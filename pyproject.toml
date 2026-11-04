@@ -8,8 +8,8 @@ version = "0.1.0"
 description = "Escola em Pauta: diagnóstico do impacto do fechamento de escolas do campo, antes da decisão (Global Solution FIAP 2026-2, CitizenTech)"
 requires-python = ">=3.12"
 dependencies = [
-  "pandas>=2.2",
-    "pyarrow>=15",   # Censo Escolar (CSV por escola, ~218 MB/ano)
+  "pandas>=2.2",    # Censo Escolar (CSV por escola, ~218 MB/ano)
+  "pyarrow>=15",    # parquet dos dados processados
   "jinja2>=3.1",   # templates HTML das fichas
 ]
 
