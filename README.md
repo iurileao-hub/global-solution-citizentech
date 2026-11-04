@@ -110,6 +110,16 @@ Malha viária: para o site, ponha em `dados/brutos/osm/` os recortes regionais d
 - **Vagas nas receptoras não são publicadas.** Alunos por sala é uma estimativa que soma os turnos.
 - **Escola do campo em área urbana**: o Decreto 7.352/2010 define população do campo pelo trabalho no meio rural. Morar na zona rural é usado como indício.
 
+## Equipe
+
+| Nome | RM |
+|---|---|
+| Gabriel Carmona Bittencourt | RM569239 |
+| Iúri Leão de Almeida | RM570215 |
+| Márcio Francisco dos Santos Júnior | RM570758 |
+| Maria Sophia Domingues dos Santos | RM571209 |
+| Gabrielly Drosda da Silva | RM571793 |
+
 ## Fontes e licenças
 
 - Censo Escolar da Educação Básica, INEP (microdados por escola, 2019 a 2025).
