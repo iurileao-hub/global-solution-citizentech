@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# Suíte de testes — mantida em disco, fora do repositório versionado (decisão acadêmica, mesma da GS 2026-1)
+tests/
+
+# Artefatos de trabalho (specs, planos, discussões, referências) e instruções de agente — não versionar.
+# Entregáveis oficiais entram por exceção (!docs/...) quando o enunciado de CC definir quais são.
+docs/*
+/CLAUDE.md
+.remember/
