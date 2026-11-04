@@ -20,7 +20,9 @@ from __future__ import annotations
 import math
 
 ANO_CORTE = 2022  # último ano do treino no backtest
-LIMIAR_ESTAVEL = 0.03  # inclinação menor que 3% da média por ano = estável
+# Inclinação menor que 2% da média por ano = estável (~12% em 6 anos). Com 3%, uma queda de
+# 71 para 57 alunos (−20%) saía como "estável" (Cananéia, 04/11): limiar baixado.
+LIMIAR_ESTAVEL = 0.02
 
 
 def ajustar_reta(anos: list[int], valores: list[float]) -> tuple[float, float]:

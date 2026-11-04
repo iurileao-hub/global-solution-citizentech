@@ -27,7 +27,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from . import censo, ficha, geo, grafo, receptoras
+from . import censo, ficha, grafo, osm_local, receptoras
 from .censo import ETAPAS, RAIZ
 from .diagnostico import diagnosticar
 
@@ -54,7 +54,7 @@ def escolas_do_territorio(chave: str) -> list[int]:
     """Escolas públicas ativas do campo: rurais, ou em terra indígena ou comunidade quilombola."""
     t = TERRITORIOS[chave]
     r = censo.retrato()
-    sel = r[(r["uf"] == t["uf"]) & (r["situacao"] == 1)]
+    sel = r[(r["uf"] == t["uf"]) & (r["situacao"] == 1) & censo.fora_de_privacao(r)]
     if t["municipios"]:
         sel = sel[sel["municipio"].isin(t["municipios"])]
     campo = (sel["localizacao"] == 2) | sel["localizacao_diferenciada"].isin([2, 3])
@@ -62,13 +62,14 @@ def escolas_do_territorio(chave: str) -> list[int]:
 
 
 def preparar_malhas(codigos: list[int]) -> None:
-    """Baixa, por célula de grade (0,25°, ~28 km), uma malha que cobre as escolas da célula e suas candidatas.
+    """Garante, por célula de grade (0,25°, ~28 km), uma malha que cobre as escolas da célula e suas candidatas.
 
     Uma área por município falharia no DF (um "município" só, do tamanho de uma metrópole); uma por
     escola faria centenas de chamadas. A célula é o meio-termo, e cada escola cabe na malha da sua célula.
     """
     r = censo.retrato()
     grupos: dict[tuple[int, int], list[tuple[float, float]]] = {}
+    ufs: dict[tuple[int, int], str] = {}
     for c in codigos:
         e = receptoras.escola(c)
         if e.lat is None:
@@ -76,13 +77,30 @@ def preparar_malhas(codigos: list[int]) -> None:
         etapas = [v for v in ETAPAS.values() if r.loc[c, v] > 0] or list(ETAPAS.values())
         perto = receptoras.pre_filtrar(e, etapas, 12)
         celula = (math.floor(e.lat / CELULA), math.floor(e.lon / CELULA))
+        ufs[celula] = e.uf
         grupos.setdefault(celula, []).extend([(e.lat, e.lon)] + list(zip(perto["lat"], perto["lon"])))
-    for celula, pontos in sorted(grupos.items()):
+    # Células sem malha em cache: extraídas do recorte regional (uma passada por região);
+    # sem recorte disponível, cai no Overpass.
+    faltam: dict[Path | None, list[tuple]] = {}
+    for (celula, pontos), uf in zip(sorted(grupos.items()), [ufs[c] for c in sorted(grupos)]):
         bbox = grafo.bbox_ao_redor(pontos)
-        area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
-        print(f"  malha {celula}: bbox {bbox} ({area:.2f} grau²)", file=sys.stderr)
-        grafo.arquivo_da_malha(*bbox)
-        time.sleep(2)  # gentileza com o servidor público
+        if _em_cache(bbox):
+            continue
+        faltam.setdefault(osm_local.pbf_da_uf(uf), []).append(bbox)
+    for pbf, bboxes in faltam.items():
+        if pbf is not None:
+            print(f"  extraindo {len(bboxes)} malhas de {pbf.name}...", file=sys.stderr)
+            osm_local.extrair(pbf, bboxes)
+        else:
+            for bbox in bboxes:
+                print(f"  malha {bbox} do Overpass...", file=sys.stderr)
+                grafo.arquivo_da_malha(*bbox)
+                time.sleep(2)  # gentileza com o servidor público
+
+
+def _em_cache(bbox: tuple[float, float, float, float]) -> bool:
+    s0, o0, n0, l0 = bbox
+    return any(s <= s0 and o <= o0 and n >= n0 and l >= l0 for _, (s, o, n, l) in grafo._bboxes_em_cache(grafo.CACHE_OSM))
 
 
 def _ambiente() -> Environment:

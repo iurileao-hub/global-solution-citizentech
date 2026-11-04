@@ -174,7 +174,7 @@ def contexto(d: Diagnostico, hoje: date | None = None) -> dict:
         b = t["inclinacao_alunos_ano"]
         ritmo = f"{'+' if b >= 0 else '−'}{abs(b):.1f}".replace(".", ",")
         leia2 = (f"De {a0} a {a1}, a matrícula foi de {v0} para {v1}: tendência <b>{t['sentido']}</b> "
-                 f"({ritmo} aluno por ano).")
+                 f"({ritmo} {'aluno' if abs(b) < 2 else 'alunos'} por ano).")
     else:
         leia2 = "Série curta demais para descrever uma tendência."
     nao_preve = ("Não projetamos o futuro: num teste com quase 2 mil escolas rurais (DF, SP e ES), projetar pela "
@@ -222,8 +222,10 @@ def contexto(d: Diagnostico, hoje: date | None = None) -> dict:
     return {
         "d": d, "e": e,
         "nome": nome_legivel(e.nome),
-        "onde": f"Escola {p.get('dependencia', 'pública')} da zona {'rural' if e.rural else 'urbana'} de "
-                f"{e.municipio}, {UF_NOME.get(e.uf, e.uf)}. Código INEP {e.codigo_inep}."
+        "onde": (f"Escola da rede pública do Distrito Federal, zona {'rural' if e.rural else 'urbana'}. "
+                 f"Código INEP {e.codigo_inep}." if e.uf == "DF" else
+                 f"Escola {p.get('dependencia', 'pública')} da zona {'rural' if e.rural else 'urbana'} de "
+                 f"{e.municipio}, {UF_NOME.get(e.uf, e.uf)}. Código INEP {e.codigo_inep}.")
                 + (f" Localizada em {e.localizacao_diferenciada}." if e.localizacao_diferenciada else ""),
         "carimbo": f"Censo Escolar {d.ano_referencia} e mapa de estradas, {data_pt(hoje)}",
         "abre": " ".join(abre),

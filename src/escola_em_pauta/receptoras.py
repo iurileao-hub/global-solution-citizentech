@@ -47,7 +47,7 @@ def pre_filtrar(origem: Escola, etapas: list[str], n: int) -> pd.DataFrame:
     """As n escolas ativas mais próximas em linha reta que oferecem alguma das etapas."""
     r = censo.retrato()
     t = geo.tabela()
-    pool = r[(r["situacao"] == 1) & (r.index != origem.codigo_inep)]
+    pool = r[(r["situacao"] == 1) & (r.index != origem.codigo_inep) & censo.fora_de_privacao(r)]
     pool = pool[(pool[etapas] > 0).any(axis=1)]
     pool = pool.join(t[["lat", "lon"]], how="inner").dropna(subset=["lat", "lon"])
     pool = pool.assign(reta_km=_distancias_km(origem.lat, origem.lon, pool["lat"].to_numpy(), pool["lon"].to_numpy()))

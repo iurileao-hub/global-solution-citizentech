@@ -81,7 +81,19 @@ SO_RETRATO = {
     "IN_QUADRA_ESPORTES": "quadra",
     "IN_BIBLIOTECA": "biblioteca",
     "IN_ALIMENTACAO": "alimentacao",
+    "IN_LOCAL_FUNC_UNID_PRISIONAL": "em_prisional",
+    "IN_LOCAL_FUNC_SOCIOEDUCATIVO": "em_socioeducativo",
+    "IN_LOCAL_FUNC_PRISIONAL_SOCIO": "em_prisional_socio",
 }
+
+# Escola em unidade prisional ou socioeducativa: não é escola do campo para este fim,
+# nem receptora possível para crianças de outra escola.
+PRIVACAO_DE_LIBERDADE = ("em_prisional", "em_socioeducativo", "em_prisional_socio")
+
+
+def fora_de_privacao(df: pd.DataFrame) -> pd.Series:
+    cols = [c for c in PRIVACAO_DE_LIBERDADE if c in df.columns]
+    return ~(df[cols].fillna(0) == 1).any(axis=1) if cols else pd.Series(True, index=df.index)
 
 # Códigos de TP_LOCALIZACAO_DIFERENCIADA (dicionário do INEP).
 LOCALIZACAO_DIFERENCIADA = {

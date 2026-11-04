@@ -209,6 +209,8 @@
   .avisos li { margin-left: 1em; }
   .estradas td.num.sem { font-weight: 400; color: var(--lapis); white-space: normal; font-size: .82rem; }
   .estradas .reta { position: absolute; left: 0; top: 50%; height: 0; margin-top: -1px; border-top: 2px dashed var(--lapis); }
+  /* sem medição de campo, não há linha de referência (sem isto ela cairia no zero) */
+  .estradas:not(.medida) td.trilha .faixa::before { content: none; }
   /* rótulos de receptora com várias informações: quebram em segunda linha */
   .estradas th.quem { white-space: normal; width: 36%; }
   .estradas th.quem small { display: block; font-size: .78rem; line-height: 1.2; }

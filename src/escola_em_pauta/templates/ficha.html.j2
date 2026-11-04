@@ -98,7 +98,7 @@
     <p class="leia larga">{{ leia3 | safe }}</p>
 
     {% if rows %}
-    <table class="estradas"{% if medicao %} style="--tce: {{ medicao.x }}%"{% endif %}>
+    <table class="estradas{% if medicao %} medida{% endif %}"{% if medicao %} style="--tce: {{ medicao.x }}%"{% endif %}>
       <thead>
         <tr>
           <th scope="col" class="quem">Escola possível</th>

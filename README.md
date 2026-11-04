@@ -24,7 +24,7 @@ A ficha informa. Quem decide é a comunidade escolar e o Conselho.
 ```
 Censo Escolar (INEP, 2019-2025) ─┐
 Escolas geolocalizadas (Ipea)  ──┼─► diagnosticar(codigo_inep) ─► ficha HTML (A4, imprimível)
-OpenStreetMap (Overpass)       ──┘                              └► site estático com busca
+OpenStreetMap (Geofabrik)      ──┘                              └► site estático com busca
 ```
 
 | Módulo | O que faz |
@@ -32,6 +32,7 @@ OpenStreetMap (Overpass)       ──┘                              └► sit
 | `censo.py` | Lê os zips do INEP sem descompactar e harmoniza a mudança de layout de 2025 (escola, matrícula e docentes em tabelas separadas) |
 | `geo.py` | Lê o GeoPackage do Ipea com `sqlite3` e decodifica o ponto (WKB) à mão |
 | `grafo.py` | Transforma as vias do OSM em grafo, com custo em minutos de ônibus por tipo de via e superfície |
+| `osm_local.py` | Extrai as vias de várias áreas de um recorte regional do OSM (PBF) numa passada só; o Overpass fica como alternativa |
 | `rota.py` | Dijkstra com fila de prioridade (`heapq`) |
 | `receptoras.py` | Pré-filtro em linha reta e rota real só para as candidatas |
 | `tendencia.py` | Mínimos quadrados e backtest contra uma linha de base |
@@ -97,7 +98,7 @@ escola-em-pauta site                   # site dos territórios de demonstração
 escola-em-pauta validar                # tabela de erro de Muniz Freire
 ```
 
-A malha viária é baixada do Overpass sob demanda e guardada em cache.
+Malha viária: para o site, ponha em `dados/brutos/osm/` os recortes regionais da Geofabrik (`centro-oeste-latest.osm.pbf`, `sudeste-latest.osm.pbf`); as vias de cada área são extraídas localmente numa passada só. Sem o recorte da região, a malha vem do Overpass, sob demanda, com cache. Publicar o site: `scripts/publicar_pages.sh`.
 
 ## Limitações
 

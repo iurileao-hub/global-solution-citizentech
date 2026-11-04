@@ -112,7 +112,7 @@ def piso(g: Grafo, origem: tuple[float, float], destino: tuple[float, float]) ->
     no_d, acesso_d = g.no_mais_proximo(*destino)
     acesso = max(acesso_o, acesso_d)
     if acesso > KM_ACESSO_MAX:
-        return Rota(None, None, None, reta, acesso, f"escola a {acesso:.1f} km da estrada mapeada mais próxima")
+        return Rota(None, None, None, reta, acesso, f"escola a {acesso:.1f} km da estrada mapeada mais próxima".replace(".", ",", 1))
     ida, volta = dijkstra(g, no_o, no_d), dijkstra(g, no_d, no_o)
     if ida is None or volta is None:
         return Rota(None, None, None, reta, acesso, "rota não encontrada na malha do OpenStreetMap")
@@ -138,7 +138,7 @@ def pisos(g: Grafo, origem: tuple[float, float], destinos: list[tuple[float, flo
         reta = 2 * haversine_km(*origem, *d)
         acesso = max(acesso_o, acesso_d)
         if acesso > KM_ACESSO_MAX:
-            saida.append(Rota(None, None, None, reta, acesso, f"escola a {acesso:.1f} km da estrada mapeada mais próxima"))
+            saida.append(Rota(None, None, None, reta, acesso, f"escola a {acesso:.1f} km da estrada mapeada mais próxima".replace(".", ",", 1)))
         elif no_d not in ida or no_d not in volta:
             saida.append(Rota(None, None, None, reta, acesso, "rota não encontrada na malha do OpenStreetMap"))
         else:
