@@ -15,3 +15,8 @@ docs/*
 !docs/metodologia.md
 /CLAUDE.md
 .remember/
+
+# Dados públicos baixados (grandes, re-baixáveis) e site gerado
+dados/brutos/
+dados/processados/
+site/

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "escola-em-pauta"
+version = "0.1.0"
+description = "Escola em Pauta: diagnóstico do impacto do fechamento de escolas do campo, antes da decisão (Global Solution FIAP 2026-2, CitizenTech)"
+requires-python = ">=3.12"
+dependencies = [
+  "pandas>=2.2",   # Censo Escolar (CSV por escola, ~218 MB/ano)
+  "jinja2>=3.1",   # templates HTML das fichas
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+escola-em-pauta = "escola_em_pauta.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
