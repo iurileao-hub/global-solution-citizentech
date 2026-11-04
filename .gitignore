@@ -12,5 +12,6 @@ tests/
 # Artefatos de trabalho (specs, planos, discussões, referências) e instruções de agente — não versionar.
 # Entregáveis oficiais entram por exceção (!docs/...) quando o enunciado de CC definir quais são.
 docs/*
+!docs/metodologia.md
 /CLAUDE.md
 .remember/
