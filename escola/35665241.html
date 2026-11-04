@@ -184,9 +184,12 @@
   /* ---------- conformidade ---------- */
   .lei td, .lei th { padding: .12em .6em .12em 0; border-bottom: 1px solid var(--filete); font-size: .88rem; line-height: 1.3; }
   .lei thead th { color: var(--lapis); font-size: .82rem; font-weight: 400; }
-  .lei td.s { white-space: nowrap; width: 11em; }
+  .lei { table-layout: fixed; }  /* larguras pelas colunas, não pelo texto mais longo */
+  .lei .c-item { width: 34%; } .lei .c-norma { width: 27%; } .lei .c-sit { width: 39%; }
+  .lei td { vertical-align: top; }
+  .lei td.s { padding-left: 1.35em; text-indent: -1.35em; }  /* texto longo quebra alinhado depois do marcador */
   .lei td.s b { font-weight: 700; }
-  .lei td.f { color: var(--lapis); width: 15em; white-space: nowrap; }
+  .lei td.f { color: var(--lapis); }
   .lei .g { display: inline-block; width: 1.1em; text-align: center; margin-right: .25em; color: var(--mata); }
 
   /* ---------- método ---------- */
@@ -204,9 +207,11 @@
   /* ---------- impressão ---------- */
   @page { size: A4; margin: 0; }
   @media print {
-    html { font-size: 10pt; }
+    /* 8,5pt: medido nas 256 fichas (04/11), é o maior corpo em que frente e verso cabem cada um numa A4.
+       Sem overflow: hidden: se um dia algo não couber, sai numa página a mais, em vez de sumir calado. */
+    html { font-size: 8.5pt; }
     body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .folha { margin: 0; box-shadow: none; width: 210mm; min-height: 297mm; height: 297mm; padding: 12mm 13mm 9mm; break-after: page; overflow: hidden; }
+    .folha { margin: 0; box-shadow: none; width: 210mm; min-height: 297mm; height: auto; padding: 10mm 12mm 8mm; break-after: page; }
     .folha:last-child { break-after: auto; }
     a { color: inherit; text-decoration: none; }
   }
@@ -226,6 +231,14 @@
   .estradas th.quem small { display: block; font-size: .78rem; line-height: 1.2; }
   .estradas thead th.num { width: 15%; }
   .eixo-linha { grid-template-columns: 36% 1fr 15%; }
+
+  /* impressão, ajustes finos: no FIM do arquivo de propósito. @media não soma especificidade,
+     então uma regra de tela escrita depois venceria a de impressão (aconteceu com .quem small). */
+  @media print {
+    .linha { height: 5.5mm; }
+    .estradas th.quem small { font-size: .72rem; line-height: 1.15; }
+    .lei td, .lei th { padding-top: .08em; padding-bottom: .08em; }
+  }
 
 </style>
 </head>
@@ -256,7 +269,7 @@
   </div>
 
   <div class="avisos" role="note"><strong>Atenção:</strong>
-    <ul><li>Nenhuma rota encontrada na malha do OpenStreetMap; a linha reta aparece como limite inferior.</li></ul>
+    <ul><li>Esta escola fica a 1,3 km da estrada mapeada mais próxima no OpenStreetMap, por isso não há rota calculada; a distância em linha reta aparece como limite inferior.</li></ul>
   </div>
 
   <div class="topo">
@@ -315,32 +328,32 @@
         <tr>
           <th scope="row" class="quem">Bairro Bombas EMEIEF <small>rural, ~2 alunos por sala, somando os turnos</small></th>
           <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="reta" style="width:52.2%" aria-hidden="true"></span></div></td>
-          <td class="num sem">escola a 1,3 km da estrada mapeada mais próxima; em linha reta, 21 km</td>
+          <td class="num sem">Em linha reta, 21 km</td>
         </tr>
         <tr>
           <th scope="row" class="quem">Centro Municipal de Educacao Infantil Padre Joao Dreisewerd <small>urbana, ~7 alunos por sala, somando os turnos</small></th>
           <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="reta" style="width:55.9%" aria-hidden="true"></span></div></td>
-          <td class="num sem">escola a 1,3 km da estrada mapeada mais próxima; em linha reta, 22 km</td>
+          <td class="num sem">Em linha reta, 22 km</td>
         </tr>
         <tr>
           <th scope="row" class="quem">Vitor Rodrigues da Motta EMEIEF <small>rural, ~8 alunos por sala, somando os turnos</small></th>
           <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="reta" style="width:63.3%" aria-hidden="true"></span></div></td>
-          <td class="num sem">escola a 1,3 km da estrada mapeada mais próxima; em linha reta, 25 km</td>
+          <td class="num sem">Em linha reta, 25 km</td>
         </tr>
         <tr>
           <th scope="row" class="quem">Bairro Pavao EMEI do <small>rural, em Itaoca, ~8 alunos por sala, somando os turnos</small></th>
           <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="reta" style="width:69.3%" aria-hidden="true"></span></div></td>
-          <td class="num sem">escola a 1,3 km da estrada mapeada mais próxima; em linha reta, 28 km</td>
+          <td class="num sem">Em linha reta, 28 km</td>
         </tr>
         <tr>
           <th scope="row" class="quem">Benedito Barbosa EM <small>rural, ~2 alunos por sala, somando os turnos</small></th>
           <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="reta" style="width:69.4%" aria-hidden="true"></span></div></td>
-          <td class="num sem">escola a 1,3 km da estrada mapeada mais próxima; em linha reta, 28 km</td>
+          <td class="num sem">Em linha reta, 28 km</td>
         </tr>
         <tr>
           <th scope="row" class="quem">Joao G de Almeida e Mei Ef <small>rural, em Adrianópolis, ~8 alunos por sala, somando os turnos</small></th>
           <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="reta" style="width:79.0%" aria-hidden="true"></span></div></td>
-          <td class="num sem">escola a 1,5 km da estrada mapeada mais próxima; em linha reta, 32 km</td>
+          <td class="num sem">Em linha reta, 32 km</td>
         </tr>
       </tbody>
     </table>
@@ -403,6 +416,7 @@
     <h2 id="s5"><span class="n" aria-hidden="true">5</span>O que a lei pede e o que já está pronto</h2>
     <p class="nota" style="margin-bottom:4px; max-width:none"><b>Pronto</b>: está nesta folha. <b>A preencher</b>: depende de pessoas. <b>A calcular</b>: depende de dado não publicado ou não processado.</p>
     <table class="lei">
+      <colgroup><col class="c-item"><col class="c-norma"><col class="c-sit"></colgroup>
       <thead><tr><th scope="col">Exigência</th><th scope="col">Onde está escrito</th><th scope="col">Situação</th></tr></thead>
       <tbody>
         <tr><td>A lei de fechamento se aplica a esta escola (escola do campo, indígena ou quilombola)<br><small style="color:var(--lapis)">Sim: escola em área rural</small></td><td class="f">Decreto 7.352/2010, art. 1º, §1º, II</td><td class="s"><span class="g">■</span><b>Pronto</b></td></tr>
