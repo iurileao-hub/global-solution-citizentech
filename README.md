@@ -4,6 +4,8 @@
 
 Global Solution FIAP 2026, tema CitizenTech.
 
+**Site:** [iurileao-hub.github.io/global-solution-citizentech](https://iurileao-hub.github.io/global-solution-citizentech/), com 256 fichas de escolas do campo do Distrito Federal, do Vale do Ribeira (SP) e de Muniz Freire (ES).
+
 ## O problema
 
 A LDB (art. 28, parágrafo único, incluído pela Lei 12.960/2014) exige que o fechamento de escolas do campo, indígenas e quilombolas seja precedido de um **diagnóstico do impacto** e da **manifestação da comunidade escolar**. A lei não define como esse diagnóstico deve ser feito. Na prática, os números (quantas crianças, quanta estrada, para qual escola) costumam aparecer só depois da decisão, no recurso ao Ministério Público ou na auditoria do Tribunal de Contas.
