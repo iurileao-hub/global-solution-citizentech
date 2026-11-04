@@ -14,54 +14,56 @@ estrada na chuva (ver docs/discussao/2026-11-04-passos-5-6.md).
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from .modelos import Diagnostico, Escola, Receptora
+
+__all__ = ["Diagnostico", "Escola", "Receptora", "diagnosticar"]
 
 
-@dataclass(frozen=True)
-class Escola:
-    codigo_inep: int
-    nome: str
-    municipio: str
-    uf: str
-    rural: bool
-    localizacao_diferenciada: str | None  # quilombola, indígena, assentamento
-    lat: float | None
-    lon: float | None
-    precisao_coordenada: str  # "ipea_geobr", "geocodificada_endereco", "ausente"
-
-
-@dataclass(frozen=True)
-class Receptora:
-    escola: Escola
-    rural: bool
-    km_ida_volta_piso: float | None  # None = rota não encontrada (nunca inventar)
-    minutos_ida_volta_piso: float | None
-    ocupacao_estimada: str  # proxy: matrícula / salas; rotulado como estimativa
-
-
-@dataclass
-class Diagnostico:
-    escola: Escola
-    ano_referencia: int
-    matriculas_por_etapa: dict[str, int]
-    moram_zona_rural: int
-    usam_transporte_publico: int
-    serie_matricula: dict[int, int]  # ano -> matrícula total
-    tendencia: dict | None  # coeficientes, previsão e MAE/RMSE do backtest
-    receptoras: list[Receptora] = field(default_factory=list)
-    checklist: list[dict] = field(default_factory=list)  # item, norma, situação
-    avisos: list[str] = field(default_factory=list)  # lacunas declaradas na ficha
-
-
-def diagnosticar(codigo_inep: int) -> Diagnostico:
+def diagnosticar(codigo_inep: int, k: int = 6) -> Diagnostico:
     """Monta o diagnóstico completo de uma escola.
 
-    Ordem prevista (cada passo num módulo próprio):
+    Passos (cada um num módulo próprio):
       1. censo.escola_e_serie(codigo)        -> matrículas, etapas, transporte, série
-      2. geo.coordenada(codigo)              -> coordenada (Ipea) ou geocodificação
-      3. receptoras.candidatas(escola, k=6)  -> mesmas etapas, mais próximas em linha reta
-      4. rota.piso(origem, destino)          -> Dijkstra no grafo OSM com velocidade por piso
-      5. tendencia.ajustar(serie)            -> regressão + backtest
-      6. checklist.avaliar(diagnostico)      -> LDB 28, PL 3.091/2024, Res. CNE/CEB 2/2008, CME Santa Cruz
+      2. geo.coordenada(codigo)              -> coordenada (Ipea); sem ela, sem rota (aviso)
+      3. receptoras.candidatas(escola, k)    -> mesmas etapas, pré-filtro em linha reta, rota real
+         (rota.piso: Dijkstra no grafo OSM com velocidade de ônibus por superfície)
+      4. tendencia.ajustar(serie)            -> descrição da série + backtest contra linha de base
+      5. checklist.avaliar(diagnostico)      -> LDB 28, Decreto 7.352, CNE/CEB 2/2008, PL 3.091, CME Santa Cruz
+
+    Levanta KeyError se a escola não for pública ou não estiver no Censo mais recente.
     """
-    raise NotImplementedError("Implementação começa na próxima sessão (ver docs/HANDOFF.md).")
+    from . import censo, checklist, receptoras, tendencia
+
+    info, serie = censo.escola_e_serie(codigo_inep)
+    escola = receptoras.escola(codigo_inep)
+    avisos: list[str] = []
+    if info["situacao"] != "ativa":
+        avisos.append(f"No Censo {info['ano_referencia']} a escola consta como {info['situacao']}.")
+
+    etapas = list(info["matriculas_por_etapa"])
+    lista, g = ([], None)
+    if escola.lat is None:
+        avisos.append("Escola sem coordenada na base do Ipea: distâncias não calculadas (plano B: geocodificar o endereço).")
+    elif not etapas:
+        avisos.append("Escola sem matrícula no ano de referência: não há receptoras a calcular.")
+    else:
+        lista, g = receptoras.candidatas(escola, etapas, k=k)
+        if not any(r.km_ida_volta_piso is not None for r in lista):
+            avisos.append("Nenhuma rota encontrada na malha do OpenStreetMap; a linha reta aparece como limite inferior.")
+
+    d = Diagnostico(
+        escola=escola,
+        situacao=info["situacao"],
+        ano_referencia=info["ano_referencia"],
+        matriculas_por_etapa=info["matriculas_por_etapa"],
+        matricula_total=info["matricula_total"],
+        moram_zona_rural=info["moram_zona_rural"],
+        usam_transporte_publico=info["usam_transporte_publico"],
+        serie_matricula=serie,
+        tendencia=tendencia.ajustar(serie),
+        receptoras=lista,
+        avisos=avisos,
+        malha={"data_osm": g.data_osm, "km_por_piso": g.km_por_piso} if g else {},
+    )
+    d.checklist = checklist.avaliar(d)
+    return d

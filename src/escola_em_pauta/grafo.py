@@ -35,6 +35,7 @@ from __future__ import annotations
 import gzip
 import json
 import math
+import sys
 import time
 import urllib.parse
 import urllib.request
@@ -50,6 +51,7 @@ CACHE_OSM = PROCESSADOS / "osm"
 OVERPASS = (
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
 )
 
 # km/h de um ônibus escolar em via pavimentada, por tipo de via (highway=*).
@@ -102,15 +104,22 @@ def baixar_malha(sul: float, oeste: float, norte: float, leste: float, cache: Pa
     """Vias e nós de uma bbox, do cache local ou do Overpass (que tem limite de uso: 1 chamada por vez)."""
     chave = f"{sul:.3f}_{oeste:.3f}_{norte:.3f}_{leste:.3f}"
     arquivo = cache / f"{chave}.json.gz"
-    if arquivo.exists():
-        with gzip.open(arquivo, "rt") as f:
+    # Reaproveita qualquer malha já baixada que CONTENHA a área pedida (a menor delas).
+    contem = [
+        (area, p) for p, (s, o, n, l) in _bboxes_em_cache(cache)
+        if s <= sul and o <= oeste and n >= norte and l >= leste
+        for area in [(n - s) * (l - o)]
+    ]
+    if contem:
+        with gzip.open(min(contem)[1], "rt") as f:
             return json.load(f)
+    print(f"  baixando malha OSM {chave} do Overpass...", file=sys.stderr)
     corpo = urllib.parse.urlencode({"data": _consulta(sul, oeste, norte, leste)}).encode()
     ultimo_erro = None
     for tentativa, url in enumerate(OVERPASS * 2):
         try:
             req = urllib.request.Request(url, data=corpo, headers={"User-Agent": "escola-em-pauta/0.1 (projeto academico)"})
-            with urllib.request.urlopen(req, timeout=200) as resp:
+            with urllib.request.urlopen(req, timeout=120) as resp:
                 bruto = json.load(resp)
             break
         except Exception as e:  # rede, 429 (limite) ou 504 (servidor ocupado): tenta o espelho, depois espera
@@ -129,6 +138,17 @@ def baixar_malha(sul: float, oeste: float, norte: float, leste: float, cache: Pa
     with gzip.open(arquivo, "wt") as f:
         json.dump(malha, f)
     return json.loads(json.dumps(malha))  # mesmas chaves (str) que a leitura do cache devolve
+
+
+def _bboxes_em_cache(cache: Path) -> list[tuple[Path, tuple[float, float, float, float]]]:
+    """Lê as bboxes do nome dos arquivos de cache (sul_oeste_norte_leste.json.gz)."""
+    saida = []
+    for p in cache.glob("*.json.gz"):
+        try:
+            saida.append((p, tuple(float(x) for x in p.name.removesuffix(".json.gz").split("_"))))
+        except ValueError:
+            continue
+    return saida
 
 
 def bbox_ao_redor(pontos: list[tuple[float, float]], margem_km: float = 5.0) -> tuple[float, float, float, float]:
