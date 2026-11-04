@@ -3,7 +3,7 @@
   escola-em-pauta dados                 processa os arquivos já baixados em dados/brutos/ (Censo e Ipea)
   escola-em-pauta ficha <codigo_inep>   gera site/escola/<codigo>.html para UMA escola qualquer do Brasil
   escola-em-pauta site [territorio...]  gera o site dos territórios (muniz-freire, df, vale-do-ribeira)
-  escola-em-pauta validar               tabela de erro contra a medição de campo (Muniz Freire)
+  escola-em-pauta validar               tabela de erro contra a estimativa do TCE-ES (Muniz Freire)
 """
 
 from __future__ import annotations

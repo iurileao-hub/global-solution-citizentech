@@ -1,10 +1,11 @@
 """Malha viária a partir de um recorte regional do OpenStreetMap (Geofabrik), sem depender do Overpass.
 
-Por quê: os servidores públicos do Overpass ficaram fora do ar durante a geração
-do site (04/11/2026, os três espelhos ao mesmo tempo). Para o site estático (v1),
-baixamos uma vez o recorte da região (formato PBF, binário compacto do OSM) e
-extraímos localmente as vias de várias áreas numa passada só. A v2 (escola
-qualquer, na hora) continua usando o Overpass, com este caminho como reserva.
+FONTE PADRÃO do projeto (decisão de Iúri, 04/11/2026): os servidores públicos do
+Overpass caíram os três ao mesmo tempo durante a geração do site, e a apresentação
+não pode depender deles. Baixamos uma vez o recorte da região (formato PBF, binário
+compacto do OSM, com md5 publicado: reprodutível) e extraímos localmente as vias de
+várias áreas numa passada só. O Overpass só é usado se pedido explicitamente
+(grafo.arquivo_da_malha(..., fonte="overpass")).
 
 Recortes (https://download.geofabrik.de/south-america/brazil/):
 centro-oeste-latest.osm.pbf (~208 MB) e sudeste-latest.osm.pbf (~863 MB),
@@ -30,6 +31,26 @@ REGIAO_POR_UF = {
     **dict.fromkeys(("PR", "SC", "RS"), "sul"),
 }
 TAGS = ("highway", "surface", "tracktype", "oneway", "name")
+
+
+def pbf_que_cobre(bbox: tuple[float, float, float, float]) -> Path | None:
+    """O menor recorte em dados/brutos/osm/ cuja área (gravada no cabeçalho do PBF) contém a bbox."""
+    import osmium
+
+    s, o, n, l = bbox
+    melhor = None
+    for pbf in sorted(PBF_DIR.glob("*.osm.pbf")):
+        r = osmium.io.Reader(str(pbf), osmium.osm.osm_entity_bits.NOTHING)
+        caixa = r.header().box()
+        r.close()
+        if not caixa.valid():
+            continue
+        bl, tr = caixa.bottom_left, caixa.top_right
+        if bl.lat <= s and bl.lon <= o and tr.lat >= n and tr.lon >= l:
+            area = (tr.lat - bl.lat) * (tr.lon - bl.lon)
+            if melhor is None or area < melhor[0]:
+                melhor = (area, pbf)
+    return melhor[1] if melhor else None
 
 
 def pbf_da_uf(uf: str) -> Path | None:

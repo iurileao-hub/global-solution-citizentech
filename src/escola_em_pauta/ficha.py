@@ -39,11 +39,12 @@ ETAPA_FIM = {"creche": "à creche", "pre_escola": "à pré-escola", "anos_inicia
 ORDEM_ETAPAS = list(ETAPA_ROTULO)
 ANOS_DA_ETAPA = {"anos_iniciais": range(1, 6), "anos_finais": range(6, 10)}
 
-# Validação em Muniz Freire (validacao.py, 04/11/2026): TCE mediu 52 km/dia; de escola a
-# escola, nossa rota deu de 24,9 a 45,0 km. Atualizar se houver mais casos medidos.
-MARGEM_TEXTO = ("por enquanto há um único caso com medição de campo (Muniz Freire, ES). O Tribunal de Contas "
-                "mediu 52 km por dia; o cálculo de escola a escola deu de 25 a 45 km, ou seja, o real foi de "
-                "16% a 109% maior. A margem será revista quando houver mais casos medidos.")
+# Referência externa em Muniz Freire (validacao.py, 04/11/2026): para a receptora indicada pela
+# prefeitura, a área técnica do TCE-ES estimou ATÉ 52 km/dia; de escola a escola, nossa rota dá 25 km.
+MARGEM_TEXTO = ("por enquanto há uma única referência externa (Muniz Freire, ES). Para a escola receptora "
+                "indicada pela prefeitura, a área técnica do Tribunal de Contas estimou até 52 km por dia, "
+                "pensando em quem mora mais longe; o cálculo de escola a escola dá 25 km. O caminho real de "
+                "parte das crianças pode passar do dobro do piso.")
 
 SIGLAS = {"EMEF", "EEEFM", "CEEFMTI", "CEI", "EPM", "EEEM", "EMEI", "EMEIEF", "CMEI", "CEF", "CED", "EC",
           "CAIC", "EE", "EM", "EMEB", "EMEFM", "EEF", "EEM", "EEFM", "CIEP", "CE", "UE", "ETEC", "IF", "JI"}
@@ -97,16 +98,19 @@ def _rotulo_receptora(r: Receptora, d: Diagnostico) -> str:
     faltam = set(d.matriculas_por_etapa) - set(r.etapas_cobertas)
     if faltam:
         partes.append("só " + lista_pt([ETAPA_ROTULO[e] for e in sorted(r.etapas_cobertas, key=ORDEM_ETAPAS.index)]))
+    ref = d.referencia_externa
+    if ref and ref.get("receptora") == r.escola.codigo_inep:
+        partes.insert(0, "indicada pela prefeitura")
     if r.alunos_por_sala:
         partes.append(f"~{r.alunos_por_sala:.0f} alunos por sala, somando os turnos")
     return ", ".join(partes)
 
 
 def _escala(d: Diagnostico) -> tuple[float, list[int]]:
-    """Fim do eixo (km) e marcas: cabe a maior rota e a medição de campo, com folga para a seta."""
+    """Fim do eixo (km) e marcas: cabe a maior rota e a referência externa, com folga para a seta."""
     maior = max([r.km_ida_volta_piso or r.km_linha_reta_ida_volta for r in d.receptoras] + [1.0])
-    if d.medicao_campo:
-        maior = max(maior, d.medicao_campo["km_dia"])
+    if d.referencia_externa:
+        maior = max(maior, d.referencia_externa["km_dia"])
     passo = 10 if maior <= 30 else 20 if maior <= 80 else 50
     fim = math.ceil(maior * 1.15 / passo) * passo
     return fim, list(range(0, fim, passo))
@@ -204,9 +208,9 @@ def contexto(d: Diagnostico, hoje: date | None = None) -> dict:
         leia3.append(f"Das {len(d.receptoras)} escolas mais próximas que oferecem alguma das mesmas etapas, "
                      + ("nenhuma é rural." if n_rurais == 0 else f"{n_rurais} {'é rural' if n_rurais == 1 else 'são rurais'}."))
     nota3 = []
-    if d.medicao_campo:
-        mc = d.medicao_campo
-        nota3.append(f"Neste caso, o {mc['quem']} mediu {mc['km_dia']:.0f} km por dia {mc['detalhe']} ({mc['fonte']}).")
+    if d.referencia_externa:
+        mc = d.referencia_externa
+        nota3.append(mc["texto"])
     nota3.append("Vagas em cada receptora: <b>a calcular</b> (o número de vagas não é publicado; alunos por sala é estimativa).")
     item_cne = next((i for i in d.checklist if i["item"].startswith("Pré-escola e anos iniciais")), None)
     if item_cne and "não tem essas etapas" not in item_cne["detalhe"]:
@@ -234,8 +238,8 @@ def contexto(d: Diagnostico, hoje: date | None = None) -> dict:
         "pontos": pontos, "leia2": leia2, "nao_preve": nao_preve,
         "leia3": " ".join(leia3), "rows": rows, "fim": fim,
         "marcas": [{"km": k, "x": round(100 * k / fim, 1)} for k in marcas],
-        "medicao": ({"x": round(100 * d.medicao_campo["km_dia"] / fim, 1), **d.medicao_campo}
-                    if d.medicao_campo else None),
+        "medicao": ({"x": round(100 * d.referencia_externa["km_dia"] / fim, 1), **d.referencia_externa}
+                    if d.referencia_externa else None),
         "nota3": " ".join(nota3),
         "lei": lei, "fonte_osm": fonte_osm, "margem": MARGEM_TEXTO,
     }

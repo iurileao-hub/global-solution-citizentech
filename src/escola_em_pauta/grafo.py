@@ -1,10 +1,10 @@
 """Malha viária do OpenStreetMap como grafo.
 
-Fonte: Overpass API (dados sob licença ODbL, atribuição obrigatória na ficha
-e no site: "© colaboradores do OpenStreetMap"). Baixamos as vias de carro de
-um retângulo (bbox) e guardamos em cache local; a mesma bbox nunca é baixada
-duas vezes. Na v1 a bbox cobre a escola e as receptoras candidatas; na v2 é a
-mesma chamada, feita sob demanda.
+Fonte: OpenStreetMap (licença ODbL, atribuição obrigatória: "© colaboradores do
+OpenStreetMap"). PADRÃO: recortes regionais da Geofabrik processados localmente
+(osm_local.py). Alternativa só sob pedido: Overpass API (baixar_malha), que caiu
+inteiro em 04/11/2026. As vias de carro de um retângulo (bbox) ficam em cache
+local, e uma área contida numa malha já em cache nunca é extraída de novo.
 
 Estrutura de dados: LISTA DE ADJACÊNCIA, dict[nó, list[(vizinho, minutos, km, chão)]],
 em que chão = True quando a via não é pavimentada.
@@ -260,14 +260,30 @@ def _maior_componente(adj: dict[int, list]) -> set[int]:
     return maior
 
 
-def arquivo_da_malha(sul: float, oeste: float, norte: float, leste: float, cache: Path = CACHE_OSM) -> Path:
-    """Arquivo em cache que contém a bbox (a menor delas); baixa do Overpass se nenhum contiver."""
+FONTE_PADRAO = "geofabrik"  # decisão de 04/11/2026: o Overpass público cai e não pode derrubar a apresentação
+
+
+def arquivo_da_malha(sul: float, oeste: float, norte: float, leste: float, cache: Path = CACHE_OSM,
+                     fonte: str = FONTE_PADRAO) -> Path:
+    """Arquivo em cache que contém a bbox (o menor deles). Se nenhum contiver, extrai do recorte
+    regional da Geofabrik (padrão) ou, só se pedido, baixa do Overpass."""
     contem = [((n - s) * (l - o), p) for p, (s, o, n, l) in _bboxes_em_cache(cache)
               if s <= sul and o <= oeste and n >= norte and l >= leste]
-    if not contem:
-        baixar_malha(sul, oeste, norte, leste, cache)
-        return arquivo_da_malha(sul, oeste, norte, leste, cache)
-    return min(contem)[1]
+    if contem:
+        return min(contem)[1]
+    bbox = (sul, oeste, norte, leste)
+    if fonte == "overpass":
+        baixar_malha(*bbox, cache)
+    else:
+        from . import osm_local
+        pbf = osm_local.pbf_que_cobre(bbox)
+        if pbf is None:
+            raise FileNotFoundError(
+                f"Nenhum recorte da Geofabrik em {osm_local.PBF_DIR} cobre a área {bbox}. Baixe a região em "
+                "https://download.geofabrik.de/south-america/brazil/ (ou use fonte='overpass').")
+        print(f"  extraindo malha {bbox} de {pbf.name}...", file=sys.stderr)
+        osm_local.extrair(pbf, [bbox], cache)
+    return arquivo_da_malha(sul, oeste, norte, leste, cache, fonte)
 
 
 @lru_cache(maxsize=2)

@@ -18,10 +18,18 @@ from .modelos import Diagnostico, Escola, Receptora
 
 __all__ = ["Diagnostico", "Escola", "Receptora", "diagnosticar"]
 
-# Medições de campo conhecidas, com fonte (servem de régua na ficha e na validação).
-MEDICOES_DE_CAMPO = {
+# Referências externas conhecidas, com fonte (servem de régua na ficha e na validação).
+# Conferido no texto da decisão em 04/11/2026: "apontou-se que os alunos percorreriam ATÉ 52 km
+# por dia em estradas precárias" (estimativa de máximo da área técnica, não medição), com a
+# EEEFM Arquimimo Mattos como receptora indicada. A cautelar foi DEFERIDA (o fundamental não foi
+# suprimido; a escola seguiu aberta por liminar). Ver docs/pesquisa/tce-es-durval-maximo.md.
+REFERENCIAS_EXTERNAS = {
     32049501: {"km_dia": 52.0, "quem": "Tribunal de Contas do ES", "fonte": "Decisão 02423/2025-2",
-               "detalhe": "em estradas precárias"},
+               "tipo": "estimativa de máximo", "receptora": 32050364,
+               "texto": ("Em 2025, a prefeitura anunciou o fim do ensino fundamental nesta escola. A área técnica do "
+                         "Tribunal de Contas do ES estimou que os alunos percorreriam até 52 km por dia, em estradas "
+                         "precárias, até a escola indicada para recebê-los, e a medida foi barrada pela Justiça e "
+                         "pelo Tribunal (Decisão 02423/2025-2).")},
 }
 
 
@@ -72,7 +80,7 @@ def diagnosticar(codigo_inep: int, k: int = 6) -> Diagnostico:
         malha={"data_osm": g.data_osm, "km_por_piso": g.km_por_piso} if g else {},
         perfil={k: info[k] for k in ("dependencia", "por_ano_escolar", "educacao_especial", "professores",
                                      "salas_utilizadas", "infraestrutura", "sem_energia")},
-        medicao_campo=MEDICOES_DE_CAMPO.get(codigo_inep),
+        referencia_externa=REFERENCIAS_EXTERNAS.get(codigo_inep),
     )
     d.checklist = checklist.avaliar(d)
     return d

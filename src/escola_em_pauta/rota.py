@@ -9,8 +9,8 @@ horas. Complexidade total: O((V + E) log V).
 Saída: km e minutos de ida e volta, como PISO. Se não houver caminho no grafo,
 devolvemos None e o aviso "rota não encontrada", nunca uma estimativa inventada.
 
-Validação (docs/discussao/2026-11-04-passos-5-6.md): em Muniz Freire o TCE-ES
-mediu 52 km/dia; o OSRM deu 25 a 37 km/dia. Ver validacao.py.
+Validação (docs/pesquisa/tce-es-durval-maximo.md): em Muniz Freire o TCE-ES
+estimou até 52 km/dia; de escola a escola, 25 km para a receptora indicada. Ver validacao.py.
 """
 
 from __future__ import annotations

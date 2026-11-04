@@ -5,10 +5,10 @@ Territórios de demonstração (decisão de 04/11):
 - Vale do Ribeira/SP: escolas públicas rurais ativas de 21 municípios (lista abaixo,
   definição usual do Vale do Ribeira paulista; a contagem do fase2b, "~22 municípios,
   177 ativas", usou uma lista que não ficou registrada; esta dá 172 em 2024).
-- Muniz Freire/ES: caso de validação (medição de campo do TCE-ES).
+- Muniz Freire/ES: caso de validação (estimativa do TCE-ES, Decisão 02423/2025-2).
 
-Malha viária: um download do Overpass por grupo (município, ou o DF inteiro),
-cobrindo todas as escolas do grupo e suas candidatas; depois, cada escola usa a
+Malha viária: recortes da Geofabrik (osm_local.py), uma área por célula de grade,
+cobrindo as escolas da célula e suas candidatas; depois, cada escola usa a
 malha em cache que a contém. Publicação: GitHub Pages (pasta site/, fora do git
 principal, publicada na branch gh-pages).
 
@@ -20,7 +20,6 @@ from __future__ import annotations
 import json
 import math
 import sys
-import time
 import traceback
 from datetime import date
 from pathlib import Path
@@ -42,7 +41,7 @@ VALE_DO_RIBEIRA = (
 
 TERRITORIOS = {
     "muniz-freire": {"nome": "Muniz Freire (ES)", "uf": "ES", "municipios": ("Muniz Freire",),
-                     "papel": "Caso de validação: o Tribunal de Contas do ES mediu a estrada de uma escola daqui."},
+                     "papel": "Caso de validação: o Tribunal de Contas do ES barrou o fechamento de uma escola daqui em 2025."},
     "df": {"nome": "Distrito Federal", "uf": "DF", "municipios": None,
            "papel": "Escolas do campo da capital do país, a minutos e a horas do Plano Piloto."},
     "vale-do-ribeira": {"nome": "Vale do Ribeira (SP)", "uf": "SP", "municipios": VALE_DO_RIBEIRA,
@@ -69,7 +68,6 @@ def preparar_malhas(codigos: list[int]) -> None:
     """
     r = censo.retrato()
     grupos: dict[tuple[int, int], list[tuple[float, float]]] = {}
-    ufs: dict[tuple[int, int], str] = {}
     for c in codigos:
         e = receptoras.escola(c)
         if e.lat is None:
@@ -77,25 +75,21 @@ def preparar_malhas(codigos: list[int]) -> None:
         etapas = [v for v in ETAPAS.values() if r.loc[c, v] > 0] or list(ETAPAS.values())
         perto = receptoras.pre_filtrar(e, etapas, 12)
         celula = (math.floor(e.lat / CELULA), math.floor(e.lon / CELULA))
-        ufs[celula] = e.uf
         grupos.setdefault(celula, []).extend([(e.lat, e.lon)] + list(zip(perto["lat"], perto["lon"])))
-    # Células sem malha em cache: extraídas do recorte regional (uma passada por região);
-    # sem recorte disponível, cai no Overpass.
-    faltam: dict[Path | None, list[tuple]] = {}
-    for (celula, pontos), uf in zip(sorted(grupos.items()), [ufs[c] for c in sorted(grupos)]):
+    # Células sem malha em cache: extraídas do recorte regional da Geofabrik, uma passada por recorte.
+    faltam: dict[Path, list[tuple]] = {}
+    for celula, pontos in sorted(grupos.items()):
         bbox = grafo.bbox_ao_redor(pontos)
         if _em_cache(bbox):
             continue
-        faltam.setdefault(osm_local.pbf_da_uf(uf), []).append(bbox)
+        pbf = osm_local.pbf_que_cobre(bbox)
+        if pbf is None:
+            print(f"  AVISO: nenhum recorte da Geofabrik cobre {bbox}; essas escolas ficarão sem rota", file=sys.stderr)
+            continue
+        faltam.setdefault(pbf, []).append(bbox)
     for pbf, bboxes in faltam.items():
-        if pbf is not None:
-            print(f"  extraindo {len(bboxes)} malhas de {pbf.name}...", file=sys.stderr)
-            osm_local.extrair(pbf, bboxes)
-        else:
-            for bbox in bboxes:
-                print(f"  malha {bbox} do Overpass...", file=sys.stderr)
-                grafo.arquivo_da_malha(*bbox)
-                time.sleep(2)  # gentileza com o servidor público
+        print(f"  extraindo {len(bboxes)} malhas de {pbf.name}...", file=sys.stderr)
+        osm_local.extrair(pbf, bboxes)
 
 
 def _em_cache(bbox: tuple[float, float, float, float]) -> bool:
@@ -152,7 +146,7 @@ def _validacao_html() -> list[dict]:
         return []
     import pandas as pd
     df = pd.read_csv(arq)
-    return [{"nome": ficha.nome_legivel(x.receptora), "reta": f"{x.linha_reta_km:.0f}", "osrm": f"{x.osrm_km:.0f}",
+    return [{"nome": ficha.nome_legivel(x.receptora), "indicada": bool(getattr(x, "indicada", False)), "reta": f"{x.linha_reta_km:.0f}", "osrm": f"{x.osrm_km:.0f}",
              "nossa": f"{x.nossa_km:.0f}", "erro": f"{x.nossa_erro_rel:+.0%}".replace("-", "−")}
             for x in df.itertuples()]
 

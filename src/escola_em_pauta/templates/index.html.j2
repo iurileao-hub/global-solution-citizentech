@@ -95,17 +95,20 @@
   <section class="cartao" aria-labelledby="v">
     <h2 id="v" style="font-size:1.2rem; margin-bottom:8px">Quanto o cálculo fica abaixo do real</h2>
     <p class="leia larga">
-      Em Muniz Freire (ES), o Tribunal de Contas mediu <b>52 km por dia</b> de transporte para os alunos da
-      EMEF Durval Máximo, em estradas precárias. Comparamos três formas de estimar essa distância com dado
-      público, de escola a escola, para as escolas urbanas que poderiam receber os alunos:
+      Em 2025, a prefeitura de Muniz Freire (ES) anunciou o fim do ensino fundamental na EMEF Durval Máximo.
+      A área técnica do Tribunal de Contas estimou que os alunos percorreriam <b>até 52 km por dia</b>, em
+      estradas precárias, até a escola indicada para recebê-los, a EEEFM Arquimimo Mattos. A Justiça e o
+      Tribunal barraram a medida e exigiram plano com participação da comunidade (Decisão 02423/2025-2).
+      Comparamos essa estimativa com três cálculos feitos só com dado público, de escola a escola:
     </p>
     <table class="valid">
       <thead><tr><th>Escola receptora</th><th>Linha reta (km/dia)</th><th>Roteador OSRM, carro (km/dia)</th><th>Nossa rota, ônibus (km/dia)</th><th>Diferença para os 52 km</th></tr></thead>
-      <tbody>{% for v in validacao %}<tr><td>{{ v.nome }}</td><td>{{ v.reta }}</td><td>{{ v.osrm }}</td><td>{{ v.nossa }}</td><td>{{ v.erro }}</td></tr>{% endfor %}</tbody>
+      <tbody>{% for v in validacao %}<tr{% if v.indicada %} style="font-weight:700"{% endif %}><td>{{ v.nome }}{% if v.indicada %} (indicada pela prefeitura){% endif %}</td><td>{{ v.reta }}</td><td>{{ v.osrm }}</td><td>{{ v.nossa }}</td><td>{{ v.erro }}</td></tr>{% endfor %}</tbody>
     </table>
     <p class="nota" style="margin-top:8px; max-width:none">
-      Todas as estimativas ficam abaixo da medição de campo, e é por isso que a ficha fala sempre em
-      "pelo menos". É um caso só: mostra a ordem de grandeza, sem autorizar um fator de correção.
+      Para a escola indicada, o cálculo de escola a escola dá cerca da metade da estimativa do Tribunal, que pensa
+      em quem mora mais longe. Por isso a ficha fala sempre em "pelo menos". É uma referência só, e é um máximo:
+      mostra a ordem de grandeza, sem autorizar um fator de correção.
     </p>
   </section>
   {% endif %}

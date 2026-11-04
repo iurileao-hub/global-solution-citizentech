@@ -1,17 +1,18 @@
-"""Análise de erro do piso: quanto o dado público subestima a estrada real.
+"""Análise de erro do piso: quanto o cálculo de escola a escola fica abaixo da referência externa.
 
-Caso: EMEF Durval Máximo (Muniz Freire/ES, INEP 32049501). O TCE-ES mediu
-52 km por dia de transporte em estradas precárias. A fonte não identifica a
-escola receptora, então comparamos as candidatas urbanas com anos finais
-(as mesmas do experimento do passo 6) por três métodos:
+Caso: EMEF Durval Máximo (Muniz Freire/ES, INEP 32049501). Na Decisão 02423/2025-2
+(conferida no texto em 04/11/2026), a área técnica do TCE-ES estimou que os alunos
+"percorreriam ATÉ 52 km por dia em estradas precárias" até a receptora indicada pela
+prefeitura, a EEEFM Arquimimo Mattos. É uma estimativa de máximo (quem mora mais
+longe), e NÃO uma medição de campo; o método do TCE não está descrito na decisão.
 
+Comparamos, para a receptora indicada e para as demais candidatas urbanas:
 1. linha reta (haversine), ida e volta: o limite inferior absoluto;
 2. OSRM, perfil de carro (servidor público de demonstração, só como referência);
 3. nossa rota: Dijkstra no grafo do OSM com velocidade de ônibus por superfície.
 
-Erro = estimativa - medição de campo. Erro relativo = erro / medição.
-n = 1 caso medido: o resultado mostra a ordem de grandeza da subestimação, e
-não autoriza um fator de correção geral.
+Diferença relativa = (estimativa - 52) / 52. n = 1 referência externa, e ela é um
+máximo: o resultado mostra a ordem de grandeza, sem autorizar fator de correção.
 
 Rodar: python -m escola_em_pauta.validacao
 """
@@ -28,6 +29,7 @@ from .censo import PROCESSADOS
 
 DURVAL = 32049501
 KM_DIA_TCE = 52.0
+RECEPTORA_INDICADA = 32050364  # EEEFM Arquimimo Mattos, segundo a Decisão 02423/2025-2
 CANDIDATAS = (32049536, 32049552, 32050070, 32050089, 32050364, 32050836)  # urbanas com anos finais
 
 OSRM = "https://router.project-osrm.org/route/v1/driving/{},{};{},{}?overview=false"
@@ -60,6 +62,7 @@ def validar_muniz_freire() -> pd.DataFrame:
         volta = _osrm_km_min(destino, origem, cache)
         linhas.append({
             "receptora": r.loc[codigo, "nome"],
+            "indicada": codigo == RECEPTORA_INDICADA,
             "linha_reta_km": nossa.km_linha_reta_ida_volta,
             "osrm_km": ida[0] + volta[0],
             "osrm_min": ida[1] + volta[1],
@@ -84,7 +87,7 @@ def resumo(df: pd.DataFrame) -> str:
     )
     faixa = lambda c: f"{df[c].min():+.0%} a {df[c].max():+.0%}"  # noqa: E731
     rodape = (
-        f"\nErro relativo contra os {KM_DIA_TCE:.0f} km/dia medidos pelo TCE-ES: "
+        f"\nDiferença relativa para os até {KM_DIA_TCE:.0f} km/dia estimados pelo TCE-ES: "
         f"linha reta {faixa('linha_reta_erro_rel')}; OSRM {faixa('osrm_erro_rel')}; "
         f"nossa rota {faixa('nossa_erro_rel')}.\n"
     )

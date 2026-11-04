@@ -34,7 +34,7 @@ OpenStreetMap (Geofabrik)      ──┘                              └► sit
 | `censo.py` | Lê os zips do INEP sem descompactar e harmoniza a mudança de layout de 2025 (escola, matrícula e docentes em tabelas separadas) |
 | `geo.py` | Lê o GeoPackage do Ipea com `sqlite3` e decodifica o ponto (WKB) à mão |
 | `grafo.py` | Transforma as vias do OSM em grafo, com custo em minutos de ônibus por tipo de via e superfície |
-| `osm_local.py` | Extrai as vias de várias áreas de um recorte regional do OSM (PBF) numa passada só; o Overpass fica como alternativa |
+| `osm_local.py` | Fonte padrão da malha: extrai as vias de várias áreas de um recorte regional do OSM (Geofabrik, PBF) numa passada só |
 | `rota.py` | Dijkstra com fila de prioridade (`heapq`) |
 | `receptoras.py` | Pré-filtro em linha reta e rota real só para as candidatas |
 | `tendencia.py` | Mínimos quadrados e backtest contra uma linha de base |
@@ -52,18 +52,18 @@ OpenStreetMap (Geofabrik)      ──┘                              └► sit
 
 ### 1. O cálculo fica abaixo do real, e por isso é piso
 
-Em Muniz Freire (ES), o Tribunal de Contas mediu **52 km por dia** de transporte para os alunos da EMEF Durval Máximo (Decisão 02423/2025-2). Comparação com as escolas urbanas candidatas, de escola a escola, ida e volta:
+Em 2025, a prefeitura de Muniz Freire (ES) anunciou o fim do ensino fundamental na EMEF Durval Máximo. Na Decisão 02423/2025-2, a área técnica do Tribunal de Contas do ES estimou que os alunos "percorreriam até 52 km por dia em estradas precárias" até a receptora indicada, a EEEFM Arquimimo Mattos. A medida foi barrada por liminar judicial e pela cautelar do Tribunal, que exigiu plano de ação com participação da comunidade escolar. Comparação, de escola a escola, ida e volta:
 
 | Escola receptora | Linha reta (km) | OSRM, carro (km) | Nossa rota, ônibus (km) |
 |---|---|---|---|
+| **EEEFM Arquimimo Mattos (indicada pela prefeitura)** | **18** | **25** | **25** |
 | CEEFMTI Bráulio Franco | 18 | 28 | 32 |
 | EMEF Lia Therezinha Mercon Rocha | 19 | 30 | 32 |
 | EMEF Maria Áurea Barroso | 16 | 29 | 29 |
 | EMEF Leovegília Emiliano da Silva | 21 | 37 | 45 |
-| EEEFM Arquimimo Mattos | 18 | 25 | 25 |
 | EMEF Paulo Fábio Sartore | 20 | 29 | 29 |
 
-Erro relativo contra os 52 km: linha reta de −69% a −60%; OSRM de −52% a −28%; nossa rota de −52% a −14%. **Todos os métodos subestimam**, porque o ônibus de verdade passa de casa em casa. A diferença entre o OSRM e a nossa rota não mostra que uma seja mais precisa; com um caso só, o resultado vale como ordem de grandeza. Reproduzir: `escola-em-pauta validar`.
+Para a receptora indicada, o cálculo de escola a escola dá **cerca da metade** da estimativa do Tribunal, que considera quem mora mais longe (o ônibus de verdade passa de casa em casa). Os 52 km são uma estimativa de máximo, e o método do Tribunal não está descrito na decisão. Com uma única referência externa, o resultado vale como ordem de grandeza. Reproduzir: `escola-em-pauta validar`.
 
 Na região, **mais de 80% dos quilômetros de estrada mapeados são de chão**.
 
@@ -81,7 +81,7 @@ Em escola pequena, uma família que se muda pesa 10% da matrícula, e a reta pro
 
 ### 3. O caso real contradiz a intuição
 
-A escola mais próxima da Durval Máximo é **rural e fica em outro município** (EMEF Alto Monforte, Conceição do Castelo, 18 km por dia, com pré-escola e anos iniciais). Uma lista feita só com as escolas urbanas do próprio município não a encontraria.
+A escola mais próxima da Durval Máximo é **rural e fica em outro município** (EMEF Alto Monforte, Conceição do Castelo, 18 km por dia, com pré-escola e anos iniciais). Uma lista feita só com as escolas urbanas do próprio município não a encontraria. A receptora indicada pela prefeitura era urbana, e o Tribunal de Contas apontou isso como violação do Termo de Ajustamento de Gestão, que proíbe nuclear escola do campo com escola da cidade.
 
 ## Como rodar
 
@@ -100,7 +100,7 @@ escola-em-pauta site                   # site dos territórios de demonstração
 escola-em-pauta validar                # tabela de erro de Muniz Freire
 ```
 
-Malha viária: para o site, ponha em `dados/brutos/osm/` os recortes regionais da Geofabrik (`centro-oeste-latest.osm.pbf`, `sudeste-latest.osm.pbf`); as vias de cada área são extraídas localmente numa passada só. Sem o recorte da região, a malha vem do Overpass, sob demanda, com cache. Publicar o site: `scripts/publicar_pages.sh`.
+Malha viária: para o site, ponha em `dados/brutos/osm/` os recortes regionais da Geofabrik (`centro-oeste-latest.osm.pbf`, `sudeste-latest.osm.pbf`); as vias de cada área são extraídas localmente numa passada só. A Geofabrik é a fonte padrão: o arquivo tem md5 publicado, o que torna o cálculo reprodutível, e não depende de servidor de terceiros no dia da apresentação. O Overpass só entra se pedido (`fonte="overpass"`). Em Muniz Freire, as duas fontes deram rotas idênticas até a última casa decimal. Publicar o site: `scripts/publicar_pages.sh`.
 
 ## Limitações
 

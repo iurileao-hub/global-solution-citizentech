@@ -125,14 +125,14 @@
       <div></div>
       <div class="eixo"{% if medicao %} style="--tce: {{ medicao.x }}%"{% endif %}>
         {% for m in marcas %}<span class="tick{% if m.km == 0 %} zero{% endif %}" style="left:{{ m.x }}%">{{ m.km }}{% if m.km %} km{% endif %}</span>{% endfor %}
-        {% if medicao %}<span class="tce">{{ medicao.km_dia | round | int }} km medidos pelo {{ medicao.quem }}</span>{% endif %}
+        {% if medicao %}<span class="tce">até {{ medicao.km_dia | round | int }} km, estimativa do {{ medicao.quem }}</span>{% endif %}
       </div>
       <div></div>
     </div>
     <div class="legenda" aria-hidden="true">
       <span><i></i> por estrada, escola a escola</span>
       <span><i class="pt"></i> o caminho real é maior</span>
-      {% if medicao %}<span><i class="ln"></i> medição de campo</span>{% endif %}
+      {% if medicao %}<span><i class="ln"></i> estimativa externa</span>{% endif %}
     </div>
     {% endif %}
     <p class="nota" style="margin-top:6px; max-width:none">{{ nota3 | safe }}</p>
