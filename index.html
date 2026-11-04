@@ -317,17 +317,20 @@
   <section class="cartao" aria-labelledby="v">
     <h2 id="v" style="font-size:1.2rem; margin-bottom:8px">Quanto o cálculo fica abaixo do real</h2>
     <p class="leia larga">
-      Em Muniz Freire (ES), o Tribunal de Contas mediu <b>52 km por dia</b> de transporte para os alunos da
-      EMEF Durval Máximo, em estradas precárias. Comparamos três formas de estimar essa distância com dado
-      público, de escola a escola, para as escolas urbanas que poderiam receber os alunos:
+      Em 2025, a prefeitura de Muniz Freire (ES) anunciou o fim do ensino fundamental na EMEF Durval Máximo.
+      A área técnica do Tribunal de Contas estimou que os alunos percorreriam <b>até 52 km por dia</b>, em
+      estradas precárias, até a escola indicada para recebê-los, a EEEFM Arquimimo Mattos. A Justiça e o
+      Tribunal barraram a medida e exigiram plano com participação da comunidade (Decisão 02423/2025-2).
+      Comparamos essa estimativa com três cálculos feitos só com dado público, de escola a escola:
     </p>
     <table class="valid">
       <thead><tr><th>Escola receptora</th><th>Linha reta (km/dia)</th><th>Roteador OSRM, carro (km/dia)</th><th>Nossa rota, ônibus (km/dia)</th><th>Diferença para os 52 km</th></tr></thead>
-      <tbody><tr><td>CEEFMTI Braulio Franco</td><td>18</td><td>28</td><td>32</td><td>−39%</td></tr><tr><td>EMEF Professora Lia Therezinha Mercon Rocha</td><td>19</td><td>30</td><td>32</td><td>−38%</td></tr><tr><td>EMEF Maria Aurea Barroso</td><td>16</td><td>29</td><td>29</td><td>−43%</td></tr><tr><td>EMEF Leovegilia Emiliano da Silva</td><td>21</td><td>37</td><td>45</td><td>−14%</td></tr><tr><td>EEEFM Arquimimo Mattos</td><td>18</td><td>25</td><td>25</td><td>−52%</td></tr><tr><td>EMEF Professor Paulo Fabio Sartore</td><td>20</td><td>29</td><td>29</td><td>−44%</td></tr></tbody>
+      <tbody><tr><td>CEEFMTI Braulio Franco</td><td>18</td><td>28</td><td>32</td><td>−39%</td></tr><tr><td>EMEF Professora Lia Therezinha Mercon Rocha</td><td>19</td><td>30</td><td>32</td><td>−38%</td></tr><tr><td>EMEF Maria Aurea Barroso</td><td>16</td><td>29</td><td>29</td><td>−43%</td></tr><tr><td>EMEF Leovegilia Emiliano da Silva</td><td>21</td><td>37</td><td>45</td><td>−14%</td></tr><tr style="font-weight:700"><td>EEEFM Arquimimo Mattos (indicada pela prefeitura)</td><td>18</td><td>25</td><td>25</td><td>−52%</td></tr><tr><td>EMEF Professor Paulo Fabio Sartore</td><td>20</td><td>29</td><td>29</td><td>−44%</td></tr></tbody>
     </table>
     <p class="nota" style="margin-top:8px; max-width:none">
-      Todas as estimativas ficam abaixo da medição de campo, e é por isso que a ficha fala sempre em
-      "pelo menos". É um caso só: mostra a ordem de grandeza, sem autorizar um fator de correção.
+      Para a escola indicada, o cálculo de escola a escola dá cerca da metade da estimativa do Tribunal, que pensa
+      em quem mora mais longe. Por isso a ficha fala sempre em "pelo menos". É uma referência só, e é um máximo:
+      mostra a ordem de grandeza, sem autorizar um fator de correção.
     </p>
   </section>
   
@@ -351,7 +354,7 @@
 
 <script>
 (function () {
-  var papeis = {"df": {"municipios": null, "nome": "Distrito Federal", "papel": "Escolas do campo da capital do pa\u00eds, a minutos e a horas do Plano Piloto.", "uf": "DF"}, "muniz-freire": {"municipios": ["Muniz Freire"], "nome": "Muniz Freire (ES)", "papel": "Caso de valida\u00e7\u00e3o: o Tribunal de Contas do ES mediu a estrada de uma escola daqui.", "uf": "ES"}, "vale-do-ribeira": {"municipios": ["Apia\u00ed", "Barra do Chap\u00e9u", "Barra do Turvo", "Cajati", "Canan\u00e9ia", "Eldorado", "Iguape", "Ilha Comprida", "Iporanga", "Itaoca", "Itapirapu\u00e3 Paulista", "Itariri", "Jacupiranga", "Juqui\u00e1", "Miracatu", "Pariquera-A\u00e7u", "Pedro de Toledo", "Registro", "Ribeira", "Sete Barras", "Tapira\u00ed"], "nome": "Vale do Ribeira (SP)", "papel": "A regi\u00e3o mais pobre do estado mais rico, com quilombos e aldeias.", "uf": "SP"}};
+  var papeis = {"df": {"municipios": null, "nome": "Distrito Federal", "papel": "Escolas do campo da capital do pa\u00eds, a minutos e a horas do Plano Piloto.", "uf": "DF"}, "muniz-freire": {"municipios": ["Muniz Freire"], "nome": "Muniz Freire (ES)", "papel": "Caso de valida\u00e7\u00e3o: o Tribunal de Contas do ES barrou o fechamento de uma escola daqui em 2025.", "uf": "ES"}, "vale-do-ribeira": {"municipios": ["Apia\u00ed", "Barra do Chap\u00e9u", "Barra do Turvo", "Cajati", "Canan\u00e9ia", "Eldorado", "Iguape", "Ilha Comprida", "Iporanga", "Itaoca", "Itapirapu\u00e3 Paulista", "Itariri", "Jacupiranga", "Juqui\u00e1", "Miracatu", "Pariquera-A\u00e7u", "Pedro de Toledo", "Registro", "Ribeira", "Sete Barras", "Tapira\u00ed"], "nome": "Vale do Ribeira (SP)", "papel": "A regi\u00e3o mais pobre do estado mais rico, com quilombos e aldeias.", "uf": "SP"}};
   var lista = document.getElementById("lista"), q = document.getElementById("q");
   var conta = document.getElementById("conta"), papel = document.getElementById("papel");
   var escolas = [], territorio = "";
