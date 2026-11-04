@@ -17,7 +17,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .modelos import Diagnostico, Receptora
+from .modelos import ORIGEM_LONGE, SEM_ROTA, Diagnostico, Receptora
 
 TEMPLATES = Path(__file__).parent / "templates"
 
@@ -187,6 +187,7 @@ def contexto(d: Diagnostico, hoje: date | None = None) -> dict:
     # ---- seção 3: estradas
     fim, marcas = _escala(d)
     rows = []
+    nenhuma_rota = not any(r.km_ida_volta_piso is not None for r in d.receptoras)  # o quadro "Atenção" já diz
     for r in d.receptoras:
         linha = {"nome": nome_legivel(r.escola.nome), "rotulo": _rotulo_receptora(r, d)}
         if r.km_ida_volta_piso is not None:
@@ -194,8 +195,12 @@ def contexto(d: Diagnostico, hoje: date | None = None) -> dict:
             linha.update(ok=True, km=km(r.km_ida_volta_piso), min=f"{r.minutos_ida_volta_piso:.0f}",
                          w=round(w, 1), ext=round(min(0.4 * w, 100 - w), 1))
         else:
+            reta = f"em linha reta, {km(r.km_linha_reta_ida_volta)} km"
+            # aviso que já está no quadro "Atenção" não se repete em cada linha (na impressão, 6 linhas
+            # repetidas empurravam a frente para uma terceira página)
+            no_topo = bool(r.aviso and (r.aviso.startswith(ORIGEM_LONGE) or (nenhuma_rota and r.aviso == SEM_ROTA)))
             linha.update(ok=False, reta=round(100 * r.km_linha_reta_ida_volta / fim, 1),
-                         aviso=f"{r.aviso}; em linha reta, {km(r.km_linha_reta_ida_volta)} km")
+                         aviso=reta[0].upper() + reta[1:] if no_topo else f"{r.aviso}; {reta}")
         rows.append(linha)
     n_rurais = sum(r.rural for r in d.receptoras)
     chao = d.malha.get("km_por_piso", {})

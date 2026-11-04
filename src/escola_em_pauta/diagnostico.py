@@ -14,7 +14,7 @@ estrada na chuva (ver docs/discussao/2026-11-04-passos-5-6.md).
 
 from __future__ import annotations
 
-from .modelos import Diagnostico, Escola, Receptora
+from .modelos import ORIGEM_LONGE, Diagnostico, Escola, Receptora
 
 __all__ = ["Diagnostico", "Escola", "Receptora", "diagnosticar"]
 
@@ -62,7 +62,11 @@ def diagnosticar(codigo_inep: int, k: int = 6) -> Diagnostico:
         avisos.append("Escola sem matrícula no ano de referência: não há receptoras a calcular.")
     else:
         lista, g = receptoras.candidatas(escola, etapas, k=k)
-        if not any(r.km_ida_volta_piso is not None for r in lista):
+        origem_longe = next((r.aviso for r in lista if r.aviso and r.aviso.startswith(ORIGEM_LONGE)), None)
+        if origem_longe:  # a mesma causa para todas as linhas: dita uma vez aqui, não em cada receptora
+            avisos.append(origem_longe.replace(ORIGEM_LONGE, "Esta escola fica a", 1)
+                          + " no OpenStreetMap, por isso não há rota calculada; a distância em linha reta aparece como limite inferior.")
+        elif not any(r.km_ida_volta_piso is not None for r in lista):
             avisos.append("Nenhuma rota encontrada na malha do OpenStreetMap; a linha reta aparece como limite inferior.")
 
     d = Diagnostico(

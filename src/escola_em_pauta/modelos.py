@@ -5,6 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 
+# Prefixo do aviso de rota quando a ESCOLA DE ORIGEM está longe da estrada mapeada: vale para todas
+# as receptoras, então a ficha o mostra uma vez no quadro "Atenção" (rota.py escreve, diagnostico/ficha leem).
+ORIGEM_LONGE = "a escola de origem fica a"
+SEM_ROTA = "rota não encontrada na malha do OpenStreetMap"
+
 @dataclass(frozen=True)
 class Escola:
     codigo_inep: int

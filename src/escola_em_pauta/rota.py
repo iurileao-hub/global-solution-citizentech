@@ -21,6 +21,7 @@ from dataclasses import dataclass
 
 from .geo import haversine_km
 from .grafo import Grafo
+from .modelos import ORIGEM_LONGE, SEM_ROTA
 
 # Velocidade do trecho entre a escola e a estrada mais próxima (pátio, acesso).
 KMH_ACESSO = 10.0
@@ -105,6 +106,15 @@ class Rota:
     aviso: str | None = None
 
 
+def _aviso_acesso(acesso_o: float, acesso_d: float) -> str:
+    """Diz QUAL ponta está longe da estrada: a escola de origem (vale para todas as receptoras) ou a receptora."""
+    if acesso_o > KM_ACESSO_MAX:
+        texto = f"{ORIGEM_LONGE} {acesso_o:.1f} km da estrada mapeada mais próxima"
+    else:
+        texto = f"receptora a {acesso_d:.1f} km da estrada mapeada mais próxima"
+    return texto.replace(".", ",", 1)
+
+
 def piso(g: Grafo, origem: tuple[float, float], destino: tuple[float, float]) -> Rota:
     """Rota de ida (origem→destino) e de volta (destino→origem); as duas podem diferir por mão única."""
     reta = 2 * haversine_km(*origem, *destino)
@@ -112,10 +122,10 @@ def piso(g: Grafo, origem: tuple[float, float], destino: tuple[float, float]) ->
     no_d, acesso_d = g.no_mais_proximo(*destino)
     acesso = max(acesso_o, acesso_d)
     if acesso > KM_ACESSO_MAX:
-        return Rota(None, None, None, reta, acesso, f"escola a {acesso:.1f} km da estrada mapeada mais próxima".replace(".", ",", 1))
+        return Rota(None, None, None, reta, acesso, _aviso_acesso(acesso_o, acesso_d))
     ida, volta = dijkstra(g, no_o, no_d), dijkstra(g, no_d, no_o)
     if ida is None or volta is None:
-        return Rota(None, None, None, reta, acesso, "rota não encontrada na malha do OpenStreetMap")
+        return Rota(None, None, None, reta, acesso, SEM_ROTA)
     km_acesso_total = 2 * (acesso_o + acesso_d)  # o trecho escola↔estrada, nas duas pontas, ida e volta
     return Rota(
         km_ida_volta=ida.km + volta.km + km_acesso_total,
@@ -138,9 +148,9 @@ def pisos(g: Grafo, origem: tuple[float, float], destinos: list[tuple[float, flo
         reta = 2 * haversine_km(*origem, *d)
         acesso = max(acesso_o, acesso_d)
         if acesso > KM_ACESSO_MAX:
-            saida.append(Rota(None, None, None, reta, acesso, f"escola a {acesso:.1f} km da estrada mapeada mais próxima".replace(".", ",", 1)))
+            saida.append(Rota(None, None, None, reta, acesso, _aviso_acesso(acesso_o, acesso_d)))
         elif no_d not in ida or no_d not in volta:
-            saida.append(Rota(None, None, None, reta, acesso, "rota não encontrada na malha do OpenStreetMap"))
+            saida.append(Rota(None, None, None, reta, acesso, SEM_ROTA))
         else:
             (m1, k1, c1), (m2, k2, c2) = ida[no_d], volta[no_d]
             ac = 2 * (acesso_o + acesso_d)
