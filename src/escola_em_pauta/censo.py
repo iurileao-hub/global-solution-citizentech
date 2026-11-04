@@ -70,10 +70,17 @@ SO_RETRATO = {
     "QT_MAT_ZR_RUR": "moram_zona_rural",
     "QT_MAT_ZR_URB": "moram_zona_urbana",
     "QT_TRANSP_PUBLICO": "usam_transporte_publico",
+    "QT_MAT_ESP": "educacao_especial",
+    "QT_DOC_BAS": "professores",
+    **{f"QT_MAT_FUND_AI_{i}": f"ano_{i}" for i in range(1, 6)},
+    **{f"QT_MAT_FUND_AF_{i}": f"ano_{i}" for i in range(6, 10)},
     "QT_SALAS_UTILIZADAS": "salas_utilizadas",
     "IN_AGUA_POTAVEL": "agua_potavel",
     "IN_ENERGIA_INEXISTENTE": "sem_energia",
     "IN_INTERNET": "internet",
+    "IN_QUADRA_ESPORTES": "quadra",
+    "IN_BIBLIOTECA": "biblioteca",
+    "IN_ALIMENTACAO": "alimentacao",
 }
 
 # Códigos de TP_LOCALIZACAO_DIFERENCIADA (dicionário do INEP).
@@ -83,6 +90,10 @@ LOCALIZACAO_DIFERENCIADA = {
     3: "comunidade quilombola",
     8: "área de povos e comunidades tradicionais",
 }
+
+DEPENDENCIA = {1: "federal", 2: "estadual", 3: "municipal"}
+INFRA = {"agua_potavel": "água potável", "internet": "internet", "quadra": "quadra",
+         "biblioteca": "biblioteca", "alimentacao": "alimentação escolar"}
 
 ROTULO_SITUACAO = {1: "ativa", 2: "paralisada (já fechada)", 3: "extinta", 4: "extinta no ano anterior"}
 
@@ -116,13 +127,16 @@ def ler_ano(ano: int, colunas: dict[str, str], brutos: Path = BRUTOS) -> pd.Data
             df = _ler_csv(zf, _membro(zf, f"microdados_ed_basica_{ano}.csv"), colunas)
         else:
             # 2025 em diante: escola e matrícula em tabelas separadas.
-            escola = _ler_csv(zf, _membro(zf, f"Tabela_Escola_{ano}_V2.csv"), colunas)
-            so_matricula = {k: v for k, v in colunas.items() if v not in escola.columns or k == "CO_ENTIDADE"}
-            mat = _ler_csv(zf, _membro(zf, f"Tabela_Matricula_{ano}_V2.csv"), so_matricula)
-            df = escola.merge(mat, on="codigo_inep", how="left", validate="one_to_one")
-            # Escola sem linha na tabela de matrícula = nenhuma matrícula naquele ano.
-            contagens = [c for c in mat.columns if c != "codigo_inep"]
-            df[contagens] = df[contagens].fillna(0)
+            df = _ler_csv(zf, _membro(zf, f"Tabela_Escola_{ano}_V2.csv"), colunas)
+            for tabela in ("Matricula", "Docente"):
+                faltam = {k: v for k, v in colunas.items() if v not in df.columns or k == "CO_ENTIDADE"}
+                if len(faltam) == 1:
+                    continue
+                extra = _ler_csv(zf, _membro(zf, f"Tabela_{tabela}_{ano}_V2.csv"), faltam)
+                df = df.merge(extra, on="codigo_inep", how="left", validate="one_to_one")
+                # Escola sem linha nessas tabelas = nenhuma matrícula (ou docente) naquele ano.
+                contagens = [c for c in extra.columns if c != "codigo_inep"]
+                df[contagens] = df[contagens].fillna(0)
     df = df[df["dependencia"].isin(DEPENDENCIAS_PUBLICAS)].copy()
     df.insert(0, "ano", ano)
     return df
@@ -190,6 +204,12 @@ def escola_e_serie(codigo_inep: int) -> tuple[dict, dict[int, int]]:
         "moram_zona_rural": _int(linha["moram_zona_rural"]),
         "usam_transporte_publico": _int(linha["usam_transporte_publico"]),
         "salas_utilizadas": _int(linha["salas_utilizadas"]),
+        "dependencia": DEPENDENCIA.get(_int(linha["dependencia"]), ""),
+        "por_ano_escolar": {i: _int(linha[f"ano_{i}"]) for i in range(1, 10)},
+        "educacao_especial": _int(linha["educacao_especial"]),
+        "professores": _int(linha["professores"]),
+        "infraestrutura": [rot for col, rot in INFRA.items() if _int(linha[col]) == 1],
+        "sem_energia": _int(linha["sem_energia"]) == 1,
     }
     s = _serie()
     s = s[s["codigo_inep"] == codigo_inep].sort_values("ano")

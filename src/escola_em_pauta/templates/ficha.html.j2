@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escola em Pauta: {{ nome }}</title>
+<meta name="description" content="Diagnóstico do impacto do fechamento de uma escola do campo, com dados públicos: {{ nome }}, {{ e.municipio }}, {{ e.uf }}.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+{{ css | safe }}
+</style>
+</head>
+<body>
+
+<!-- ============================ FRENTE ============================ -->
+<article class="folha" aria-label="Frente da ficha">
+
+  <header class="cabecalho">
+    <div class="marca">
+      <span class="nome">Escola em Pauta</span>
+      <svg width="120" height="10" viewBox="0 0 120 10" aria-hidden="true">
+        <circle cx="4" cy="5" r="4" fill="#2E5E3E"/>
+        <rect x="6" y="2.5" width="58" height="5" rx="0" fill="#8A4B22"/>
+        <line x1="66" y1="5" x2="116" y2="5" stroke="#8A4B22" stroke-width="2" stroke-dasharray="2 3"/>
+      </svg>
+      <span class="descritor">Antes de decidir: o impacto de fechar uma escola do campo, medido antes da decisão</span>
+    </div>
+    <div class="carimbo">
+      <strong>Gerado com dados públicos</strong>
+      {{ carimbo }}
+    </div>
+  </header>
+
+  <div class="escola">
+    <h1>{{ nome }}</h1>
+    <p class="onde">{{ onde }}</p>
+  </div>
+
+  {% if avisos %}
+  <div class="avisos" role="note"><strong>Atenção:</strong>
+    <ul>{% for a in avisos %}<li>{{ a }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  <div class="topo">
+  <p class="abre">{{ abre | safe }}</p>
+
+  <aside class="aviso">
+    <strong>Nada aqui está decidido.</strong> Esta folha reúne o que os dados públicos dizem, para a comunidade
+    e o Conselho de Educação lerem a mesma coisa antes da decisão. O que os dados não dizem fica no verso,
+    para a comunidade escrever.
+  </aside>
+  </div>
+
+  <div class="duas">
+    <section aria-labelledby="s1">
+      <h2 id="s1"><span class="n" aria-hidden="true">1</span>Quem estuda aqui</h2>
+      <p class="leia">{{ leia1 }}</p>
+      <table class="turmas">
+        <tbody>
+        {% for l in linhas %}
+          {% if l.tipo == "etapa" %}
+          <tr class="etapa"><th scope="row">{{ l.rotulo }}</th><td class="barra">{{ l.sub }}</td><td></td></tr>
+          {% elif l.tipo == "etapa_valor" %}
+          <tr class="etapa"><th scope="row">{{ l.rotulo }}</th><td class="barra"><span class="b" style="width:{{ l.w }}%" aria-hidden="true"></span></td><td class="v" style="padding-top:.45em">{{ l.v }}</td></tr>
+          {% else %}
+          <tr{% if l.v == 0 %} class="zero"{% endif %}><th scope="row">{{ l.rotulo }}</th><td class="barra"><span class="b" style="width:{{ l.w }}%" aria-hidden="true"></span></td><td class="v">{{ l.v }}</td></tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <div>
+      <section aria-labelledby="s1b">
+        <h2 id="s1b" style="border:0; margin-bottom:4px; font-size:.95rem; color:var(--lapis); font-weight:400">A escola e quem a usa</h2>
+        {% for f in fatos %}<p class="fatos">{{ f | safe }}</p>{% endfor %}
+      </section>
+
+      <section aria-labelledby="s2">
+        <h2 id="s2"><span class="n" aria-hidden="true">2</span>A matrícula ao longo dos anos</h2>
+        <p class="leia" style="font-size:.95rem">{{ leia2 | safe }}</p>
+        <div class="grafico">
+          <div class="serie" style="grid-template-columns: repeat({{ pontos | length }}, 1fr)" role="img"
+               aria-label="Matrícula por ano: {% for p in pontos %}{{ p.ano }}, {{ p.v }}{% if not loop.last %}; {% endif %}{% endfor %}">
+            {% for p in pontos %}<div style="--y: {{ p.y }}%"><span class="valor">{{ p.v }}</span><span class="ponto"></span></div>{% endfor %}
+          </div>
+          <div class="anos" style="grid-template-columns: repeat({{ pontos | length }}, 1fr)" aria-hidden="true">{% for p in pontos %}<span>{{ p.ano }}</span>{% endfor %}</div>
+          <p class="nota" style="margin-top:6px">{{ nao_preve }}</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section aria-labelledby="s3">
+    <h2 id="s3"><span class="n" aria-hidden="true">3</span>Para onde as crianças iriam, e quanta estrada</h2>
+    <p class="leia larga">{{ leia3 | safe }}</p>
+
+    {% if rows %}
+    <table class="estradas"{% if medicao %} style="--tce: {{ medicao.x }}%"{% endif %}>
+      <thead>
+        <tr>
+          <th scope="col" class="quem">Escola possível</th>
+          <th scope="col">Estrada por dia, ida e volta, de escola a escola</th>
+          <th scope="col" class="num">Pelo menos</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <th scope="row" class="quem">{{ r.nome }} <small>{{ r.rotulo }}</small></th>
+          {% if r.ok %}
+          <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="piso" style="width:{{ r.w }}%" aria-hidden="true"></span><span class="incerto" style="left:{{ r.w }}%; width:{{ r.ext }}%" aria-hidden="true"></span></div></td>
+          <td class="num">{{ r.km }} km <small>{{ r.min }} min</small></td>
+          {% else %}
+          <td class="trilha"><div class="faixa"><span class="origem" aria-hidden="true"></span><span class="reta" style="width:{{ r.reta }}%" aria-hidden="true"></span></div></td>
+          <td class="num sem">{{ r.aviso }}</td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div class="eixo-linha" aria-hidden="true">
+      <div></div>
+      <div class="eixo"{% if medicao %} style="--tce: {{ medicao.x }}%"{% endif %}>
+        {% for m in marcas %}<span class="tick{% if m.km == 0 %} zero{% endif %}" style="left:{{ m.x }}%">{{ m.km }}{% if m.km %} km{% endif %}</span>{% endfor %}
+        {% if medicao %}<span class="tce">{{ medicao.km_dia | round | int }} km medidos pelo {{ medicao.quem }}</span>{% endif %}
+      </div>
+      <div></div>
+    </div>
+    <div class="legenda" aria-hidden="true">
+      <span><i></i> por estrada, escola a escola</span>
+      <span><i class="pt"></i> o caminho real é maior</span>
+      {% if medicao %}<span><i class="ln"></i> medição de campo</span>{% endif %}
+    </div>
+    {% endif %}
+    <p class="nota" style="margin-top:6px; max-width:none">{{ nota3 | safe }}</p>
+  </section>
+
+  <footer class="rodape">
+    <span>Frente. No verso: o que a folha não mede, o que a lei pede, como calculamos.</span>
+    <span>Escola em Pauta, projeto acadêmico. Dados: INEP e © colaboradores do OpenStreetMap.</span>
+  </footer>
+</article>
+
+<!-- ============================ VERSO ============================ -->
+<article class="folha" aria-label="Verso da ficha">
+
+  <header class="cabecalho" style="margin-bottom:10px">
+    <div class="marca">
+      <span class="nome">{{ nome }}</span>
+      <span class="descritor">{{ e.municipio }}, {{ e.uf }}. Verso da ficha: a parte que a comunidade escreve.</span>
+    </div>
+    <div class="carimbo"><strong>Gerado com dados públicos</strong>Escola em Pauta</div>
+  </header>
+
+  <section aria-labelledby="s4">
+    <h2 id="s4"><span class="n" aria-hidden="true">4</span>O que esta folha não mede</h2>
+    <p class="leia larga">
+      Os números da frente não dizem o que esta escola é para a comunidade. A lei pede a manifestação da comunidade,
+      e <b>esta parte vale tanto quanto a frente</b>. Escrevam aqui, na assembleia; a folha vai ao Conselho com a ata.
+    </p>
+    <ul class="perguntas">
+      <li><div class="q">O que acontece nesta escola além da aula?</div><div class="linha"></div><div class="linha"></div></li>
+      <li><div class="q">Quem usa a escola além dos alunos?</div><div class="linha"></div><div class="linha"></div></li>
+      <li><div class="q">Como fica a estrada quando chove?</div><div class="linha"></div><div class="linha"></div></li>
+      <li><div class="q">Quem mora mais longe, e quanto tempo já leva hoje?</div><div class="linha"></div><div class="linha"></div></li>
+      <li><div class="q">O que a comunidade perderia?</div><div class="linha"></div><div class="linha"></div></li>
+      <li><div class="q">O que poderia melhorar com a mudança?</div><div class="linha"></div><div class="linha"></div></li>
+    </ul>
+    <div class="livre">
+      <div class="q">O que mais o Conselho precisa saber antes de decidir?</div>
+      <div class="linha"></div><div class="linha"></div><div class="linha"></div>
+    </div>
+    <div class="assina" aria-hidden="true">
+      <div>Assembleia realizada em</div>
+      <div>Quem escreveu</div>
+      <div>Quantas pessoas presentes, por grupo (pais, professores, alunos, funcionários)</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s5">
+    <h2 id="s5"><span class="n" aria-hidden="true">5</span>O que a lei pede e o que já está pronto</h2>
+    <p class="nota" style="margin-bottom:4px; max-width:none"><b>Pronto</b>: está nesta folha. <b>A preencher</b>: depende de pessoas. <b>A calcular</b>: depende de dado não publicado ou não processado.</p>
+    <table class="lei">
+      <thead><tr><th scope="col">Exigência</th><th scope="col">Onde está escrito</th><th scope="col">Situação</th></tr></thead>
+      <tbody>
+      {% for i in lei %}
+        <tr><td>{{ i.item }}{% if i.situacao == "pronto" and i.detalhe and not i.detalhe.startswith("item") and not i.detalhe.startswith("frente") %}<br><small style="color:var(--lapis)">{{ i.detalhe }}</small>{% endif %}</td><td class="f">{{ i.norma }}</td><td class="s"><span class="g">{{ i.g }}</span>{% if i.situacao == "pronto" %}<b>Pronto</b>{% else %}{{ i.situacao | capitalize }}{% endif %}{% if i.detalhe and (i.detalhe.startswith("item") or i.detalhe.startswith("frente") or i.situacao != "pronto") %}, {{ i.detalhe }}{% endif %}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="s6">
+    <h2 id="s6"><span class="n" aria-hidden="true">6</span>Como calculamos e de onde vêm os dados</h2>
+    <div class="metodo">
+      <p><b>Matrículas, transporte e estrutura</b>: Censo Escolar {{ d.ano_referencia }}, INEP, escola de código {{ e.codigo_inep }}; série de 2019 a {{ d.ano_referencia }}. São dados declarados pela própria escola ao Censo.</p>
+      <p><b>Distância e tempo</b>: mapa de estradas do {{ fonte_osm }} e cálculo do caminho mais rápido por estrada (algoritmo de Dijkstra), de escola a escola, com velocidades de ônibus escolar por tipo de estrada (asfalto ou chão). O cálculo não sabe onde cada criança mora nem como fica a estrada na chuva. Por isso o resultado é tratado como piso: o caminho real é maior. Km arredondados; minutos somam ida e volta. Coordenadas das escolas: Ipea.</p>
+      <p><b>Quanto o cálculo fica abaixo do real</b>: {{ margem }}</p>
+      <p><b>Fora de propósito</b>: o endereço das crianças (dado pessoal) e a rota do ônibus (não há base pública). A estrada na chuva não existe em dado público; por isso é pergunta do item 4.</p>
+    </div>
+  </section>
+
+  <footer class="rodape">
+    <span>Verso. A folha informa; quem decide é a comunidade escolar e o Conselho.</span>
+    <span>Escola em Pauta, projeto acadêmico. Dados: INEP, Ipea e © colaboradores do OpenStreetMap.</span>
+  </footer>
+</article>
+
+</body>
+</html>

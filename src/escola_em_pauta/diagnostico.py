@@ -18,6 +18,12 @@ from .modelos import Diagnostico, Escola, Receptora
 
 __all__ = ["Diagnostico", "Escola", "Receptora", "diagnosticar"]
 
+# Medições de campo conhecidas, com fonte (servem de régua na ficha e na validação).
+MEDICOES_DE_CAMPO = {
+    32049501: {"km_dia": 52.0, "quem": "Tribunal de Contas do ES", "fonte": "Decisão 02423/2025-2",
+               "detalhe": "em estradas precárias"},
+}
+
 
 def diagnosticar(codigo_inep: int, k: int = 6) -> Diagnostico:
     """Monta o diagnóstico completo de uma escola.
@@ -64,6 +70,9 @@ def diagnosticar(codigo_inep: int, k: int = 6) -> Diagnostico:
         receptoras=lista,
         avisos=avisos,
         malha={"data_osm": g.data_osm, "km_por_piso": g.km_por_piso} if g else {},
+        perfil={k: info[k] for k in ("dependencia", "por_ano_escolar", "educacao_especial", "professores",
+                                     "salas_utilizadas", "infraestrutura", "sem_energia")},
+        medicao_campo=MEDICOES_DE_CAMPO.get(codigo_inep),
     )
     d.checklist = checklist.avaliar(d)
     return d

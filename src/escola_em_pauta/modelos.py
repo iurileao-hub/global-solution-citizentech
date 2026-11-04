@@ -46,3 +46,5 @@ class Diagnostico:
     checklist: list[dict] = field(default_factory=list)  # item, norma, situação
     avisos: list[str] = field(default_factory=list)  # lacunas declaradas na ficha
     malha: dict = field(default_factory=dict)  # data do OSM e km por tipo de piso na área
+    perfil: dict = field(default_factory=dict)  # rede, matrícula por ano escolar, professores, salas, infraestrutura
+    medicao_campo: dict | None = None  # medição externa conhecida (ex.: TCE), para a linha de referência
