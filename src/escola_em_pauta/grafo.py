@@ -41,6 +41,7 @@ import urllib.parse
 import urllib.request
 from collections import deque
 from dataclasses import dataclass, field
+from functools import cached_property, lru_cache
 from pathlib import Path
 
 from .censo import PROCESSADOS
@@ -168,6 +169,15 @@ class Grafo:
     km_por_piso: dict[str, float] = field(default_factory=dict)
     data_osm: str | None = None
 
+    @cached_property
+    def reverso(self) -> dict[int, list[tuple[int, float, float, bool]]]:
+        """Mesmas arestas, sentido invertido: caminhos de qualquer nó ATÉ a origem viram caminhos DA origem."""
+        rev: dict[int, list[tuple[int, float, float, bool]]] = {n: [] for n in self.adj}
+        for a, viz in self.adj.items():
+            for b, minutos, km, chao in viz:
+                rev[b].append((a, minutos, km, chao))
+        return rev
+
     @property
     def n_nos(self) -> int:
         return len(self.adj)
@@ -176,11 +186,24 @@ class Grafo:
     def n_arestas(self) -> int:
         return sum(len(v) for v in self.adj.values())
 
+    @cached_property
+    def _nos_np(self):
+        import numpy as np
+        ids = np.fromiter(self.adj.keys(), dtype=np.int64, count=len(self.adj))
+        coords = np.array([self.coord[n] for n in ids], dtype=float)
+        return ids, coords[:, 0], coords[:, 1]
+
     def no_mais_proximo(self, lat: float, lon: float) -> tuple[int, float]:
-        """Nó do grafo mais perto de um ponto e a distância até ele em km (busca linear: O(n), basta para ~10^5 nós)."""
-        # Aproximação equirretangular para ordenar (barata); haversine só no vencedor.
+        """Nó do grafo mais perto de um ponto e a distância até ele em km.
+
+        Busca linear O(n), mas vetorizada com numpy (milhões de nós em milissegundos).
+        Aproximação equirretangular para ordenar; haversine exato só no vencedor.
+        """
+        import numpy as np
+        ids, lats, lons = self._nos_np
         c = math.cos(math.radians(lat))
-        melhor = min(self.adj, key=lambda n: (self.coord[n][0] - lat) ** 2 + ((self.coord[n][1] - lon) * c) ** 2)
+        i = int(np.argmin((lats - lat) ** 2 + ((lons - lon) * c) ** 2))
+        melhor = int(ids[i])
         return melhor, haversine_km(lat, lon, *self.coord[melhor])
 
 
@@ -237,5 +260,22 @@ def _maior_componente(adj: dict[int, list]) -> set[int]:
     return maior
 
 
+def arquivo_da_malha(sul: float, oeste: float, norte: float, leste: float, cache: Path = CACHE_OSM) -> Path:
+    """Arquivo em cache que contém a bbox (a menor delas); baixa do Overpass se nenhum contiver."""
+    contem = [((n - s) * (l - o), p) for p, (s, o, n, l) in _bboxes_em_cache(cache)
+              if s <= sul and o <= oeste and n >= norte and l >= leste]
+    if not contem:
+        baixar_malha(sul, oeste, norte, leste, cache)
+        return arquivo_da_malha(sul, oeste, norte, leste, cache)
+    return min(contem)[1]
+
+
+@lru_cache(maxsize=2)
+def _grafo_do_arquivo(arquivo: Path) -> Grafo:
+    with gzip.open(arquivo, "rt") as f:
+        return construir(json.load(f))
+
+
 def grafo_ao_redor(pontos: list[tuple[float, float]], margem_km: float = 5.0) -> Grafo:
-    return construir(baixar_malha(*bbox_ao_redor(pontos, margem_km)))
+    """Grafo que cobre os pontos. Construído uma vez por arquivo de malha e reaproveitado (muitas escolas, uma malha)."""
+    return _grafo_do_arquivo(arquivo_da_malha(*bbox_ao_redor(pontos, margem_km)))

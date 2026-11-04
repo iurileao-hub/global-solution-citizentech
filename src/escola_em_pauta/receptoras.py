@@ -65,8 +65,8 @@ def candidatas(origem: Escola, etapas: list[str], k: int = 6, pre_filtro: int = 
     if g is None:
         g = grafo.grafo_ao_redor([(origem.lat, origem.lon)] + list(zip(perto["lat"], perto["lon"])))
     lista = []
-    for codigo, x in perto.iterrows():
-        rt = rota.piso(g, (origem.lat, origem.lon), (x["lat"], x["lon"]))
+    rotas = rota.pisos(g, (origem.lat, origem.lon), list(zip(perto["lat"], perto["lon"])))
+    for (codigo, x), rt in zip(perto.iterrows(), rotas):
         salas = x["salas_utilizadas"]
         lista.append(Receptora(
             escola=escola(int(codigo)),

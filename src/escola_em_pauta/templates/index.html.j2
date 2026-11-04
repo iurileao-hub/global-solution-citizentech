@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escola em Pauta</title>
+<meta name="description" content="O impacto de fechar uma escola do campo, medido antes da decisão: uma ficha por escola, com dados públicos, para a comunidade e o Conselho de Educação lerem a mesma coisa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+{{ css | safe }}
+  .pagina { max-width: 980px; margin: 0 auto; padding: 28px 16px 48px; }
+  .pagina .cabecalho { margin-bottom: 28px; }
+  .capa h1 { font-size: 2.1rem; letter-spacing: -0.01em; max-width: 20em; }
+  .capa .sub { font-size: 1.15rem; max-width: 36em; margin: 12px 0 18px; }
+  .cartao { background: var(--papel); padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 1px 0 rgba(30,42,34,.08), 0 8px 24px rgba(30,42,34,.06); }
+  .tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 18px 0; }
+  @media (max-width: 760px) { .tres { grid-template-columns: 1fr; } .capa h1 { font-size: 1.6rem; } }
+  .tres h3 { font-size: 1rem; margin-bottom: 4px; }
+  .tres p { font-size: .95rem; margin: 0; }
+  .busca label { font-weight: 700; color: var(--mata); display: block; margin-bottom: 6px; }
+  .busca input { width: 100%; font: inherit; font-size: 1.1rem; padding: 10px 12px; border: 2px solid var(--mata); background: var(--papel); color: var(--tinta); }
+  .filtros { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .filtros button { font: inherit; font-size: .9rem; padding: 5px 12px; border: 1.5px solid var(--mata); background: var(--papel); color: var(--mata); cursor: pointer; border-radius: 999px; }
+  .filtros button[aria-pressed="true"] { background: var(--mata); color: var(--papel); }
+  .conta { color: var(--lapis); font-size: .9rem; margin: 6px 0 10px; }
+  ul.escolas { list-style: none; padding: 0; margin: 0; }
+  ul.escolas li { border-bottom: 1px solid var(--filete); }
+  ul.escolas a { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 9px 2px; color: inherit; text-decoration: none; }
+  ul.escolas a:hover .nm, ul.escolas a:focus .nm { text-decoration: underline; color: var(--mata); }
+  ul.escolas .nm { font-weight: 700; }
+  ul.escolas .mu { color: var(--lapis); font-size: .9rem; }
+  ul.escolas .km { text-align: right; font-variant-numeric: tabular-nums; font-size: .92rem; }
+  ul.escolas .km b { color: var(--terra); }
+  .territorio { margin-top: 6px; color: var(--lapis); font-size: .92rem; }
+  .valid td, .valid th { padding: .25em .8em .25em 0; border-bottom: 1px solid var(--filete); font-size: .92rem; font-variant-numeric: tabular-nums; }
+  .valid thead th { color: var(--lapis); font-size: .85rem; }
+  .pe { color: var(--lapis); font-size: .85rem; margin-top: 28px; }
+  :root[data-theme="dark"] .busca input, .cartao { color: var(--tinta); }
+</style>
+</head>
+<body>
+<main class="pagina">
+
+  <header class="cabecalho">
+    <div class="marca">
+      <span class="nome">Escola em Pauta</span>
+      <svg width="120" height="10" viewBox="0 0 120 10" aria-hidden="true">
+        <circle cx="4" cy="5" r="4" fill="#2E5E3E"/>
+        <rect x="6" y="2.5" width="58" height="5" fill="#8A4B22"/>
+        <line x1="66" y1="5" x2="116" y2="5" stroke="#8A4B22" stroke-width="2" stroke-dasharray="2 3"/>
+      </svg>
+      <span class="descritor">Antes de decidir: o impacto de fechar uma escola do campo, medido antes da decisão</span>
+    </div>
+    <div class="carimbo"><strong>Projeto acadêmico</strong>Dados públicos, {{ hoje }}</div>
+  </header>
+
+  <section class="capa cartao" aria-labelledby="t">
+    <h1 id="t">Antes de uma escola do campo fechar, a lei manda medir o impacto.</h1>
+    <p class="sub">
+      A LDB, no art. 28, exige um <b>diagnóstico do impacto</b> e a <b>manifestação da comunidade escolar</b>
+      antes do fechamento de escolas do campo, indígenas e quilombolas. A lei não diz como medir. Na prática,
+      os números costumam aparecer só depois, no recurso ao Ministério Público ou no Tribunal de Contas.
+    </p>
+    <p>
+      O Escola em Pauta gera, com dados públicos, uma <b>ficha de duas páginas por escola</b>: quantas crianças
+      estudam ali, como a matrícula andou, para quais escolas elas poderiam ir e quanta estrada isso
+      significa, no mínimo. O verso fica em branco de propósito, para a comunidade escrever o que nenhum dado
+      mede: o que aquela escola é para quem vive em volta dela.
+    </p>
+    <div class="tres">
+      <div><h3>O mesmo número para todos</h3><p>A comunidade e o Conselho de Educação leem a mesma folha, antes da assembleia.</p></div>
+      <div><h3>Sempre como piso</h3><p>Medimos de escola a escola. O ônibus de verdade passa de casa em casa; o caminho real é maior.</p></div>
+      <div><h3>A ficha não decide</h3><p>Ela informa. Quem decide é a comunidade escolar e o Conselho, como manda a lei.</p></div>
+    </div>
+  </section>
+
+  <section class="cartao busca" aria-labelledby="b">
+    <h2 id="b" style="font-size:1.2rem; margin-bottom:10px">Encontre uma escola</h2>
+    <label for="q">Nome da escola ou do município</label>
+    <input id="q" type="search" autocomplete="off" placeholder="Ex.: Durval, Registro, Planaltina">
+    <div class="filtros" role="group" aria-label="Território">
+      <button type="button" data-t="" aria-pressed="true">Todos ({{ total }})</button>
+      {% for k, t in territorios.items() %}{% if contagem.get(k) %}
+      <button type="button" data-t="{{ k }}" aria-pressed="false">{{ t.nome }} ({{ contagem[k] }})</button>
+      {% endif %}{% endfor %}
+    </div>
+    <p class="territorio" id="papel"></p>
+    <p class="conta" id="conta" aria-live="polite"></p>
+    <ul class="escolas" id="lista"></ul>
+    <noscript><p>A busca precisa de JavaScript. As fichas ficam em <code>escola/&lt;código INEP&gt;.html</code>.</p></noscript>
+  </section>
+
+  {% if validacao %}
+  <section class="cartao" aria-labelledby="v">
+    <h2 id="v" style="font-size:1.2rem; margin-bottom:8px">Quanto o cálculo fica abaixo do real</h2>
+    <p class="leia larga">
+      Em Muniz Freire (ES), o Tribunal de Contas mediu <b>52 km por dia</b> de transporte para os alunos da
+      EMEF Durval Máximo, em estradas precárias. Comparamos três formas de estimar essa distância com dado
+      público, de escola a escola, para as escolas urbanas que poderiam receber os alunos:
+    </p>
+    <table class="valid">
+      <thead><tr><th>Escola receptora</th><th>Linha reta (km/dia)</th><th>Roteador OSRM, carro (km/dia)</th><th>Nossa rota, ônibus (km/dia)</th><th>Diferença para os 52 km</th></tr></thead>
+      <tbody>{% for v in validacao %}<tr><td>{{ v.nome }}</td><td>{{ v.reta }}</td><td>{{ v.osrm }}</td><td>{{ v.nossa }}</td><td>{{ v.erro }}</td></tr>{% endfor %}</tbody>
+    </table>
+    <p class="nota" style="margin-top:8px; max-width:none">
+      Todas as estimativas ficam abaixo da medição de campo, e é por isso que a ficha fala sempre em
+      "pelo menos". É um caso só: mostra a ordem de grandeza, sem autorizar um fator de correção.
+    </p>
+  </section>
+  {% endif %}
+
+  <section class="cartao" aria-labelledby="m">
+    <h2 id="m" style="font-size:1.2rem; margin-bottom:8px">De onde vêm os dados</h2>
+    <div class="metodo">
+      <p><b>Escolas e matrículas</b>: Censo Escolar do INEP, 2019 a 2025, declarado pela própria escola.</p>
+      <p><b>Localização</b>: base de escolas geolocalizadas do Ipea. Escola sem coordenada aparece com o aviso, sem distância inventada.</p>
+      <p><b>Estradas</b>: OpenStreetMap, com o tipo de piso de cada via. O caminho mais rápido é calculado pelo algoritmo de Dijkstra, com velocidades de ônibus escolar.</p>
+      <p><b>O que fica de fora</b>: onde cada criança mora (dado pessoal), a rota do ônibus e a estrada na chuva. Essas perguntas vão para o verso da ficha.</p>
+    </div>
+  </section>
+
+  <p class="pe">
+    Escola em Pauta, projeto acadêmico (Global Solution FIAP 2026, tema CitizenTech).
+    Dados: INEP, Ipea e © colaboradores do OpenStreetMap (licença ODbL).
+    Código aberto em <a href="https://github.com/iurileao-hub/global-solution-citizentech">github.com/iurileao-hub/global-solution-citizentech</a>.
+  </p>
+</main>
+
+<script>
+(function () {
+  var papeis = {{ territorios | tojson }};
+  var lista = document.getElementById("lista"), q = document.getElementById("q");
+  var conta = document.getElementById("conta"), papel = document.getElementById("papel");
+  var escolas = [], territorio = "";
+  function norm(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function desenhar() {
+    var termo = norm(q.value.trim());
+    var achadas = escolas.filter(function (e) {
+      return (!territorio || e.t === territorio) && (!termo || e.busca.indexOf(termo) !== -1);
+    });
+    lista.innerHTML = "";
+    achadas.slice(0, 200).forEach(function (e) {
+      var li = document.createElement("li"), a = document.createElement("a");
+      a.href = "escola/" + e.c + ".html";
+      var nm = document.createElement("span"); nm.className = "nm"; nm.textContent = e.n;
+      var km = document.createElement("span"); km.className = "km";
+      if (e.km !== null) { km.innerHTML = "pelo menos <b>" + e.km + " km/dia</b>" + (e.r ? " (rural)" : ""); }
+      else { km.textContent = "distância não calculada"; }
+      var mu = document.createElement("span"); mu.className = "mu";
+      mu.textContent = e.m + ", " + e.uf + " · " + e.a + (e.a === 1 ? " matrícula" : " matrículas");
+      a.appendChild(nm); a.appendChild(km); a.appendChild(mu);
+      li.appendChild(a); lista.appendChild(li);
+    });
+    conta.textContent = achadas.length + (achadas.length === 1 ? " escola" : " escolas") +
+      (achadas.length > 200 ? " (mostrando 200; refine a busca)" : "");
+    papel.textContent = territorio ? papeis[territorio].papel : "";
+  }
+  document.querySelectorAll(".filtros button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      territorio = b.getAttribute("data-t");
+      document.querySelectorAll(".filtros button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      desenhar();
+    });
+  });
+  q.addEventListener("input", desenhar);
+  fetch("escolas.json").then(function (r) { return r.json(); }).then(function (dados) {
+    escolas = dados.map(function (e) { e.busca = norm(e.n + " " + e.m); return e; });
+    escolas.sort(function (a, b) { return a.n.localeCompare(b.n, "pt-BR"); });
+    desenhar();
+  });
+})();
+</script>
+</body>
+</html>

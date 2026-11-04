@@ -68,6 +68,32 @@ def dijkstra(g: Grafo, origem: int, destino: int) -> Caminho | None:
     return Caminho(minutos=tempo[destino], km=km, km_chao=km_chao, nos=nos[::-1])
 
 
+def dijkstra_muitos(adj: dict[int, list], origem: int, alvos: set[int]) -> dict[int, tuple[float, float, float]]:
+    """Um Dijkstra só, da origem até TODOS os alvos: {alvo: (minutos, km, km_chao)}.
+
+    O Dijkstra já calcula o menor caminho para cada nó que fecha; basta não parar
+    no primeiro destino. Km e km de chão vão "de carona" na relaxação das arestas
+    (o caminho é escolhido pelo tempo), então não é preciso reconstruir o trajeto.
+    """
+    melhor: dict[int, tuple[float, float, float]] = {origem: (0.0, 0.0, 0.0)}
+    fechados: set[int] = set()
+    faltam = set(alvos)
+    heap = [(0.0, origem)]
+    while heap and faltam:
+        t, u = heapq.heappop(heap)
+        if u in fechados:
+            continue
+        fechados.add(u)
+        faltam.discard(u)
+        _, km_u, chao_u = melhor[u]
+        for v, minutos, km, chao in adj.get(u, ()):
+            novo = t + minutos
+            if novo < melhor.get(v, (math.inf,))[0]:
+                melhor[v] = (novo, km_u + km, chao_u + (km if chao else 0.0))
+                heapq.heappush(heap, (novo, v))
+    return {a: melhor[a] for a in alvos if a in fechados}
+
+
 @dataclass(frozen=True)
 class Rota:
     """Ida e volta entre duas escolas, como piso."""
@@ -98,3 +124,25 @@ def piso(g: Grafo, origem: tuple[float, float], destino: tuple[float, float]) ->
         km_linha_reta_ida_volta=reta,
         km_acesso=acesso,
     )
+
+
+def pisos(g: Grafo, origem: tuple[float, float], destinos: list[tuple[float, float]]) -> list[Rota]:
+    """Igual a piso(), para vários destinos com 2 Dijkstras no total (ida no grafo, volta no grafo reverso)."""
+    no_o, acesso_o = g.no_mais_proximo(*origem)
+    pontas = [g.no_mais_proximo(*d) for d in destinos]
+    alvos = {n for n, a in pontas if a <= KM_ACESSO_MAX}
+    ida = dijkstra_muitos(g.adj, no_o, alvos) if acesso_o <= KM_ACESSO_MAX else {}
+    volta = dijkstra_muitos(g.reverso, no_o, alvos) if acesso_o <= KM_ACESSO_MAX else {}
+    saida = []
+    for d, (no_d, acesso_d) in zip(destinos, pontas):
+        reta = 2 * haversine_km(*origem, *d)
+        acesso = max(acesso_o, acesso_d)
+        if acesso > KM_ACESSO_MAX:
+            saida.append(Rota(None, None, None, reta, acesso, f"escola a {acesso:.1f} km da estrada mapeada mais próxima"))
+        elif no_d not in ida or no_d not in volta:
+            saida.append(Rota(None, None, None, reta, acesso, "rota não encontrada na malha do OpenStreetMap"))
+        else:
+            (m1, k1, c1), (m2, k2, c2) = ida[no_d], volta[no_d]
+            ac = 2 * (acesso_o + acesso_d)
+            saida.append(Rota(k1 + k2 + ac, m1 + m2 + ac / KMH_ACESSO * 60, c1 + c2, reta, acesso))
+    return saida
