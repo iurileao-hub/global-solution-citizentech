@@ -82,7 +82,7 @@ AVISOS = {
                 "poderiam receber os alunos, então não há rota calculada.",
     "sem_candidata": "Não há escola pública ativa com as mesmas etapas a até {raio} km em linha reta.",
     "sem_matricula": "A escola não tem matrícula no ano de referência: não há receptoras a calcular.",
-    "sem_coordenada": "A escola não tem coordenada na base do Ipea: não há rota calculada.",
+    "sem_coordenada": "A escola não tem coordenada pública (Catálogo de Escolas do INEP e base do Ipea): não há rota calculada.",
 }
 AVISO_FLUVIAL = "Rota por estrada não se aplica ou estrada não mapeada; o transporte pode ser fluvial."
 NOTA_FLUVIAL = ("Nesta região parte do transporte escolar é fluvial: a rota por estrada pode não ser o "

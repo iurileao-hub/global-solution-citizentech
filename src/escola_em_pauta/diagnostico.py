@@ -62,7 +62,7 @@ def diagnosticar(codigo_inep: int, k: int = 6, grafo_area=None) -> Diagnostico:
     etapas = list(info["matriculas_por_etapa"])
     lista, g = ([], None)
     if escola.lat is None:
-        avisos.append("Escola sem coordenada na base do Ipea: distâncias não calculadas (plano B: geocodificar o endereço).")
+        avisos.append("Escola sem coordenada pública (nem no Catálogo de Escolas do INEP, nem na base do Ipea): distâncias não calculadas.")
     elif not etapas:
         avisos.append("Escola sem matrícula no ano de referência: não há receptoras a calcular.")
     else:

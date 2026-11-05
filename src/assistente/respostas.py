@@ -180,8 +180,10 @@ def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B",
         linhas.append(_par((rota.get("aviso") or "Nenhuma rota por estrada foi calculada para esta escola.")
                            + " Não vou estimar um número sem base."))
     elif not e["geo"]:
-        linhas.append(_par("Esta escola não tem coordenada na base pública do Ipea, então a distância até outras "
-                           "escolas não pode ser calculada. Não vou estimar um número sem base."))
+        linhas.append(_par("A localização desta escola não é pública: o Catálogo de Escolas do INEP não traz a "
+                           "coordenada dela (nem a base do Ipea, que copia o Catálogo). Sem isso, a distância até "
+                           "outras escolas não pode ser calculada. Não vou estimar um número sem base. A localização "
+                           "pode ser pedida ao INEP pela Lei de Acesso à Informação."))
     else:
         linhas.append(_par("A distância até as escolas que poderiam receber os alunos ainda não foi calculada para "
                            "esta escola. Não vou estimar um número sem base."))
