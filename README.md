@@ -294,7 +294,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 - A base cobre 27 orientações. Pergunta fora delas recebe "não sei", e o vocabulário de palavras-chave foi escrito pela equipe.
 - O radical de 5 letras é grosseiro e junta palavras diferentes; o bônus de palavra inteira atenua, mas não resolve.
 - As distâncias são piso, de escola a escola. Velocidades de ônibus são parâmetros declarados, sem medição própria.
-- Cerca de 23% das escolas do campo não têm coordenada na base pública do Ipea e ficam sem distância.
+- Cerca de 23% das escolas do campo (12.601) não têm coordenada pública e ficam sem distância. A lacuna é da fonte oficial: o Catálogo de Escolas do INEP, de onde vêm as coordenadas do Ipea, tem ponto para só 1 delas (conferido em 05/11/2026; nas 155 mil escolas com ponto nas duas bases, as coordenadas são idênticas).
 - Escola perto da divisa entre regiões só procura receptoras na malha da própria região. Medido em 05/11/2026: em até 174 escolas (0,4% das que têm rota), uma das 4 candidatas mais próximas em linha reta fica em outra região e não entrou na lista, e a receptora real pode estar mais perto que a listada.
 - As normas mudam. Se o PL 3.091/2024 virar lei, ele substitui o parágrafo único do art. 28 da LDB, e a base precisa ser revista.
 
@@ -303,7 +303,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 2. Trocar o radical por um algoritmo de redução de palavras feito para o português (como o RSLP).
 3. Um modelo de linguagem como camada opcional de redação, com a resposta conferida contra a base antes de ser mostrada.
 4. Um servidor que calcule na hora a rota de escola ainda não calculada, com fila, alimentando o mesmo índice.
-5. Geocodificar pelo endereço as escolas sem coordenada.
+5. Recuperar coordenadas pelo cadastro de endereços do IBGE (CNEFE 2022), casando o nome da escola no município. Testado em AC, AM e BA: recupera de 33% a 45% das escolas sem ponto, mas em 5% (BA) a 23% (AC) dos casos de controle o ponto diverge mais de 5 km, então só serviria com rótulo de coordenada estimada.
 
 ## 📁 Estrutura de pastas
 
