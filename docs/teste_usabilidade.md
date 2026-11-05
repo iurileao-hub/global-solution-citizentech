@@ -10,7 +10,7 @@ Essas perguntas formam o **segundo conjunto de teste**: a equipe classifica, par
 
 ## Parte 2. Tarefas com o assistente
 
-A pessoa usa `python src/sistema.py` sem ajuda. Quem aplica só observa e anota.
+A pessoa usa a versão web do assistente, sem ajuda. Quem aplica só observa e anota. (A versão de terminal, `python src/sistema.py`, atende à especificação da disciplina e foi testada com usuários simulados; pedir a uma família que use um terminal mediria a barreira do terminal, não o assistente.)
 
 | # | Tarefa | Concluiu? | Tempo | Onde travou |
 |---|---|---|---|---|
