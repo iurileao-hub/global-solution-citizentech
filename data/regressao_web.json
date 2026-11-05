@@ -5,7 +5,7 @@
  "insumos": {
   "base_orientacoes.json": "5320a917aedb0114d998265f6ab834ed96381764897cfee5aa6470d5db15128b",
   "fechamentos.json": "a630e384d4fe57c1d4729ac75b5b872175e3a5a3be68ea3e1ba080abb62960af",
-  "escolas_campo.json.gz": "0778cfbef717ff8577c48ddaa33fd72de31ef4b8ada07c53484ae7cf8040a326",
+  "escolas_campo.json.gz": "7ce5fd7f1998d33cd7fd130f24a759f69845cb5093bc1b5abdf312a98cc0fdfe",
   "perguntas_teste.json": "4fc281400f4c7fffa01f7791acb2a3e12553cefab19f51e068d66e3610936f79",
   "perguntas_cegas.json": "e1a5896a2e32addccad3a7ccf4c9ab7a54f9b1584ad3ad6b1fd8a26d4c26ca67",
   "perguntas_r3.json": "a10296adcdbea7125040669e56e4faf821858d29e7a3e84bdaab27216db46f82"
@@ -880,7 +880,7 @@
      32049501
     ],
     "parcial": false,
-    "texto": "EMEF DURVAL MAXIMO, Muniz Freire/ES (código INEP 32049501) Escola municipal rural. Alunos em 2025: 56 (pré-escola: 18; anos iniciais (1º ao 5º ano): 18; anos finais (6º ao 9º ano): 20). Usam transporte escolar público: 39. Moram na zona rural: 56. Matrícula por ano: 2019: 48, 2020: 50, 2021: 51, 2022: 53, 2023: 44, 2024: 48, 2025: 56. A distância até as escolas que poderiam receber os alunos ainda não foi calculada para esta escola. Não vou estimar um número sem base. Fonte: Censo Escolar 2025, INEP (microdados por escola); coordenadas: Ipea/geobr, base 2023 (dados baixados em 04/11/2026). Para continuar: [D1] O que a lei exige antes de fechar uma escola do campo? [C1] Como pedir à prefeitura, ao estado ou ao DF o diagnóstico e os números do fechamento? Talvez também interesse: [C5] Isso já aconteceu em algum lugar? Deu certo recorrer? (Não oficial: confira com o órgão responsável.)"
+    "texto": "EMEF DURVAL MAXIMO, Muniz Freire/ES (código INEP 32049501) Escola municipal rural. Alunos em 2025: 56 (pré-escola: 18; anos iniciais (1º ao 5º ano): 18; anos finais (6º ao 9º ano): 20). Usam transporte escolar público: 39. Moram na zona rural: 56. Matrícula por ano: 2019: 48, 2020: 50, 2021: 51, 2022: 53, 2023: 44, 2024: 48, 2025: 56. Escolas que poderiam receber os alunos (estrada por dia, ida e volta, PELO MENOS): - EMEF ALTO MONFORTE (rural, Conceição do Castelo/ES): 18 km e 33 min, dos quais 18 km de estrada de chão; recebe só pré-escola, anos iniciais (1º ao 5º ano). - CEI ANA BAZILIO DE AVILA (urbana): 25 km e 51 min, dos quais 24 km de estrada de chão; recebe só pré-escola. - EEEFM ARQUIMIMO MATTOS (urbana): 25 km e 51 min, dos quais 24 km de estrada de chão; recebe só anos iniciais (1º ao 5º ano), anos finais (6º ao 9º ano). - EMEF PROFESSOR PAULO FABIO SARTORE (urbana): 29 km e 1 h 05 min, dos quais 28 km de estrada de chão; recebe todas as etapas desta escola. Conta feita de escola a escola pela malha do OpenStreetMap, dados de 03/11/2026. A casa de cada criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior. Fonte: Censo Escolar 2025, INEP (microdados por escola); coordenadas: Ipea/geobr, base 2023 (dados baixados em 04/11/2026). Para continuar: [D1] O que a lei exige antes de fechar uma escola do campo? [C1] Como pedir à prefeitura, ao estado ou ao DF o diagnóstico e os números do fechamento? [F2] Por que a distância aparece como \"pelo menos\"? Talvez também interesse: [C5] Isso já aconteceu em algum lugar? Deu certo recorrer? (Não oficial: confira com o órgão responsável.)"
    }
   },
   {

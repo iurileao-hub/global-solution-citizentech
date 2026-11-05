@@ -87,7 +87,11 @@ class Bloco:
         r, todas = principal(e)
         if r is None:
             rota = e.get("rota")
-            self.sem_rota["nao_calculada" if rota is None else rota.get("motivo", "sem_rota")] += 1
+            if rota is None:  # sem coordenada no Ipea o pré-cálculo nem tenta (05/11: 12.601 escolas, 23%)
+                motivo = "sem_coordenada" if not e.get("geo") else "nao_calculada"
+            else:
+                motivo = rota.get("motivo", "sem_rota")
+            self.sem_rota[motivo] += 1
             return
         t = e.get("t") or 0
         self.km.append(r["km"])
