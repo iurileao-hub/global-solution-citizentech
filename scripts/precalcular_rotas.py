@@ -437,14 +437,60 @@ def rederivar_aviso(rota: dict, uf: str) -> dict:
     return rota
 
 
-def fundir(indice: Path = INDICE, dir_rotas: Path = DIR_ROTAS) -> Counter:
+CAMPO_RECEPTORAS_V2 = ("as 4 escolas com rota mais próximas por estrada, da mais perto à mais longe; se nenhuma "
+                       "delas recebe todas as etapas da escola, entra em 5º a mais próxima que recebe, buscada "
+                       "entre as até 10 da segunda passada (scripts/precalcular_rotas_v2.py)")
+CAMPOS_SO_V2 = ("p", "pc", "mat", "salas")  # traçado e capacidade ficam nos dados da camada 2, não no índice
+
+
+def recebe_todas(r: dict, etapas) -> bool:
+    return set(r.get("etapas") or ()) >= set(etapas)
+
+
+def selecionar(receptoras: list[dict], etapas, n: int = MAX_RECEPTORAS) -> list[dict]:
+    """As n mais próximas; se nenhuma recebe todas as etapas, mais a mais próxima que recebe (se houver).
+
+    Sem isso, quem lê só a lista curta (retrato, assistente) conclui "nenhuma recebe todas" quando a 5ª ou a
+    9ª recebe. Medido no ES em 05/11: com 4, 141 escolas nesse caso; com 10, 53.
+    """
+    lista = [{k: v for k, v in r.items() if k not in CAMPOS_SO_V2} for r in receptoras]
+    topo = lista[:n]
+    if not any(recebe_todas(r, etapas) for r in topo):
+        extra = next((r for r in lista[n:] if recebe_todas(r, etapas)), None)
+        if extra is not None:
+            topo.append(extra)
+    return topo
+
+
+def com_v2(rota_v1: dict, x2: dict, etapas) -> dict:
+    """Rota da primeira passada com a lista trocada pela da segunda (selecionar). Escola sem lista na v2
+    fica com a rota da v1 inteira: o motivo e a distância até a estrada (origem_longe) só existem lá."""
+    r2 = x2["rota"]
+    if not r2.get("receptoras"):
+        return rota_v1
+    rota = {k: v for k, v in rota_v1.items() if k not in ("receptoras", "sem_rota", "osm", "motivo", "acesso_km")}
+    rota["receptoras"] = selecionar(r2["receptoras"], etapas)
+    for k in ("sem_rota", "osm"):
+        if r2.get(k):
+            rota[k] = r2[k]
+    return rota
+
+
+def fundir(indice: Path = INDICE, dir_rotas: Path = DIR_ROTAS, dir_v2: Path | None = None) -> Counter:
     """Grava o resumo de cada escola processada no campo "rota" do índice nacional.
 
     Escola com erro ou ainda não processada fica como estava (null = "ainda não calculada").
+    Com dir_v2 (segunda passada), a lista de receptoras vem de lá (com_v2); exige a segunda passada
+    completa para toda escola com linha na primeira, para o índice não misturar listas de 4 e de 10.
     O gzip sai com mtime=0: mesmo conteúdo, mesmo arquivo byte a byte (o git não vê mudança falsa).
     """
     doc = carregar_indice(indice)
     linhas = ler_todas(dir_rotas)
+    linhas_v2 = ler_todas(dir_v2) if dir_v2 else None
+    if linhas_v2 is not None:
+        faltam = [c for c, x in linhas.items() if "erro" not in x and (c not in linhas_v2 or "erro" in linhas_v2[c])]
+        if faltam:
+            raise SystemExit(f"segunda passada incompleta ou com erro em {len(faltam)} escolas (ex.: {faltam[:3]})")
     cont: Counter = Counter()
     for e in doc["escolas"]:
         x = linhas.get(e["c"])
@@ -453,11 +499,20 @@ def fundir(indice: Path = INDICE, dir_rotas: Path = DIR_ROTAS) -> Counter:
         elif "erro" in x:
             cont["erro"] += 1
         else:
-            e["rota"] = rederivar_aviso(x["rota"], e.get("uf") or "")
-            cont["com_rota" if x["rota"]["receptoras"] else "sem_rota_com_aviso"] += 1
+            rota = x["rota"]
+            if linhas_v2 is not None:
+                rota = com_v2(rota, linhas_v2[e["c"]], e.get("e") or {})
+                cont["quinta_receptora"] += len(rota["receptoras"]) > MAX_RECEPTORAS
+            e["rota"] = rederivar_aviso(rota, e.get("uf") or "")
+            cont["com_rota" if rota["receptoras"] else "sem_rota_com_aviso"] += 1
     doc["campos"]["rota"] = ("resumo das receptoras com rota calculada (preenchido pelo pré-cálculo, "
                              "scripts/precalcular_rotas.py) ou null")
-    doc["campos_rota"] = CAMPOS_ROTA
+    doc["campos_rota"] = dict(CAMPOS_ROTA)
+    if linhas_v2 is not None:
+        doc["campos_rota"]["receptoras"] = CAMPO_RECEPTORAS_V2
+        doc["rotas_v2"] = {"k": json.loads((dir_v2 / "meta.json").read_text())["k"]}
+    else:
+        doc.pop("rotas_v2", None)
     bruto = json.dumps(doc, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
     tmp = indice.with_name(indice.name + ".parcial")
     tmp.write_bytes(gzip.compress(bruto, mtime=0))
@@ -466,7 +521,7 @@ def fundir(indice: Path = INDICE, dir_rotas: Path = DIR_ROTAS) -> Counter:
 
 
 def cmd_fundir(a) -> None:
-    cont = fundir(dir_rotas=Path(a.dir))
+    cont = fundir(dir_rotas=Path(a.dir), dir_v2=Path(a.v2) if a.v2 else None)
     print(f"índice atualizado: {dict(cont)} | {INDICE.stat().st_size / 1e6:.1f} MB")
 
 
@@ -483,6 +538,8 @@ def main(argv: list[str] | None = None) -> None:
     r.add_argument("--refazer-erros", action="store_true", help="tenta de novo as escolas que falharam")
     for s in (r, sub.add_parser("status", help="resumo do progresso"), sub.add_parser("fundir", help="grava no índice")):
         s.add_argument("--dir", default=str(DIR_ROTAS), help="diretório dos .jsonl de progresso")
+        if s.prog.endswith("fundir"):
+            s.add_argument("--v2", help="pasta da segunda passada: a lista de receptoras vem de lá (até 4 + 1)")
     a = p.parse_args(argv)
     {"rodar": cmd_rodar, "status": cmd_status, "fundir": cmd_fundir}[a.cmd](a)
 

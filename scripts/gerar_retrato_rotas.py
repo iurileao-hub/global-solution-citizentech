@@ -8,7 +8,9 @@ Qual receptora conta (o MESMO critério da frase de abertura da ficha, ficha._ma
   a mais próxima por estrada que recebe TODAS as etapas da escola; se nenhuma das listadas recebe todas,
   a mais próxima, e a escola entra em "nenhuma_recebe_todas" (a família pode precisar de mais de uma escola).
   O índice guarda até 4 receptoras por escola (MAX_RECEPTORAS), então "nenhuma recebe todas" quer dizer
-  "nenhuma das 4 mais próximas com rota".
+  "nenhuma das 4 mais próximas com rota". Depois de `precalcular_rotas.py fundir --v2`, o índice guarda também,
+  em 5º, a mais próxima que recebe todas entre as 10 da segunda passada (campo "rotas_v2" do índice): a conta
+  sobre o índice dá então o mesmo resultado que sobre as 10.
 
 Com --rotas-v2 (pasta da segunda passada, scripts/precalcular_rotas_v2.py), a lista de cada escola vem de lá:
 até 10 receptoras em vez de 4. Isso muda o número, e não é ruído: medido no ES em 05/11, "nenhuma recebe
@@ -219,7 +221,7 @@ def main(argv: list[str] | None = None) -> None:
     doc = json.loads(gzip.decompress(a.indice.read_bytes()))
     if a.ufs:
         doc = {**doc, "escolas": [e for e in doc["escolas"] if e.get("uf") in set(a.ufs)]}
-    k = 4
+    k = (doc.get("rotas_v2") or {}).get("k", 4)
     if a.rotas_v2:
         from precalcular_rotas import ler_todas
         k = json.loads((a.rotas_v2 / "meta.json").read_text())["k"]

@@ -24,8 +24,9 @@ Com --rotas-v2 (segunda passada, scripts/precalcular_rotas_v2.py), mais dois con
   tracados/NNNN.json   traçado da ida de cada rota (polyline do Google, precisão 5) e trechos de chão, em
                        PEDACOS_TRACADO pedaços por código INEP. Só baixa quando a pessoa abre o mapa da escola.
 
-Os pedaços escolas/ continuam com a rota da PRIMEIRA passada (até 4 receptoras): é o que o assistente de
-terminal lê e o que o contrato data/regressao_web.json prende.
+Os pedaços escolas/ trazem a rota do ÍNDICE, a mesma que o assistente de terminal lê e o contrato
+data/regressao_web.json prende: as 4 receptoras mais próximas e, depois de `precalcular_rotas.py fundir --v2`,
+a mais próxima que recebe todas as etapas em 5º quando nenhuma das 4 recebe.
 
 Os registros de escola saem IGUAIS aos do índice (mesmas chaves, mesmos valores): a versão web lê o mesmo
 formato que o assistente de terminal, e tests/test_dados_web.py confere que juntar os pedaços devolve o índice.
