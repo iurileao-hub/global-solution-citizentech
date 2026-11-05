@@ -409,6 +409,24 @@ def cmd_status(a) -> None:
         print(f"{uf}: {n} escolas, {s / n:.2f} s/escola no diagnóstico | " + ", ".join(f"{k} {v}" for k, v in sorted(c.items())))
 
 
+def rederivar_aviso(rota: dict, uf: str) -> dict:
+    """Recalcula o aviso a partir do motivo e da UF, com as regras ATUAIS (UFS_FLUVIAIS, AVISOS).
+
+    O aviso é texto derivado; o que foi caro de calcular (as rotas) não depende dele. Assim, mudar o
+    critério fluvial ou a redação exige só um novo `fundir`, nunca recalcular as rotas.
+    """
+    from escola_em_pauta.receptoras import RAIO_MAX_KM  # import local, como no cálculo (carrega pandas)
+
+    rota = dict(rota)
+    if rota.get("motivo"):
+        rota["aviso"] = aviso(rota["motivo"], uf, rota.get("acesso_km"), RAIO_MAX_KM)
+    elif rota.get("receptoras") and uf in UFS_FLUVIAIS:
+        rota["aviso"] = NOTA_FLUVIAL
+    else:
+        rota.pop("aviso", None)
+    return rota
+
+
 def fundir(indice: Path = INDICE, dir_rotas: Path = DIR_ROTAS) -> Counter:
     """Grava o resumo de cada escola processada no campo "rota" do índice nacional.
 
@@ -425,7 +443,7 @@ def fundir(indice: Path = INDICE, dir_rotas: Path = DIR_ROTAS) -> Counter:
         elif "erro" in x:
             cont["erro"] += 1
         else:
-            e["rota"] = x["rota"]
+            e["rota"] = rederivar_aviso(x["rota"], e["uf"])
             cont["com_rota" if x["rota"]["receptoras"] else "sem_rota_com_aviso"] += 1
     doc["campos"]["rota"] = ("resumo das receptoras com rota calculada (preenchido pelo pré-cálculo, "
                              "scripts/precalcular_rotas.py) ou null")
