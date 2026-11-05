@@ -123,7 +123,9 @@ def extrair(pbf: Path, bboxes: list[tuple[float, float, float, float]], cache: P
         arq = cache / f"{s:.3f}_{o:.3f}_{n:.3f}_{l:.3f}.json.gz"
         # Escreve ao lado e troca (os.replace é atômico): um processo morto no meio da escrita não
         # deixa uma malha cortada passando por pronta no cache.
-        tmp = arq.with_name(arq.name + ".parcial")
+        # O pid no nome: dois lotes em paralelo (regiões diferentes) podem gravar a mesma célula ao mesmo
+        # tempo, e um temporário comum aos dois sairia com as duas escritas misturadas.
+        tmp = arq.with_name(f"{arq.name}.{os.getpid()}.parcial")
         # compresslevel=1: no nível 9 (o padrão do gzip), gravar 16 malhas levava 41 s de uma passada
         # de 122 s; no nível 1, 11 s, com arquivos um pouco maiores. O conteúdo é o mesmo.
         with gzip.open(tmp, "wt", compresslevel=1) as f:
