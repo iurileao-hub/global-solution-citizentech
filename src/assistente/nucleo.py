@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from . import fechamentos as fech_mod
 from . import respostas
 from .base import Base
 from .busca import IndiceOrientacoes
@@ -30,6 +31,7 @@ class Contexto:
     base: Base
     indice: IndiceOrientacoes
     escolas: IndiceEscolas | None = None          # None = índice de escolas indisponível (degrada)
+    fechamentos: dict | None = None               # números de fechamento por lugar (F5); None = indisponível
 
 
 @dataclass
@@ -41,8 +43,32 @@ class Resposta:
     parcial: bool = False  # respondeu avisando que parte da pergunta ficou sem cobertura
 
 
-def montar(base: Base, doc_escolas: dict | None) -> Contexto:
-    return Contexto(base, IndiceOrientacoes(base), IndiceEscolas(doc_escolas) if doc_escolas else None)
+def montar(base: Base, doc_escolas: dict | None, doc_fechamentos: dict | None = None) -> Contexto:
+    return Contexto(base, IndiceOrientacoes(base), IndiceEscolas(doc_escolas) if doc_escolas else None,
+                    doc_fechamentos)
+
+
+def _lugar_desempata(ctx: Contexto, r, texto: str):
+    """Pergunta que cita um lugar ("aqui em Minas", "em Muniz Freire") e empata com a orientação de números
+    por lugar: ela responde, e as outras viram sugestão. Só ela sabe responder POR LUGAR."""
+    if not ctx.fechamentos or r.tipo not in ("ambigua", "unica") or not r.pontuacoes:
+        return r
+    alvo = next((rid for rid in r.pontuacoes if ctx.base.registros[rid].get("dados") == "fechamentos"), None)
+    topo = max(r.pontuacoes.values())
+    if not alvo or r.pontuacoes[alvo] < topo - 1 or (r.tipo == "unica" and r.ids == [alvo]):
+        return r
+    if not fech_mod.achar_lugar(ctx.fechamentos, texto):
+        return r
+    outros = [x for x in sorted(r.pontuacoes, key=lambda x: -r.pontuacoes[x]) if x != alvo][:2]
+    r.tipo, r.ids, r.sugestoes, r.fora = "unica", [alvo], outros, []
+    return r
+
+
+def _numeros(ctx: Contexto, rid: str, texto: str) -> str:
+    """Bloco de dados do registro, quando ele pede ("dados": "fechamentos") e o arquivo existe."""
+    if ctx.base.registros[rid].get("dados") == "fechamentos" and ctx.fechamentos:
+        return fech_mod.bloco(ctx.fechamentos, texto)
+    return ""
 
 
 def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
@@ -54,7 +80,8 @@ def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
 
     codigo = bruto.replace(" ", "").upper()
     if codigo in base.registros:
-        return Resposta("codigo", respostas.orientacao(base, codigo, modelo), [codigo])
+        return Resposta("codigo", respostas.orientacao(base, codigo, modelo, numeros=_numeros(ctx, codigo, "")),
+                        [codigo])
 
     if bruto.isdigit() and not (ctx.escolas and int(bruto) in ctx.escolas.por_codigo):
         return Resposta("vazia", respostas._par(f"Não reconheci o número {bruto}. Digite um código como D1, o código "
@@ -71,14 +98,19 @@ def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
             return lista_escolas(achado)
         resp = escola(ctx, achado["escolas"][0], modelo, extras)
         return resp
+    r = _lugar_desempata(ctx, r, texto)
     if r.tipo == "vazia":
         return Resposta("vazia", respostas._par("Não entendi a pergunta: ela só tem palavras muito comuns. Tente com "
                                                 "outras palavras."))
     if r.tipo == "unica":
         ja = set(base.registros[r.ids[0]].get("relacionados", [])[:3])
         extras = [x for x in r.sugestoes if x not in ja] if modelo == "B" else []
-        return Resposta("unica", respostas.orientacao(base, r.ids[0], modelo, extras, r.fora), r.ids,
-                        parcial=bool(r.fora))
+        fora = [] if _numeros(ctx, r.ids[0], texto) and r.fora else r.fora   # o lugar citado É o assunto
+        if fora and ctx.fechamentos and base.registros[r.ids[0]].get("dados") == "fechamentos":
+            lugar = fech_mod.achar_lugar(ctx.fechamentos, texto)
+            fora = [] if lugar else fora
+        return Resposta("unica", respostas.orientacao(base, r.ids[0], modelo, extras, fora,
+                                                      _numeros(ctx, r.ids[0], texto)), r.ids, parcial=bool(fora))
     if r.tipo == "ambigua":
         return Resposta("ambigua", respostas.ambigua(base, r.ids), r.ids)
 

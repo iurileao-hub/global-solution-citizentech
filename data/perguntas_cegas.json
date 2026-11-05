@@ -111,9 +111,12 @@
    "persona": "mae-agricultora",
    "tipo": "cega",
    "pergunta": "outras escola do campo ja fecharam aqui em minas? o que aconteceu com as criança",
-   "esperado_tipo": "nenhuma",
-   "parcial_na_base": false,
-   "justificativa": "A base só tem um caso (Muniz Freire, ES, em C5) e nenhum dado de fechamentos em Minas."
+   "parcial_na_base": true,
+   "justificativa": "A base só tem um caso (Muniz Freire, ES, em C5) e nenhum dado de fechamentos em Minas.",
+   "esperado": [
+    "F5"
+   ],
+   "rotulo_atualizado": "05/11: rótulo original do juiz = 'nenhuma'; a base ganhou F5 (números de fechamento por lugar, pedido nas próprias perguntas cegas) e passou a responder."
   },
   {
    "id": "C11",
@@ -407,9 +410,12 @@
    "persona": "professora",
    "tipo": "cega",
    "pergunta": "quantas escolas do campo foram fechadas no DF nos ultimos anos",
-   "esperado_tipo": "nenhuma",
    "parcial_na_base": false,
-   "justificativa": "Estatística de fechamentos no DF não está na base."
+   "justificativa": "Estatística de fechamentos no DF não está na base.",
+   "esperado": [
+    "F5"
+   ],
+   "rotulo_atualizado": "05/11: rótulo original do juiz = 'nenhuma'; a base ganhou F5 (números de fechamento por lugar, pedido nas próprias perguntas cegas) e passou a responder."
   },
   {
    "id": "C38",
@@ -525,9 +531,12 @@
    "persona": "estudante",
    "tipo": "cega",
    "pergunta": "quantas escola do campo ja fecharam no para",
-   "esperado_tipo": "nenhuma",
    "parcial_na_base": false,
-   "justificativa": "Estatística de fechamentos no Pará não está na base."
+   "justificativa": "Estatística de fechamentos no Pará não está na base.",
+   "esperado": [
+    "F5"
+   ],
+   "rotulo_atualizado": "05/11: rótulo original do juiz = 'nenhuma'; a base ganhou F5 (números de fechamento por lugar, pedido nas próprias perguntas cegas) e passou a responder."
   },
   {
    "id": "C49",

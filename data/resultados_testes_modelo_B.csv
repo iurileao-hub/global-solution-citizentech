@@ -1,21 +1,21 @@
 id,tipo,pergunta,esperado,obtido,classificacao,tempo_ms,fmt_cita_fonte,fmt_data_verificacao,fmt_aviso_nao_oficial,fmt_pede_confirmacao,fmt_oferece_continuidade,fmt_linhas,fmt_palavras_por_frase
-P01,direta,A prefeitura pode fechar a escola sem consultar a gente?,D1,unica:D1,acerto,0.446,True,True,True,True,True,22,14.7
-P02,reformulação,precisa de algum estudo antes de fechar escola rural?,D1,unica:D1,acerto,0.204,True,True,True,True,True,22,14.7
-P03,direta,"A escola fica na cidade mas os alunos são da roça, conta como escola do campo?",D2,unica:D2,acerto,0.441,True,True,True,True,True,21,12.8
-P04,reformulação,meu filho de 5 anos vai ter que pegar ônibus pra estudar na cidade,D3,unica:D3,acerto,0.31,True,True,True,True,True,24,15.0
-P05,direta,Como consigo os números e o estudo da prefeitura?,C1,unica:C1,acerto,0.242,True,True,True,True,True,25,13.0
-P06,direta,"Fecharam mesmo assim, com quem eu falo?",C4,unica:C4,acerto,0.169,True,True,True,,True,21,13.8
+P01,direta,A prefeitura pode fechar a escola sem consultar a gente?,D1,unica:D1,acerto,0.438,True,True,True,True,True,22,14.7
+P02,reformulação,precisa de algum estudo antes de fechar escola rural?,D1,unica:D1,acerto,0.208,True,True,True,True,True,22,14.7
+P03,direta,"A escola fica na cidade mas os alunos são da roça, conta como escola do campo?",D2,unica:D2,acerto,0.445,True,True,True,True,True,21,12.8
+P04,reformulação,meu filho de 5 anos vai ter que pegar ônibus pra estudar na cidade,D3,unica:D3,acerto,0.316,True,True,True,True,True,25,14.7
+P05,direta,Como consigo os números e o estudo da prefeitura?,C1,unica:C1,acerto,0.247,True,True,True,True,True,25,13.0
+P06,direta,"Fecharam mesmo assim, com quem eu falo?",C4,unica:C4,acerto,0.167,True,True,True,,True,21,14.1
 P07,direta,Quem paga o ônibus escolar?,T2/T3,unica:T2,acerto,0.144,True,True,True,,True,19,10.6
-P08,reformulação,o motorista da van precisa ter curso?,T4,unica:T4,acerto,0.25,True,True,True,,True,17,15.5
+P08,reformulação,o motorista da van precisa ter curso?,T4,unica:T4,acerto,0.253,True,True,True,,True,18,15.0
 P09,direta,Por que a ficha diz pelo menos 25 km?,F2,unica:F2 (com aviso de parcial),acerto,0.291,True,True,True,True,True,26,16.2
-P10,direta,Escola paralisada quer dizer o quê?,F4,unica:F4,acerto,0.192,True,True,True,,True,19,15.0
-P11,reformulação,meu filho vai continuar tendo merenda na escola nova?,D7,unica:D7,acerto,0.271,True,True,True,True,True,25,14.5
-P12,direta,"A escola é quilombola, muda alguma coisa?",D5,unica:D5 (com aviso de parcial),acerto,0.534,True,True,True,True,True,32,12.9
-P13,fora do tema,Como tiro a segunda via do RG?,nenhuma,nenhuma,acerto,0.131,False,False,True,,False,7,13.4
-P14,fora do tema,Qual é a melhor escola particular da cidade?,nenhuma,nenhuma,acerto,0.136,False,False,True,,False,7,13.4
+P10,direta,Escola paralisada quer dizer o quê?,F4,unica:F4,acerto,1.007,True,True,True,,True,22,15.0
+P11,reformulação,meu filho vai continuar tendo merenda na escola nova?,D7,unica:D7,acerto,0.263,True,True,True,True,True,25,14.5
+P12,direta,"A escola é quilombola, muda alguma coisa?",D5,unica:D5 (com aviso de parcial),acerto,0.537,True,True,True,True,True,32,12.9
+P13,fora do tema,Como tiro a segunda via do RG?,nenhuma,nenhuma,acerto,0.13,False,False,True,,False,7,13.4
+P14,fora do tema,Qual é a melhor escola particular da cidade?,nenhuma,nenhuma,acerto,0.138,False,False,True,,False,7,13.4
 P15,limite: entrada vazia,   ,vazia,vazia,acerto,0.024,False,False,False,,False,2,8.0
-P16,limite: ambígua,Escola Municipal São José,escola_ambigua:31151220,escola_ambigua:546 escola(s),acerto,0.792,False,False,False,,False,11,41.0
+P16,limite: ambígua,Escola Municipal São José,escola_ambigua:31151220,escola_ambigua:546 escola(s),acerto,0.795,False,False,False,,False,11,41.0
 P17,escola por nome,Durval Máximo,escola:32049501,escola:32049501,acerto,0.175,True,True,True,,True,20,11.5
-P18,limite: só palavras comuns,"e aí, o que que é isso?",vazia,vazia,acerto,0.075,False,False,False,,False,2,7.0
-P19,código direto,c5,C5,codigo:C5,acerto,0.199,True,True,True,True,True,23,15.0
-P20,limite: sem resposta confiável,Quantos quilômetros meu filho vai andar até a escola nova?,F2,unica:F2 (com aviso de parcial),acerto,0.3,True,True,True,True,True,27,15.8
+P18,limite: só palavras comuns,"e aí, o que que é isso?",vazia,vazia,acerto,0.074,False,False,False,,False,2,7.0
+P19,código direto,c5,C5,codigo:C5,acerto,0.196,True,True,True,True,True,23,15.0
+P20,limite: sem resposta confiável,Quantos quilômetros meu filho vai andar até a escola nova?,F2,unica:F2 (com aviso de parcial),acerto,0.291,True,True,True,True,True,27,15.8

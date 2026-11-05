@@ -20,11 +20,13 @@ sys.path.insert(0, str(SRC))
 
 from assistente import base as base_mod          # noqa: E402
 from assistente import escolas as escolas_mod    # noqa: E402
+from assistente import fechamentos as fech_mod   # noqa: E402
 from assistente import respostas                 # noqa: E402
 from assistente.nucleo import Contexto, escola, lista_escolas, montar, responder  # noqa: E402
 
 ARQ_BASE = RAIZ / "data" / "base_orientacoes.json"
 ARQ_ESCOLAS = RAIZ / "data" / "escolas_campo.json.gz"
+ARQ_FECHAMENTOS = RAIZ / "data" / "fechamentos.json"
 
 MENU = """
 O que você quer fazer?
@@ -173,7 +175,12 @@ def main(argv: list[str] | None = None) -> int:
     except escolas_mod.ErroEscolas as e:
         print(f"Aviso: {e}\nO assistente funciona, mas sem a consulta de escolas.", file=sys.stderr)
         doc_escolas = None
-    ctx = montar(base, doc_escolas)
+    try:
+        doc_fech = fech_mod.carregar(ARQ_FECHAMENTOS)
+    except fech_mod.ErroFechamentos as e:
+        print(f"Aviso: {e}\nO assistente funciona, mas sem os números de fechamento por lugar.", file=sys.stderr)
+        doc_fech = None
+    ctx = montar(base, doc_escolas, doc_fech)
 
     if args.avaliar:
         from assistente import avaliacao

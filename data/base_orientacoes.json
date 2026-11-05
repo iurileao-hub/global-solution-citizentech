@@ -346,7 +346,8 @@
    "relacionados": [
     "D1",
     "C2",
-    "C4"
+    "C4",
+    "C7"
    ]
   },
   {
@@ -419,7 +420,8 @@
    "confirmar": "A regra de Santa Cruz do Sul vale só lá. Pergunte ao Conselho da sua cidade se ele tem regra própria.",
    "relacionados": [
     "D6",
-    "C2"
+    "C2",
+    "C6"
    ]
   },
   {
@@ -502,8 +504,7 @@
     "direito",
     "levar",
     "buscar",
-    "gratuito",
-    "barco"
+    "gratuito"
    ],
    "orientacao": "Sim. A Constituição e a LDB colocam o transporte escolar entre os deveres do Estado com a educação, em todas as etapas da educação básica: é um apoio que o poder público tem de garantir ao aluno.",
    "referencia": {
@@ -514,7 +515,8 @@
    "relacionados": [
     "T2",
     "T3",
-    "T4"
+    "T4",
+    "T6"
    ]
   },
   {
@@ -562,9 +564,7 @@
     "ônibus",
     "fiscaliza",
     "fiscalizar",
-    "fundeb",
-    "barco",
-    "lancha"
+    "fundeb"
    ],
    "orientacao": "Além do dinheiro próprio de estados e municípios, o governo federal ajuda por dois programas do FNDE: o PNATE repassa dinheiro para custear o transporte de alunos que moram na zona rural (combustível, manutenção, serviço contratado), e o Caminho da Escola financia ônibus, barcos e bicicletas próprios para essas regiões. Quem fiscaliza o transporte escolar é o Conselho do Fundeb da sua cidade ou estado.",
    "referencia": {
@@ -607,7 +607,8 @@
    "data_verificacao": "2026-11-05",
    "relacionados": [
     "T1",
-    "F2"
+    "F2",
+    "T5"
    ]
   },
   {
@@ -725,6 +726,193 @@
    "relacionados": [
     "F1",
     "D1"
+   ]
+  },
+  {
+   "id": "F5",
+   "tema": "dados",
+   "subtema": "fontes",
+   "pergunta": "Quantas escolas do campo já fecharam no meu estado ou município?",
+   "palavras_chave": [
+    "quantas",
+    "quantos",
+    "número",
+    "numero",
+    "fecharam",
+    "fechou",
+    "fechadas",
+    "extintas",
+    "paralisadas",
+    "estatística",
+    "dados",
+    "estado",
+    "município",
+    "cidade",
+    "aqui",
+    "região"
+   ],
+   "orientacao": "O Censo Escolar mostra, ano a ano, quantas escolas públicas rurais estão em atividade, quantas foram extintas (encerradas de vez, por ato da Secretaria) e quantas estão paralisadas (sem aulas, mas sem extinção formal). Uma escola paralisada há muitos anos costuma estar fechada na prática, sem o ato formal e, talvez, sem o rito que a lei exige.",
+   "referencia": {
+    "titulo": "INEP, microdados do Censo Escolar 2019 a 2025 (contagem do projeto)",
+    "url": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-escolar"
+   },
+   "data_verificacao": "2026-11-04",
+   "confirmar": "São números de escolas, não de crianças. Uma escola extinta pode ter sido juntada a outra (nucleada) ou fechada de vez; o Censo não diz qual.",
+   "relacionados": [
+    "F4",
+    "D1",
+    "C1"
+   ],
+   "dados": "fechamentos"
+  },
+  {
+   "id": "T5",
+   "tema": "transporte",
+   "subtema": "veiculo",
+   "pergunta": "E se o caminho até a escola for de barco?",
+   "palavras_chave": [
+    "barco",
+    "barcos",
+    "lancha",
+    "voadeira",
+    "rabeta",
+    "canoa",
+    "rio",
+    "fluvial",
+    "embarcação",
+    "colete",
+    "capitania",
+    "marinha",
+    "travessia",
+    "ribeirinho",
+    "ribeirinhos",
+    "levar"
+   ],
+   "orientacao": "Se a nova escola for alcançada de barco, o barco também é transporte escolar e tem regras. O dinheiro federal do transporte escolar (PNATE) pode pagar a manutenção do barco ou uma empresa contratada, e o barco precisa estar registrado e liberado pela Capitania dos Portos (o órgão da Marinha que fiscaliza embarcações). Quem pilota precisa de habilitação profissional da Marinha, e deve haver um colete salva-vidas para cada pessoa a bordo, inclusive coletes de tamanho infantil para cada criança. Não há regra nacional sobre tempo máximo de viagem de barco: isso depende da regra do seu estado ou município.",
+   "referencia": {
+    "titulo": "Res. CD/FNDE 18/2021 (PNATE), art. 13; Res. CD/FNDE 1/2021 (Caminho da Escola), arts. 2º, 13 e 14; NORMAM-202 da Marinha",
+    "url": "https://www.gov.br/fnde/pt-br/acesso-a-informacao/acoes-e-programas/programas/pnate/legislacao/RESOLUOCDFNDEN18DE22DEOUTUBRODE2021.pdf",
+    "outras": [
+     "https://www.gov.br/fnde/resolveuid/ddedcb393e2e4b8b97c74396fca7b0e0"
+    ]
+   },
+   "data_verificacao": "2026-11-05",
+   "confirmar": "Pergunte à Secretaria se o barco é da prefeitura, do estado ou de empresa contratada, se tem registro na Capitania, qual a habilitação de quem pilota, a lotação e quantos coletes adultos e infantis há a bordo. A Capitania da região pode confirmar se o barco está regular.",
+   "relacionados": [
+    "T3",
+    "T4",
+    "T1"
+   ]
+  },
+  {
+   "id": "T6",
+   "tema": "transporte",
+   "subtema": "direito",
+   "pergunta": "E o aluno com deficiência: o transporte tem de servir para ele?",
+   "palavras_chave": [
+    "deficiência",
+    "deficiente",
+    "cadeirante",
+    "cadeira",
+    "rodas",
+    "acessível",
+    "acessibilidade",
+    "inclusão",
+    "monitor",
+    "cuidador",
+    "especial",
+    "especiais",
+    "autista",
+    "autismo",
+    "apoio",
+    "mobilidade"
+   ],
+   "orientacao": "Sim. Se o fechamento obrigar um aluno com deficiência a usar transporte escolar, o veículo tem de servir para ele: as regras do programa federal de transporte escolar mandam que os veículos e barcos mantidos com esse dinheiro tenham itens de atendimento a alunos com deficiência, e os ônibus do Caminho da Escola vêm com assento móvel para embarque. A Lei Brasileira de Inclusão garante acessibilidade e o profissional de apoio escolar (quem ajuda o aluno com alimentação, higiene e locomoção). Já o monitor dentro do veículo não é obrigatório pela lei nacional: depende da regra do seu estado ou município.",
+   "referencia": {
+    "titulo": "Lei Brasileira de Inclusão (Lei 13.146/2015), arts. 3º, XIII, e 28, XVII; Res. CD/FNDE 18/2021, art. 13, § 3º",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13146.htm",
+    "outras": [
+     "https://www.gov.br/fnde/pt-br/acesso-a-informacao/acoes-e-programas/programas/pnate/legislacao/RESOLUOCDFNDEN18DE22DEOUTUBRODE2021.pdf"
+    ]
+   },
+   "data_verificacao": "2026-11-05",
+   "confirmar": "Pergunte à Secretaria se o veículo da rota do aluno é acessível e qual o recurso (elevador, assento móvel, espaço para cadeira de rodas), se a regra local prevê monitor e se o profissional de apoio acompanha o trajeto. Se o veículo não servir, procure a Defensoria ou o Ministério Público (C4).",
+   "relacionados": [
+    "T1",
+    "C4"
+   ]
+  },
+  {
+   "id": "C6",
+   "tema": "comunidade",
+   "subtema": "participacao",
+   "pergunta": "O que o Conselho de Educação deve exigir, e ele pode se manifestar contra o fechamento?",
+   "palavras_chave": [
+    "exigir",
+    "documentos",
+    "parecer",
+    "recusar",
+    "contra",
+    "contrário",
+    "negar",
+    "votar",
+    "analisar",
+    "opinar",
+    "pedido",
+    "conselheira",
+    "conselheiro",
+    "conselho",
+    "impedir",
+    "barrar"
+   ],
+   "orientacao": "Antes de fechar uma escola do campo, indígena ou quilombola, a Secretaria de Educação tem de ouvir o Conselho de Educação: o municipal, se a escola é do município, ou o estadual, se é do estado. O Conselho deve receber e analisar três coisas: a justificativa da Secretaria, um estudo do impacto do fechamento na vida dos alunos e da comunidade (o diagnóstico) e a opinião da comunidade escolar, registrada em ata. O Conselho pode se manifestar contra o fechamento. A lei nacional não diz se um parecer contrário impede o fechamento: isso depende das regras do seu estado ou município. No Paraná, por exemplo, a regra estadual só autoriza o fechamento com parecer favorável.",
+   "referencia": {
+    "titulo": "LDB, art. 28, parágrafo único; CEE/PR, Parecer Normativo 01/2018 (Deliberação 03/13, art. 80, § 2º); TCE-ES, Decisão 02423/2025-2",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm",
+    "outras": [
+     "https://www.cee.pr.gov.br/sites/cee/arquivos_restritos/files/migrados/File/pdf/Pareceres_2018/CP/pa_cp_normativo_01_18.pdf"
+    ]
+   },
+   "data_verificacao": "2026-11-05",
+   "confirmar": "Peça ao Conselho a norma local sobre fechamento de escolas e confira se o pedido da Secretaria chegou com os três documentos e no prazo. Para saber se um parecer contrário impede o fechamento no seu sistema, consulte o Ministério Público ou a Defensoria.",
+   "relacionados": [
+    "C3",
+    "D1",
+    "C4"
+   ]
+  },
+  {
+   "id": "C7",
+   "tema": "comunidade",
+   "subtema": "informacao",
+   "pergunta": "Um estudante menor de 18 anos pode pedir essas informações?",
+   "palavras_chave": [
+    "menor",
+    "idade",
+    "adolescente",
+    "jovem",
+    "jovens",
+    "estudante",
+    "estudantes",
+    "grêmio",
+    "sozinho",
+    "alunos"
+   ],
+   "orientacao": "A Lei de Acesso à Informação diz que qualquer interessado pode pedir informação ao governo, sem precisar explicar por quê, e a Controladoria-Geral da União diz que o pedido pode ser feito independente de idade. Na prática, o sistema federal (Informa.BR) exige conta gov.br, e prefeituras e estados têm regras próprias de identificação; não encontramos regra oficial clara sobre menores de 18 anos. Caminhos seguros: fazer o pedido junto com um responsável ou pelo grêmio estudantil, levar a dúvida ao conselho escolar, ou procurar a Defensoria Pública ou o Ministério Público, que por lei atendem qualquer adolescente.",
+   "referencia": {
+    "titulo": "Lei 12.527/2011, art. 10; Decreto 7.724/2012; gov.br, serviço Acessar informações de órgãos públicos; ECA, art. 141",
+    "url": "https://www.gov.br/pt-br/servicos/acessar-informacoes-de-orgaos-publicos",
+    "outras": [
+     "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm",
+     "https://www.planalto.gov.br/ccivil_03/leis/l8069.htm"
+    ]
+   },
+   "data_verificacao": "2026-11-05",
+   "confirmar": "No site da prefeitura ou do estado (procure \"Acesso à Informação\" ou \"e-SIC\"), veja que dados o pedido exige e se aceita pedido de menor de idade. Se recusarem por causa da idade, guarde a recusa por escrito e leve à Defensoria ou ao Ministério Público.",
+   "relacionados": [
+    "C1",
+    "C2",
+    "C4"
    ]
   }
  ]

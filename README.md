@@ -53,14 +53,14 @@ A LDB (art. 28, parágrafo único, incluído pela Lei 12.960/2014) exige que o f
 
 **Público beneficiado:** famílias e comunidade escolar de escolas do campo, indígenas e quilombolas; conselheiros municipais e escolares; quem as apoia (associações, sindicatos rurais, Defensoria).
 
-**Temas (4) e orientações (20):**
+**Temas (4) e orientações (25):**
 
 | Tema | Subtemas | Exemplos de pergunta |
 |---|---|---|
 | Direitos e leis | fechamento, escola do campo, criança, povos indígenas e quilombolas, alimentação | "A prefeitura pode fechar sem consultar a gente?" |
 | O que a comunidade pode fazer | pedir informação, participar, recorrer, casos reais | "Como consigo os números da prefeitura?" |
 | Transporte escolar | direito, responsáveis, veículo e motorista | "Quem paga o ônibus escolar?" |
-| Entender a ficha e os números | fontes, como ler | "O que quer dizer escola paralisada?" |
+| Entender a ficha e os números | fontes, como ler, quantas escolas fecharam por estado e município | "Quantas escolas do campo já fecharam aqui em Minas?" |
 
 O problema foi escolhido por um processo explícito, antes de qualquer decisão de tecnologia: ver [`docs/metodologia.md`](docs/metodologia.md).
 
@@ -70,9 +70,11 @@ O problema foi escolhido por um processo explícito, antes de qualquer decisão 
 
 | Arquivo | Conteúdo |
 |---|---|
-| `base_orientacoes.json` | 20 orientações, 4 temas. Cada registro tem `id`, `tema`, `subtema`, `pergunta`, `palavras_chave` (com sinônimos populares: "roça", "van", "merenda"), `orientacao`, `referencia` (título e URL oficial), `data_verificacao`, `confirmar` (o que a pessoa deve confirmar) e `relacionados` |
+| `base_orientacoes.json` | 25 orientações, 4 temas. Cada registro tem `id`, `tema`, `subtema`, `pergunta`, `palavras_chave` (com sinônimos populares: "roça", "van", "merenda"), `orientacao`, `referencia` (título e URL oficial), `data_verificacao`, `confirmar` (o que a pessoa deve confirmar) e `relacionados` |
 | `escolas_campo.json.gz` | Índice nacional de escolas do campo (2,6 MB comprimido), gerado do Censo 2025 por `scripts/gerar_indice_escolas.py` |
 | `perguntas_teste.json` | 20 perguntas de teste com a resposta esperada |
+| `perguntas_cegas.json` | 50 perguntas escritas às cegas por personas simuladas, com o rótulo do juiz |
+| `fechamentos.json` | Escolas públicas rurais ativas, paralisadas e extintas de 2019 a 2025, por UF e município (Censo), gerado por `scripts/gerar_fechamentos.py` |
 
 **Origem das orientações.** Cada norma foi lida no texto oficial (Planalto, MEC/CNE, Senado, Câmara, FNDE, INEP, Prefeitura de Santa Cruz do Sul, Ministério Público de Contas do ES) em 05/11/2026. A conferência registrou correções que mudaram o texto da base: o mínimo de compra da agricultura familiar no PNAE subiu para **45%** em 2026 (a página do FNDE ainda diz 30%); a nucleação dos anos iniciais é permitida em caráter excepcional, dentro do campo; e "paralisada", no Censo, significa atividades **temporariamente suspensas**, sem extinção formal.
 
@@ -238,7 +240,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 **Conclusões.** Um assistente pequeno, só com regras explícitas e uma base conferida, já responde as perguntas que a comunidade faz quando o fechamento é anunciado, com fonte e sem inventar. A avaliação mostrou que os erros vieram da linguagem: radicais que colidem, palavras soltas, nomes próprios. O índice invertido torna viável consultar dezenas de milhares de escolas em menos de um milissegundo, num computador comum.
 
 **Limitações.**
-- A base cobre 20 orientações. Pergunta fora delas recebe "não sei", e o vocabulário de palavras-chave foi escrito pela equipe.
+- A base cobre 25 orientações. Pergunta fora delas recebe "não sei", e o vocabulário de palavras-chave foi escrito pela equipe.
 - O radical de 5 letras é grosseiro e junta palavras diferentes; o bônus de palavra inteira atenua, mas não resolve.
 - As distâncias são piso, de escola a escola. Velocidades de ônibus são parâmetros declarados, sem medição própria.
 - Cerca de 23% das escolas do campo não têm coordenada na base pública do Ipea e ficam sem distância.

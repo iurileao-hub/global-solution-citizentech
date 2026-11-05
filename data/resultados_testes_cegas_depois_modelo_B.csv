@@ -1,0 +1,51 @@
+id,tipo,pergunta,esperado,obtido,classificacao,tempo_ms,fmt_cita_fonte,fmt_data_verificacao,fmt_aviso_nao_oficial,fmt_pede_confirmacao,fmt_oferece_continuidade,fmt_linhas,fmt_palavras_por_frase
+C01,cega,a prefeitura pode fechar a escola do assentamento assim sem perguntar pra gente?,D1/C2,unica:D1 (com aviso de parcial),acerto,0.549,True,True,True,True,True,29,15.2
+C02,cega,quanto tempo meu filho de 5 ano vai ficar no onibus ate a cidade,D3,unica:D3 (com aviso de parcial),acerto,0.334,True,True,True,True,True,29,15.2
+C03,cega,o que eu posso fazer pra escola nao fechar,C2/C1/C4,unica:C2,acerto,0.265,True,True,True,,True,22,12.5
+C04,cega,tem lei que proibe fechar escola do campo?,D1,unica:D1,acerto,0.22,True,True,True,True,True,26,14.5
+C05,cega,"quem decide fechar a escola, o prefeito ou o governo?",D1/C3,unica:D1 (com aviso de parcial),acerto,0.286,True,True,True,True,True,29,15.1
+C06,cega,se fechar quem paga o onibus e tem monitor pra cuidar das criança no onibus?,T2/T3,nenhuma,erro,0.2,False,False,True,,False,7,13.4
+C07,cega,quantos aluno tem na escola do assentamento e quantos precisa pra ela nao fechar,C3,unica:F5,erro,2.123,True,True,True,True,True,31,20.0
+C08,cega,tem que ter reuniao com os pais antes? eles falaram so uma vez,C2/D1,unica:C2 (com aviso de parcial),acerto,0.259,True,True,True,,True,23,13.1
+C09,cega,"onde eu reclamo, no ministerio publico ou na secretaria de educaçao?",C4,unica:C4,acerto,0.191,True,True,True,,True,20,14.2
+C10,cega,outras escola do campo ja fecharam aqui em minas? o que aconteceu com as criança,F5,unica:F5,acerto,3.171,True,True,True,True,True,26,21.4
+C11,cega,a prefeitura pode fechar a escola do quilombo sem perguntar pra gente?,D5/D1,unica:D1 (com aviso de parcial),acerto,0.497,True,True,True,True,True,29,14.9
+C12,cega,o q e consulta previa e a gente tem direito,D5,unica:D5,acerto,0.373,True,True,True,True,True,28,12.4
+C13,cega,comunidade quilombola tem direito a escola propria no territorio?,D5,unica:D5 (com aviso de parcial),acerto,0.459,True,True,True,True,True,33,13.0
+C14,cega,escola quilombola e diferente de escola do campo,D5/D2,unica:D5,acerto,0.723,True,True,True,True,True,28,12.8
+C15,cega,"quem pode ajudar a gente a nao deixar fechar a escola, defensoria? ministerio publico?",C4,unica:C4,acerto,0.212,True,True,True,,True,21,13.8
+C16,cega,"se fechar as crianca vao ter q pegar onibus longe, isso pode?",D3/D4,unica:D3,acerto,0.291,True,True,True,True,True,24,14.8
+C17,cega,como faz pra pedir os documento da prefeitura sobre o fechamento,C1,unica:C1,acerto,0.271,True,True,True,True,True,25,13.0
+C18,cega,tem escola quilombola no vale do ribeira q fechou,nenhuma,nenhuma,acerto,0.138,False,False,True,,False,7,13.4
+C19,cega,a convencao 169 vale pra quilombo?,D5,unica:D5,acerto,0.476,True,True,True,True,True,28,12.4
+C20,cega,o conselho de educacao tem q aprovar antes de fechar,C3/D1,unica:C3,acerto,0.339,True,True,True,True,True,25,16.3
+C21,cega,A Secretaria de Educação pode fechar uma escola rural sem a manifestação do Conselho Municipal de Educação?,D1/C3,unica:C3 (com aviso de parcial),acerto,0.578,True,True,True,True,True,30,16.4
+C22,cega,Quais documentos o Conselho deve exigir da Secretaria antes de opinar sobre o fechamento de uma escola do campo?,D1/C3,unica:C1 (com aviso de parcial),erro_avisado,0.356,True,True,True,True,True,26,13.8
+C23,cega,Existe um modelo de diagnóstico de impacto que a Secretaria deveria apresentar?,D6,unica:D6 (com aviso de parcial),acerto,0.347,True,True,True,True,True,30,14.9
+C24,cega,O Conselho Municipal de Educação pode recusar o pedido de fechamento das escolas?,C3,unica:C3 (com aviso de parcial),acerto,0.432,True,True,True,True,True,29,16.6
+C25,cega,"Uma justificativa de duas páginas, sem nenhum número, é suficiente segundo a lei?",D1/D6,unica:D1 (com aviso de parcial),acerto,0.319,True,True,True,True,True,30,15.1
+C26,cega,Quantos alunos estudam nas escolas rurais de Muniz Freire e quantos seriam afetados pelo fechamento?,nenhuma,nenhuma,acerto,0.175,False,False,True,,False,7,13.4
+C27,cega,Qual é o tempo máximo de transporte escolar aceitável para uma criança da zona rural?,D3,unica:D3 (com aviso de parcial),acerto,0.346,True,True,True,True,True,29,15.1
+C28,cega,A comunidade precisa ser ouvida antes do fechamento? Como deve ser feita essa consulta?,C2/D1,unica:C2,acerto,0.422,True,True,True,,True,22,12.9
+C29,cega,"Como faço para pedir à prefeitura os dados de matrícula, transporte e custo das escolas?",C1,unica:C1 (com aviso de parcial),acerto,0.344,True,True,True,True,True,29,13.6
+C30,cega,"Se a escola for fechada sem cumprir a lei, a quem o Conselho pode recorrer? Ministério Público?",C4,unica:C4,acerto,0.251,True,True,True,,True,21,13.8
+C31,cega,a secretaria pode fechar minha escola sem consultar a comunidade?,D1/C2,unica:C2,acerto,0.4,True,True,True,,True,22,12.9
+C32,cega,quanto tempo as criancas pequenas podem ficar no onibus por lei,D3,unica:D3 (com aviso de parcial),acerto,0.332,True,True,True,True,True,29,15.1
+C33,cega,se a escola fechar os alunos da educacao infantil tambem vao pra cidade?,D3,unica:D3,acerto,0.289,True,True,True,True,True,25,14.8
+C34,cega,o que acontece com a merenda escolar se os alunos forem nucleados,D7,unica:D7,acerto,0.337,True,True,True,True,True,26,14.3
+C35,cega,os alunos com deficiencia tem direito a monitor no transporte escolar?,nenhuma,unica:T1 (com aviso de parcial),erro_avisado,0.254,True,True,True,,True,24,11.9
+C36,cega,"eu sou professora temporaria, perco meu contrato se a escola for fechada?",nenhuma,nenhuma,acerto,0.172,False,False,True,,False,7,13.4
+C37,cega,quantas escolas do campo foram fechadas no DF nos ultimos anos,F5,unica:F5,acerto,1.984,True,True,True,True,True,26,21.4
+C38,cega,como provar que a escola multisseriada tem qualidade igual ou melhor que a urbana,nenhuma,nenhuma,acerto,0.168,False,False,True,,False,7,13.4
+C39,cega,o PPP da escola do campo serve de argumento contra o fechamento?,nenhuma,nenhuma,acerto,0.229,False,False,True,,False,7,13.4
+C40,cega,quem paga o transporte escolar PNATE e o distrito federal recebe?,T3/T2,unica:T3,acerto,0.216,True,True,True,,True,20,16.0
+C41,cega,mano a prefeitura pode fechar minha escola assim do nada,D1,unica:D1 (com aviso de parcial),acerto,0.292,True,True,True,True,True,29,15.2
+C42,cega,os aluno pode fazer alguma coisa pra n fechar a escola,C2/C1/C4,unica:C2,acerto,0.219,True,True,True,,True,22,12.5
+C43,cega,eu tenho 16 anos posso pedir informação pra prefeitura ou tem q ser meus pais,C1,unica:C1 (com aviso de parcial),acerto,0.364,True,True,True,True,True,29,13.9
+C44,cega,e o barco escolar se fechar a escola vai ter barco pra levar a gente pra outra,T1/T3,unica:T1,acerto,0.27,True,True,True,,True,19,10.5
+C45,cega,qnto tempo de viagem eles podem obrigar a gente a fazer pra ir pra escola,nenhuma,nenhuma,acerto,0.166,False,False,True,,False,7,13.4
+C46,cega,quem eu chamo se eles fecharem sem avisar ministerio publico conselho tutelar sei la,C4,unica:C4 (com aviso de parcial),acerto,0.285,True,True,True,,True,24,14.7
+C47,cega,tem q ter reuniao com a comunidade antes de fechar,C2/D1,unica:C2,acerto,0.184,True,True,True,,True,22,12.5
+C48,cega,quantas escola do campo ja fecharam no para,F5,unica:F5,acerto,1.858,True,True,True,True,True,29,21.1
+C49,cega,da pra fazer abaixo assinado isso adianta alguma coisa,C2/D1,unica:C2,acerto,0.18,True,True,True,,True,22,12.5
+C50,cega,kkkk vc é robo,nenhuma,nenhuma,acerto,0.117,False,False,True,,False,7,13.4

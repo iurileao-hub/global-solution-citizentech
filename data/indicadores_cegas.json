@@ -2,43 +2,43 @@
   "A": {
     "indicadores": {
       "perguntas": 50,
-      "acerto": 44,
+      "acerto": 46,
       "parcial": 0,
-      "erro_avisado": 3,
-      "erro": 3,
-      "taxa_acerto": 88.0,
-      "tempo_medio_ms": 0.268,
-      "tempo_max_ms": 0.539
+      "erro_avisado": 2,
+      "erro": 2,
+      "taxa_acerto": 92.0,
+      "tempo_medio_ms": 0.437,
+      "tempo_max_ms": 3.003
     },
     "formato": {
-      "cita_fonte": 40,
-      "data_verificacao": 40,
-      "aviso_nao_oficial": 49,
+      "cita_fonte": 42,
+      "data_verificacao": 42,
+      "aviso_nao_oficial": 50,
       "pede_confirmacao": 0,
       "oferece_continuidade": 0,
-      "linhas": 11.0,
-      "palavras_por_frase": 14.3
+      "linhas": 11.3,
+      "palavras_por_frase": 15.7
     }
   },
   "B": {
     "indicadores": {
       "perguntas": 50,
-      "acerto": 44,
+      "acerto": 46,
       "parcial": 0,
-      "erro_avisado": 3,
-      "erro": 3,
-      "taxa_acerto": 88.0,
-      "tempo_medio_ms": 0.287,
-      "tempo_max_ms": 0.637
+      "erro_avisado": 2,
+      "erro": 2,
+      "taxa_acerto": 92.0,
+      "tempo_medio_ms": 0.465,
+      "tempo_max_ms": 3.171
     },
     "formato": {
-      "cita_fonte": 40,
-      "data_verificacao": 40,
-      "aviso_nao_oficial": 49,
-      "pede_confirmacao": 26,
-      "oferece_continuidade": 40,
-      "linhas": 22,
-      "palavras_por_frase": 13.8
+      "cita_fonte": 42,
+      "data_verificacao": 42,
+      "aviso_nao_oficial": 50,
+      "pede_confirmacao": 28,
+      "oferece_continuidade": 42,
+      "linhas": 22.9,
+      "palavras_por_frase": 14.5
     }
   }
 }

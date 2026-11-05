@@ -67,14 +67,18 @@ def aviso_parcial(fora: list[str]) -> str:
 
 
 def orientacao(base: Base, rid: str, modelo: str = "B", extras: list[str] | None = None,
-               fora: list[str] | None = None) -> str:
+               fora: list[str] | None = None, numeros: str = "") -> str:
+    """`numeros`: bloco calculado de dados (ex.: fechamentos do lugar citado), mostrado antes da fonte."""
     r = base.registros[rid]
     if fora:
-        return aviso_parcial(fora) + "\n\n" + orientacao(base, rid, modelo, extras)
+        return aviso_parcial(fora) + "\n\n" + orientacao(base, rid, modelo, extras, numeros=numeros)
     if modelo == "A":
-        return "\n".join([_par(r["orientacao"]), _par(_fonte(r)), RODAPE])
+        return "\n".join([_par(r["orientacao"])] + ([numeros] if numeros else []) + [_par(_fonte(r)), RODAPE])
     tema = base.temas[r["tema"]]
-    linhas = [f"Assunto: {r['pergunta']}  [{tema['nome']}]", "", _par(r["orientacao"]), "", _par(_fonte(r))]
+    linhas = [f"Assunto: {r['pergunta']}  [{tema['nome']}]", "", _par(r["orientacao"])]
+    if numeros:
+        linhas += ["", numeros]
+    linhas += ["", _par(_fonte(r))]
     if r.get("confirmar"):
         linhas += ["", _par("Confirme: " + r["confirmar"])]
     rel = r.get("relacionados", [])[:3]
