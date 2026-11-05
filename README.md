@@ -265,6 +265,21 @@ OpenStreetMap (Geofabrik)      ──┘
 
 **Rotas.** A malha viária do OpenStreetMap vira um grafo em lista de adjacência (cerca de 2 arestas por nó: uma matriz seria quase toda vazia). O menor caminho sai do algoritmo de Dijkstra com fila de prioridade (`heapq`), com velocidade de ônibus por tipo de via e superfície. As rotas de todas as escolas são **pré-calculadas** por `scripts/precalcular_rotas.py` (retomável, lê cada recorte regional uma vez só) e gravadas no índice, para o assistente responder em milissegundos sem depender de servidor.
 
+**O retrato nacional.** `scripts/gerar_retrato_rotas.py` resume as rotas em `data/retrato_rotas.json`, por Brasil, região, UF e localização diferenciada. Para cada escola conta a receptora mais próxima por estrada que recebe todas as etapas da escola, o mesmo critério da ficha. Os valores são de ida e volta por dia, de escola a escola, e são piso.
+
+| Recorte | Escolas com rota | Mediana por dia | 1 em cada 10 passa de | 50 km ou mais por dia | Receptora urbana |
+|---|---|---|---|---|---|
+| Brasil | 35.917 de 53.759 | 12 km / 21 min | 34 km / 62 min | 1.419 (4%) | 27% |
+| Sudeste | 5.749 de 6.750 | 14 km / 26 min | 35 km / 66 min | 177 (3%) | 45% |
+| Sul | 3.624 de 4.595 | 17 km / 29 min | 35 km / 66 min | 111 (3%) | 51% |
+| Centro-Oeste | 990 de 1.503 | 32 km / 51 min | 85 km / 155 min | 312 (32%) | 47% |
+| Nordeste | 20.272 de 27.483 | 9 km / 18 min | 26 km / 50 min | 375 (2%) | 20% |
+| Norte | 5.282 de 13.427 | 12 km / 24 min | 46 km / 85 min | 444 (8%) | 14% |
+
+No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais por dia da receptora. No Brasil, 721 escolas (88 mil alunos) passariam a ter 2 horas ou mais de ônibus por dia. "Receptora urbana" quer dizer que a escola mais próxima que recebe todas as etapas fica na cidade. Em 16% das escolas com rota, nenhuma das 4 receptoras listadas recebe todas as etapas, e a família pode precisar de mais de uma escola.
+
+As escolas sem rota são de cinco tipos: 12.601 sem coordenada na base do Ipea; 4.282 longe demais da estrada mapeada, quase todas no Amazonas e no Pará, onde o transporte pode ser fluvial; 506 sem ligação na malha; 420 sem matrícula em 2025; 33 sem receptora a até 60 km. A cobertura é menor justamente nas escolas indígenas: só 1.099 das 3.664 têm rota.
+
 **Validação.** Em Muniz Freire (ES), na EMEF Durval Máximo, a área técnica do Tribunal de Contas estimou que os alunos "percorreriam até 52 km por dia" até a receptora indicada (Decisão 02423/2025-2). O nosso cálculo, de escola a escola, dá 25 km por dia, cerca da metade, porque não conhece a casa de cada criança. O resultado confirma o número como piso. Com uma única referência externa, ele vale como ordem de grandeza.
 
 **Tendência de matrícula.** Testado em quase 2 mil escolas rurais (DF, SP, ES), prever a matrícula pela reta dos anos anteriores errou mais do que supor que ela fica igual ao último ano (erro médio de 24,4 contra 17,7 alunos em SP). Por isso a ficha e o assistente descrevem a série e não projetam.
@@ -280,7 +295,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 - O radical de 5 letras é grosseiro e junta palavras diferentes; o bônus de palavra inteira atenua, mas não resolve.
 - As distâncias são piso, de escola a escola. Velocidades de ônibus são parâmetros declarados, sem medição própria.
 - Cerca de 23% das escolas do campo não têm coordenada na base pública do Ipea e ficam sem distância.
-- Escola perto da divisa entre regiões só procura receptoras na malha da própria região.
+- Escola perto da divisa entre regiões só procura receptoras na malha da própria região. Medido em 05/11/2026: em até 174 escolas (0,4% das que têm rota), uma das 4 candidatas mais próximas em linha reta fica em outra região e não entrou na lista, e a receptora real pode estar mais perto que a listada.
 - As normas mudam. Se o PL 3.091/2024 virar lei, ele substitui o parágrafo único do art. 28 da LDB, e a base precisa ser revista.
 
 **Melhorias possíveis.**
@@ -331,7 +346,7 @@ Ver a seção 5. Resumo: `python src/sistema.py`, com Python 3.10 ou mais recent
 
 - Censo Escolar da Educação Básica, INEP (microdados por escola, 2019 a 2025).
 - Escolas geolocalizadas, Ipea (pacote `geobr`, base de 2023).
-- © colaboradores do OpenStreetMap, dados sob licença ODbL (recortes da Geofabrik).
+- © colaboradores do OpenStreetMap, dados sob licença ODbL (recortes da Geofabrik). As distâncias, os tempos e os trechos de estrada de chão do índice e do retrato derivam dessa base e seguem a mesma licença.
 - Normas: textos oficiais conferidos em 05/11/2026; lista completa com URL em cada registro de `data/base_orientacoes.json`.
 
 ---
