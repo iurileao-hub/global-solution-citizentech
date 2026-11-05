@@ -6,9 +6,12 @@ Ordem das regras (condicionais em sequência; a primeira que se aplica decide):
   3. TODAS as palavras do texto estão no nome de alguma escola -> a pessoa está nomeando uma escola:
      se só UMA escola casa ("Durval Máximo"), ela vence sempre; se o nome se repete ("Escola Municipal
      São José"), vence só quando a orientação não cobre a pergunta inteira. A orientação vira sugestão.
-  4. busca nas orientações:
+  4. busca nas orientações (as palavras do LUGAR citado não contam como assunto):
        única    -> responde (+ sugestões)
        ambígua  -> lista as opções empatadas
+     com uma exceção: pergunta que fala de fechar E pede número ("quantas", "está aumentando?") vai para a
+     orientação de números por lugar (F5), e as outras viram sugestão; com lugar citado, ela também
+     desempata e substitui o "não sei"
   5. nada em lugar nenhum -> "sem base suficiente", com os temas disponíveis
 """
 
@@ -21,7 +24,8 @@ from . import respostas
 from .base import Base
 from .busca import IndiceOrientacoes
 from .escolas import IndiceEscolas
-from .texto import normalizar
+from .busca import Resultado
+from .texto import codigo_falado, normalizar, termos
 
 MAX_ESCOLAS_LISTA = 8
 
@@ -60,8 +64,25 @@ def _lugar_desempata(ctx: Contexto, r, texto: str):
     if not fech_mod.achar_lugar(ctx.fechamentos, texto):
         return r
     outros = [x for x in sorted(r.pontuacoes, key=lambda x: -r.pontuacoes[x]) if x != alvo][:2]
-    r.tipo, r.ids, r.sugestoes, r.fora = "unica", [alvo], outros, []
+    lugar = frozenset(fech_mod.palavras_do_lugar(ctx.fechamentos, texto))
+    r.tipo, r.ids, r.sugestoes, r.fora = "unica", [alvo], outros, ctx.indice.fora_de(texto, alvo, lugar)
     return r
+
+
+def _pede_fechamentos(ctx: Contexto, r, texto: str, lugar: frozenset[str] = frozenset()):
+    """"quantas escolas fecharam no Piauí?", "está aumentando?": é pergunta de contagem, e só F5 conta."""
+    if not ctx.fechamentos or "fecha" not in termos(texto):
+        return r
+    alvo = next((rid for rid, reg in ctx.base.registros.items() if reg.get("dados") == "fechamentos"), None)
+    if not alvo or (r.tipo == "unica" and r.ids == [alvo]):
+        return r
+    com_lugar = fech_mod.achar_lugar(ctx.fechamentos, texto) is not None
+    if not (fech_mod.pede_numero(texto) or (com_lugar and r.tipo == "nenhuma")):
+        return r
+    outros = [x for x in sorted(r.pontuacoes, key=lambda x: -r.pontuacoes[x]) if x != alvo][:2]
+    # o que a contagem NÃO responde continua avisado ("quantos ALUNOS": F5 conta escolas, não alunos)
+    return Resultado("unica", ids=[alvo], sugestoes=outros, pontuacoes=r.pontuacoes, cobertura=1.0,
+                     fora=ctx.indice.fora_de(texto, alvo, lugar))
 
 
 def _numeros(ctx: Contexto, rid: str, texto: str) -> str:
@@ -78,7 +99,7 @@ def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
         return Resposta("vazia", respostas._par("Você não digitou nada. Escreva uma pergunta, um código como D1, "
                                                 "ou o nome da escola."))
 
-    codigo = bruto.replace(" ", "").upper()
+    codigo = codigo_falado(bruto) or bruto.replace(" ", "").upper()     # "ce um" = "C1"
     if codigo in base.registros:
         return Resposta("codigo", respostas.orientacao(base, codigo, modelo, numeros=_numeros(ctx, codigo, "")),
                         [codigo])
@@ -88,27 +109,28 @@ def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
                                                 "INEP de uma escola, ou escreva sua pergunta. (No menu, as opções "
                                                 "vão de 0 a 4.)"))
 
-    r = ctx.indice.buscar(texto)
+    lugar = frozenset(fech_mod.palavras_do_lugar(ctx.fechamentos, texto)) if ctx.fechamentos else frozenset()
+    r = ctx.indice.buscar(texto, lugar)
     achado = ctx.escolas.buscar(texto) if ctx.escolas else {"tipo": "nenhuma"}
     # Escola identificada sem dúvida (um só nome casa) vence sempre; nome repetido só vence se a orientação
-    # não cobrir a pergunta inteira ("quilombo" sozinho: 10 escolas, mas é pergunta sobre D5).
-    if achado["tipo"] in ("unica", "codigo") or (achado["tipo"] == "ambigua" and r.cobertura < 1.0):
+    # não cobrir a pergunta inteira ("quilombo" sozinho: 10 escolas, mas é pergunta sobre D5). Aqui a
+    # cobertura é medida COM as palavras de lugar: em "Escola Municipal São José", "São José" é nome de
+    # escola, e sem ele sobrava só "municipal", que casava inteiro com a orientação de números por lugar.
+    cob_nome = ctx.indice.buscar(texto).cobertura if lugar else r.cobertura
+    if achado["tipo"] in ("unica", "codigo") or (achado["tipo"] == "ambigua" and cob_nome < 1.0):
         extras = r.ids if r.tipo == "unica" and modelo == "B" else []
         if achado["tipo"] == "ambigua":
             return lista_escolas(achado)
         resp = escola(ctx, achado["escolas"][0], modelo, extras)
         return resp
-    r = _lugar_desempata(ctx, r, texto)
+    r = _pede_fechamentos(ctx, _lugar_desempata(ctx, r, texto), texto, lugar)
     if r.tipo == "vazia":
         return Resposta("vazia", respostas._par("Não entendi a pergunta: ela só tem palavras muito comuns. Tente com "
                                                 "outras palavras."))
     if r.tipo == "unica":
         ja = set(base.registros[r.ids[0]].get("relacionados", [])[:3])
         extras = [x for x in r.sugestoes if x not in ja] if modelo == "B" else []
-        fora = [] if _numeros(ctx, r.ids[0], texto) and r.fora else r.fora   # o lugar citado É o assunto
-        if fora and ctx.fechamentos and base.registros[r.ids[0]].get("dados") == "fechamentos":
-            lugar = fech_mod.achar_lugar(ctx.fechamentos, texto)
-            fora = [] if lugar else fora
+        fora = r.fora                     # as palavras do lugar já saíram da conta na busca
         return Resposta("unica", respostas.orientacao(base, r.ids[0], modelo, extras, fora,
                                                       _numeros(ctx, r.ids[0], texto)), r.ids, parcial=bool(fora))
     if r.tipo == "ambigua":
@@ -125,11 +147,30 @@ def escola(ctx: Contexto, e: dict, modelo: str = "B", extras: list[str] | None =
                     escolas=[e["c"]])
 
 
+def _amostra(es: list[dict], n: int) -> list[dict]:
+    """Uma escola de cada UF por vez, da UF com mais escolas para a com menos. A lista em ordem alfabética
+    mostrava só escolas do Acre para "Escola Municipal São José" (546 achadas): não ajudava ninguém."""
+    por_uf: dict[str, list[dict]] = {}
+    for e in es:
+        por_uf.setdefault(e["uf"], []).append(e)
+    filas = sorted(por_uf.values(), key=len, reverse=True)
+    saida: list[dict] = []
+    while len(saida) < n and any(filas):
+        for f in filas:
+            if f and len(saida) < n:
+                saida.append(f.pop(0))
+    return saida
+
+
 def lista_escolas(achado: dict, ja_filtrado: bool = False) -> Resposta:
     es = achado["escolas"]
     pedido = "" if ja_filtrado else ". Para escolher, informe o município e a UF"
-    linhas = [respostas._par(f"Encontrei {achado['total']} escolas com essas palavras no nome{pedido}"
-                             + (" (algumas delas):" if len(es) > MAX_ESCOLAS_LISTA else ":"))]
-    linhas += [f"  {e['c']}  {e['n']}, {e['m']}/{e['uf']}" for e in es[:MAX_ESCOLAS_LISTA]]
+    mostra = _amostra(es, MAX_ESCOLAS_LISTA) if len(es) > MAX_ESCOLAS_LISTA else es
+    n_ufs = len({e["uf"] for e in es})
+    onde = f", em {n_ufs} UFs" if n_ufs > 1 and len(es) > MAX_ESCOLAS_LISTA else ""
+    linhas = [respostas._par(f"Encontrei {achado['total']} escolas com essas palavras no nome{onde}{pedido}"
+                             + (f". Algumas delas ({len(mostra)} de {achado['total']}):" if len(es) > len(mostra)
+                                else ":"))]
+    linhas += [f"  {e['c']}  {e['n']}, {e['m']}/{e['uf']}" for e in mostra]
     linhas.append("Ou digite o código INEP (o número da esquerda).")
     return Resposta("escola_ambigua", "\n".join(linhas), escolas=[e["c"] for e in es])

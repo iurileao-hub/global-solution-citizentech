@@ -11,6 +11,7 @@ Não pede nem guarda nenhum dado pessoal.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -23,6 +24,7 @@ from assistente import escolas as escolas_mod    # noqa: E402
 from assistente import fechamentos as fech_mod   # noqa: E402
 from assistente import respostas                 # noqa: E402
 from assistente.nucleo import Contexto, escola, lista_escolas, montar, responder  # noqa: E402
+from assistente.texto import NUMEROS, normalizar  # noqa: E402
 
 ARQ_BASE = RAIZ / "data" / "base_orientacoes.json"
 ARQ_ESCOLAS = RAIZ / "data" / "escolas_campo.json.gz"
@@ -43,6 +45,25 @@ def ler(rotulo: str) -> str:
     except EOFError:            # entrada fechada (ex.: Ctrl+D): sair sem erro
         print()
         raise SystemExit(0)
+
+
+def opcao(texto: str) -> str:
+    """O que a pessoa quis no menu. Aceita o algarismo, o número por extenso ("dois", como o ditado do
+    celular escreve) e frases ("quero fazer uma pergunta"). Uma frase que não é pedido de opção vira
+    PERGUNTA (devolve "?"): na 3ª rodada, quem tinha pressa escrevia a pergunta direto no menu."""
+    t = normalizar(texto)
+    palavras = t.split()
+    if len(palavras) == 1 and palavras[0] in NUMEROS:
+        return str(NUMEROS[palavras[0]])
+    if not t or t.isdigit():
+        return t
+    if "sair" in palavras or "tchau" in palavras:
+        return "0"
+    if len(palavras) <= 8 and any(p.startswith("pergunt") for p in palavras):
+        return "2"
+    if len(palavras) <= 4 and any(p.startswith("assunto") for p in palavras):
+        return "1"
+    return "?" if len(palavras) >= 2 else texto
 
 
 def continuar(ctx: Contexto, modelo: str, ultimo: str = "") -> None:
@@ -68,7 +89,7 @@ def por_assunto(ctx: Contexto, modelo: str) -> None:
     print()
     for i, t in enumerate(temas, 1):
         print(f"  {i}  {base.temas[t]['nome']}: {base.temas[t].get('descricao', '')}")
-    op = ler("Número do assunto (Enter volta): ")
+    op = opcao(ler("Número do assunto (Enter volta): "))
     if not op:
         return
     if not op.isdigit() or not 1 <= int(op) <= len(temas):
@@ -89,6 +110,15 @@ def por_assunto(ctx: Contexto, modelo: str) -> None:
     continuar(ctx, modelo, "  [")
 
 
+def municipio_e_uf(texto: str) -> tuple[str, str]:
+    """"Carlos Chagas MG", "Carlos Chagas/MG", "Carlos Chagas - MG" -> ("Carlos Chagas", "MG").
+    Duas personas da 3ª rodada escreveram a UF junto do município, e a busca não achava nada."""
+    m = re.match(r"^(.*?\S)[\s/,-]+([A-Za-z]{2})$", texto.strip())
+    if m and m.group(2).lower() in escolas_mod.UFS:
+        return m.group(1).strip(), m.group(2).upper()
+    return texto.strip(), ""
+
+
 def escolher_escola(ctx: Contexto, modelo: str, candidatas: list[dict]) -> str:
     """Desempata nomes repetidos. Devolve o texto mostrado (para o convite seguinte saber se houve códigos)."""
     mun = ler("Município ou código INEP (Enter para pular): ")
@@ -97,9 +127,11 @@ def escolher_escola(ctx: Contexto, modelo: str, candidatas: list[dict]) -> str:
         texto = escola(ctx, e, modelo).texto if e else f"Não há escola com o código {mun} nesta lista."
         print("\n" + texto)
         return texto
-    uf = ler("UF, ex.: ES (Enter para pular): ")
-    if not mun and not uf:
+    if not mun:                             # Enter: volta logo, sem pedir a UF à toa
         return ""
+    mun, uf = municipio_e_uf(mun)
+    if not uf:
+        uf = ler("UF, ex.: ES (Enter para pular): ")
     filtradas = escolas_mod.filtrar(candidatas, municipio=mun, uf=uf)
     achado = {"escolas": filtradas, "total": len(filtradas)}
     if achado["total"] == 1:
@@ -107,7 +139,9 @@ def escolher_escola(ctx: Contexto, modelo: str, candidatas: list[dict]) -> str:
     elif achado["total"] > 1:
         texto = lista_escolas(achado, ja_filtrado=True).texto
     else:
-        texto = "Nenhuma das escolas com essas palavras no nome fica nesse município/UF."
+        lugar = mun + (f"/{uf.upper()}" if uf else "")
+        texto = respostas._par(f"Nenhuma das escolas com essas palavras no nome fica em \"{lugar}\". Confira o "
+                               "nome do município, ou digite o código INEP da escola.")
     print("\n" + texto)
     return texto
 
@@ -194,14 +228,17 @@ def main(argv: list[str] | None = None) -> int:
     try:
         while True:
             print(MENU)
-            op = ler("Opção: ")
+            bruto = ler("Opção: ")
+            op = opcao(bruto)
+            if op == "?":                   # frase no menu: tratar como pergunta, e dizer isso
+                print("(Entendi como uma pergunta.)")
             if op == "0":
                 print("Até logo.")
                 return 0
             if op in acoes:
                 acoes[op](ctx, args.modelo)
-            elif op == "2":
-                r = responder(ctx, ler("Sua pergunta: "), args.modelo)
+            elif op in ("2", "?"):
+                r = responder(ctx, bruto if op == "?" else ler("Sua pergunta: "), args.modelo)
                 print("\n" + r.texto)
                 ultimo = r.texto
                 if r.tipo == "escola_ambigua":

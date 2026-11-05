@@ -7,8 +7,8 @@
       "erro_avisado": 0,
       "erro": 0,
       "taxa_acerto": 100.0,
-      "tempo_medio_ms": 0.293,
-      "tempo_max_ms": 1.001
+      "tempo_medio_ms": 1.298,
+      "tempo_max_ms": 2.396
     },
     "formato": {
       "cita_fonte": 15,
@@ -16,8 +16,8 @@
       "aviso_nao_oficial": 17,
       "pede_confirmacao": 0,
       "oferece_continuidade": 0,
-      "linhas": 9.5,
-      "palavras_por_frase": 15.4
+      "linhas": 9.6,
+      "palavras_por_frase": 15.1
     }
   },
   "B": {
@@ -28,8 +28,8 @@
       "erro_avisado": 0,
       "erro": 0,
       "taxa_acerto": 100.0,
-      "tempo_medio_ms": 0.307,
-      "tempo_max_ms": 1.007
+      "tempo_medio_ms": 1.367,
+      "tempo_max_ms": 2.518
     },
     "formato": {
       "cita_fonte": 15,
@@ -37,8 +37,8 @@
       "aviso_nao_oficial": 17,
       "pede_confirmacao": 10,
       "oferece_continuidade": 15,
-      "linhas": 18.9,
-      "palavras_por_frase": 14.7
+      "linhas": 19.9,
+      "palavras_por_frase": 14.3
     }
   },
   "busca_escolas": [
@@ -46,36 +46,36 @@
       "consulta": "Durval Maximo",
       "encontradas": 1,
       "mesmo_resultado": true,
-      "linear_ms": 165.677,
-      "indice_ms": 0.006
+      "linear_ms": 177.15,
+      "indice_ms": 0.007
     },
     {
       "consulta": "Escola Municipal Sao Jose",
       "encontradas": 546,
       "mesmo_resultado": true,
-      "linear_ms": 165.677,
-      "indice_ms": 0.647
+      "linear_ms": 176.853,
+      "indice_ms": 0.667
     },
     {
       "consulta": "Santo Antonio",
       "encontradas": 396,
       "mesmo_resultado": true,
-      "linear_ms": 165.15,
-      "indice_ms": 0.342
+      "linear_ms": 179.957,
+      "indice_ms": 0.348
     },
     {
       "consulta": "Rui Barbosa",
       "encontradas": 184,
       "mesmo_resultado": true,
-      "linear_ms": 166.054,
-      "indice_ms": 0.113
+      "linear_ms": 176.438,
+      "indice_ms": 0.115
     },
     {
       "consulta": "Quilombo",
       "encontradas": 10,
       "mesmo_resultado": true,
-      "linear_ms": 166.722,
-      "indice_ms": 0.008
+      "linear_ms": 177.923,
+      "indice_ms": 0.009
     }
   ]
 }

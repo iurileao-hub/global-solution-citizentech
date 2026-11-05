@@ -75,9 +75,12 @@ def main() -> None:
     for lugar, por_ano in extintas.items():
         lugares[lugar]["extintas_2019_2025"] += sum(por_ano.values())
 
-    def resumo(cont: Counter) -> dict:
-        return {k: int(cont.get(k, 0)) for k in
-                ("ativas_2025", "paralisadas_2025", "paralisadas_5_anos_ou_mais", "extintas_2019_2025")}
+    def resumo(cont: Counter, por_ano: Counter | None = None) -> dict:
+        d = {k: int(cont.get(k, 0)) for k in
+             ("ativas_2025", "paralisadas_2025", "paralisadas_5_anos_ou_mais", "extintas_2019_2025")}
+        if por_ano is not None:   # série das extinções (pedido do teste: "está aumentando?"), sem os anos zerados
+            d["extintas_por_ano"] = {str(a): int(por_ano[a]) for a in ANOS if por_ano.get(a)}
+        return d
 
     por_uf: dict[str, Counter] = defaultdict(Counter)
     for (uf, _), cont in lugares.items():
@@ -86,8 +89,10 @@ def main() -> None:
     for cont in por_uf.values():
         brasil.update(cont)
     extintas_por_ano = Counter()
-    for por_ano in extintas.values():
+    extintas_uf: dict[str, Counter] = defaultdict(Counter)
+    for (uf, _), por_ano in extintas.items():
         extintas_por_ano.update(por_ano)
+        extintas_uf[uf].update(por_ano)
 
     doc = {
         "esquema": 1,
@@ -96,9 +101,10 @@ def main() -> None:
         "criterio": ("escolas públicas com localização rural no ano do Censo, fora de unidade prisional ou "
                      "socioeducativa; extinta = situação 3 no ano (contada uma vez, no ano da extinção); "
                      "paralisada = situação 2 em 2025 (atividades temporariamente suspensas, sem extinção formal)"),
-        "brasil": {**resumo(brasil), "extintas_por_ano": {str(a): int(extintas_por_ano[a]) for a in ANOS}},
-        "uf": {uf: resumo(c) for uf, c in sorted(por_uf.items())},
-        "municipio": {f"{mun}/{uf}": resumo(c) for (uf, mun), c in sorted(lugares.items(), key=lambda kv: (kv[0][0], kv[0][1]))},
+        "brasil": resumo(brasil, extintas_por_ano),
+        "uf": {uf: resumo(c, extintas_uf[uf]) for uf, c in sorted(por_uf.items())},
+        "municipio": {f"{mun}/{uf}": resumo(c, extintas.get((uf, mun), Counter()))
+                      for (uf, mun), c in sorted(lugares.items(), key=lambda kv: (kv[0][0], kv[0][1]))},
     }
     SAIDA.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     print("Brasil:", doc["brasil"], "|", len(doc["municipio"]), "municípios |", f"{SAIDA.stat().st_size / 1e3:.0f} KB")

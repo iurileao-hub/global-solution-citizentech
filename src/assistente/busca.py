@@ -9,10 +9,16 @@ peso em que esse termo aparece no registro:
     palavras-chave = 3   (vocabulário escolhido de propósito, inclusive sinônimos populares)
     pergunta modelo = 2
     nome do subtema = 1
+    título da norma citada = 1  (a 3ª rodada perguntou pela "Resolução CNE/CEB 2/2008" e pelo "Decreto
+                                 7.352/2010", que a base cita como fonte sem repetir no texto)
   + BONUS_EXATA por palavra que casa INTEIRA (não só pelo radical): "quilombola" casa inteira com
     a orientação sobre escolas quilombolas e só pelo radical com a que fala de "quilômetros".
 Termos que aparecem em mais da metade dos registros ("escol", por exemplo) não distinguem nada e
-são ignorados.
+são ignorados. Termos NEUTROS ("fechar", "campo", "rural") são o tema da base inteira: nunca aparecem no
+aviso de cobertura (na 3ª rodada, o aviso dizia que a resposta "não trata de 'fechar'"), mas continuam
+na CONTA da cobertura. Tirá-los da conta foi testado e piorou: subiu o acerto nas perguntas novas (+1) e
+derrubou o das antigas (-4), porque perguntas fora da base passaram a receber resposta tangencial.
+As palavras do LUGAR citado ("Piauí") não contam em nada: dizem onde, não o assunto.
 
 COBERTURA de um registro = fração dos termos da pergunta que ele casou. Três faixas:
     >= COBERTURA_PLENA                  -> resposta normal;
@@ -43,9 +49,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from .base import Base
-from .texto import palavras, radical, termos
+from .texto import grafia, originais, palavras, radical, termos
 
-PESOS = {"palavras_chave": 3, "pergunta": 2, "subtema": 1}
+PESOS = {"palavras_chave": 3, "pergunta": 2, "subtema": 1, "referencia": 1}
+NEUTROS = frozenset({"fecha", "campo", "rural", "escol"})
 LIMIAR_MINIMO = 3          # equivale a casar ao menos uma palavra-chave
 BONUS_EXATA = 1
 COBERTURA_MINIMA = 0.34    # abaixo disso: "não sei"
@@ -73,7 +80,8 @@ class IndiceOrientacoes:
         self.termos_de: dict[str, set[str]] = {}      # id_registro -> termos que ele tem
         for rid, r in base.registros.items():
             subtema = base.temas[r["tema"]]["subtemas"][r["subtema"]]
-            fontes = {"palavras_chave": " ".join(r["palavras_chave"]), "pergunta": r["pergunta"], "subtema": subtema}
+            fontes = {"palavras_chave": " ".join(r["palavras_chave"]), "pergunta": r["pergunta"], "subtema": subtema,
+                      "referencia": r["referencia"]["titulo"]}
             for campo, texto in fontes.items():
                 for pal in palavras(texto):
                     t = radical(pal)
@@ -84,31 +92,39 @@ class IndiceOrientacoes:
         limite = FRACAO_COMUM * len(base.registros)
         self.comuns = {t for t, regs in self.indice.items() if len(regs) > limite}
 
-    def termos_uteis(self, pergunta: str) -> set[str]:
-        return set(termos(pergunta)) - self.comuns
+    def termos_uteis(self, pergunta: str, ignorar: frozenset[str] = frozenset()) -> set[str]:
+        """`ignorar`: palavras inteiras (normalizadas) que não contam, como o nome do lugar citado."""
+        ign = {radical(grafia(p)) for p in ignorar}
+        return set(termos(pergunta)) - self.comuns - ign
 
-    def pontuar(self, pergunta: str) -> dict[str, tuple[int, int]]:
+    def cobertura(self, rid: str, uteis: set[str], casados: int) -> float:
+        """Fração dos termos úteis que o registro casou."""
+        return casados / max(len(uteis), 1)
+
+    def pontuar(self, pergunta: str, ignorar: frozenset[str] = frozenset()) -> dict[str, tuple[int, int]]:
         """id -> (pontuação, nº de termos casados)."""
         placar: dict[str, list[int]] = {}
-        for t in self.termos_uteis(pergunta):
+        uteis = self.termos_uteis(pergunta, ignorar)
+        for t in uteis:
             for rid, peso in self.indice.get(t, {}).items():
                 p = placar.setdefault(rid, [0, 0])
                 p[0] += peso
                 p[1] += 1
         for pal in set(palavras(pergunta)):
-            if radical(pal) in self.comuns:
+            if radical(pal) not in uteis:
                 continue
             for rid in self.exatas.get(pal, ()):
                 placar[rid][0] += BONUS_EXATA
         return {rid: (p[0], p[1]) for rid, p in placar.items()}
 
-    def buscar(self, pergunta: str) -> Resultado:
+    def buscar(self, pergunta: str, ignorar: frozenset[str] = frozenset()) -> Resultado:
         if not termos(pergunta):
             return Resultado("vazia")
-        n_termos = len(self.termos_uteis(pergunta)) or 1
-        todos = self.pontuar(pergunta)
+        uteis = self.termos_uteis(pergunta, ignorar)
+        todos = self.pontuar(pergunta, ignorar)
+        cob_de = {rid: self.cobertura(rid, uteis, v[1]) for rid, v in todos.items()}
         # a cobertura mínima vale para QUEM RESPONDE; as sugestões só precisam do limiar de pontuação
-        placar = {rid: v for rid, v in todos.items() if v[1] / n_termos >= COBERTURA_MINIMA}
+        placar = {rid: v for rid, v in todos.items() if cob_de[rid] >= COBERTURA_MINIMA}
         if not placar:
             return Resultado("nenhuma")
         ordenados = sorted(placar, key=lambda rid: (-placar[rid][0], -placar[rid][1], self.ordem[rid]))
@@ -116,23 +132,24 @@ class IndiceOrientacoes:
         topo = pont[ordenados[0]]
         if topo < LIMIAR_MINIMO:
             return Resultado("nenhuma", pontuacoes=pont)
-        cob = placar[ordenados[0]][1] / n_termos
+        cob = cob_de[ordenados[0]]
         empatados = [rid for rid in ordenados if pont[rid] == topo]
         subtemas = {(self.base.registros[r]["tema"], self.base.registros[r]["subtema"]) for r in empatados}
         if len(empatados) > 1 and len(subtemas) > 1:
             return Resultado("ambigua", ids=empatados, pontuacoes=pont, cobertura=cob)
         outros = sorted((r for r in todos if r != ordenados[0] and todos[r][0] >= LIMIAR_MINIMO),
                         key=lambda r: (-todos[r][0], -todos[r][1], self.ordem[r]))
-        fora = self.fora_de(pergunta, ordenados[0]) if cob < COBERTURA_PLENA else []
+        fora = self.fora_de(pergunta, ordenados[0], ignorar) if cob < COBERTURA_PLENA else []
         return Resultado("unica", ids=[ordenados[0]], sugestoes=outros[:MAX_SUGESTOES], pontuacoes=pont,
                          cobertura=cob, fora=fora)
 
-    def fora_de(self, pergunta: str, rid: str) -> list[str]:
+    def fora_de(self, pergunta: str, rid: str, ignorar: frozenset[str] = frozenset()) -> list[str]:
         """Palavras da pergunta (como a pessoa escreveu, sem repetir) que o registro não cobre."""
         tem = self.termos_de.get(rid, set())
+        uteis = self.termos_uteis(pergunta, ignorar) - NEUTROS
         vistas: list[str] = []
-        for pal in palavras(pergunta):
-            t = radical(pal)
-            if t not in tem and t not in self.comuns and pal not in vistas:
+        for pal in originais(pergunta):
+            t = radical(grafia(pal))
+            if t in uteis and t not in tem and pal not in vistas:
                 vistas.append(pal)
         return vistas

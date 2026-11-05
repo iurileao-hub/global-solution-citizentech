@@ -11,6 +11,13 @@ O radical é um corte grosseiro, escolhido por ser simples e explicável. Ele ju
 mesma família (bom) e às vezes junta palavras diferentes que começam igual: "quilombola" e
 "quilômetros" -> "quilo"; "particular" e "participar" -> "parti" (achado no primeiro teste).
 Por isso a busca dá um BÔNUS à palavra exata: o radical acha a família, a palavra inteira desempata.
+
+Dois ajustes vieram da 3ª rodada de teste (uma persona dita as perguntas no celular):
+  - GRAFIA: "x" vira "ch" antes do radical, nos DOIS lados (base e pergunta). O ditado escreve "fexar",
+    e "fexar" e "fechar" passam a ser a mesma palavra. Como a troca vale para a base também, ela não
+    cria erro novo: "exige" vira "echige" na base e na pergunta, e as duas continuam iguais.
+  - SIGLA FALADA: "elê dê bê" vira "ldb". Só as siglas do tema, numa lista fechada: juntar qualquer
+    sequência de letras faria "o que é que a" virar sigla.
 """
 
 from __future__ import annotations
@@ -29,7 +36,40 @@ me te lhe nos vos ao aos à às la le lo ai entao tambem so ate apos antes depoi
 pode podem gente mesmo coisa alguma algum algo quero queria saber sei dizer diz quer
 posso podemos poder precisa precisam preciso deve devem devia feita feito acontece acontecer aconteceu
 forem for fosse outra outro outras outros vao tinha adianta ne oi ola bom dia boa tarde noite
+obrigada obrigado obg viu ta to favor gostaria ainda tipo exemplo algumas alguns alguem cada todo toda
+todos todas foram existe existem desde querer pergunta
 """.split())
+
+# sigla do tema dita letra a letra (o reconhecimento de voz escreve "elê dê bê")
+SIGLAS_FALADAS = {
+    "ele de be": "ldb", "e ce a": "eca", "ce ene e": "cne", "eme e ce": "mec", "eme pe efe": "mpf",
+    "eme pe": "mp", "esse i ce": "sic", "ele a i": "lai", "efe ene de e": "fnde", "pe ene a e": "pnae",
+    "i ene e pe": "inep", "pe ele": "pl",
+}
+# número por extenso (menu e código falado: "dois", "ce um")
+NUMEROS = {"zero": 0, "um": 1, "uma": 1, "dois": 2, "duas": 2, "tres": 3, "quatro": 4, "cinco": 5,
+           "seis": 6, "sete": 7, "oito": 8, "nove": 9}
+LETRA_DE_CODIGO = {"de": "D", "d": "D", "ce": "C", "c": "C", "te": "T", "t": "T", "efe": "F", "f": "F"}
+
+
+def codigo_falado(texto: str) -> str | None:
+    """"ce um" -> "C1"; "dê quatro" -> "D4". Só quando o texto é exatamente letra + número."""
+    partes = normalizar(texto).split()
+    if len(partes) != 2 or partes[0] not in LETRA_DE_CODIGO:
+        return None
+    num = partes[1] if partes[1].isdigit() else str(NUMEROS.get(partes[1], ""))
+    return LETRA_DE_CODIGO[partes[0]] + num if num else None
+
+
+def grafia(p: str) -> str:
+    return p.replace("x", "ch")
+
+
+def _siglas(t: str) -> str:
+    t = f" {t} "
+    for falada, sigla in sorted(SIGLAS_FALADAS.items(), key=lambda kv: -len(kv[0])):
+        t = t.replace(f" {falada} ", f" {sigla} ")
+    return t.strip()
 
 
 def normalizar(texto: str) -> str:
@@ -43,8 +83,14 @@ def radical(palavra: str) -> str:
 
 
 def palavras(texto: str) -> list[str]:
-    """Palavras inteiras que importam (sem radical): servem para premiar o casamento EXATO."""
-    return [p for p in normalizar(texto).split() if _conta(p)]
+    """Palavras inteiras que importam (sem radical, já com a grafia unificada): servem para premiar o
+    casamento EXATO."""
+    return [grafia(p) for p in originais(texto)]
+
+
+def originais(texto: str) -> list[str]:
+    """As mesmas palavras, como a pessoa escreveu (sem acento): é o que se MOSTRA a ela."""
+    return [p for p in _siglas(normalizar(texto)).split() if _conta(p)]
 
 
 def _conta(p: str) -> bool:

@@ -1,5 +1,5 @@
 {
- "descricao": "50 perguntas escritas por 5 personas SIMULADAS (agentes) sem ver a base; rótulo esperado definido por um juiz que leu a base mas não viu as respostas do assistente.",
+ "descricao": "50 perguntas escritas por 5 personas SIMULADAS (agentes) sem ver a base; rótulo esperado definido por um juiz que leu a base mas não viu as respostas do assistente. Em 05/11 um segundo juiz, também cego às respostas, rerrotulou as 50 contra a base atual (25 registros); 13 rótulos mudaram, e cada pergunta mudada guarda o rótulo original em 'rotulo_original'.",
  "perguntas": [
   {
    "id": "C01",
@@ -53,24 +53,30 @@
    "persona": "mae-agricultora",
    "tipo": "cega",
    "pergunta": "quem decide fechar a escola, o prefeito ou o governo?",
+   "parcial_na_base": false,
+   "justificativa": "C6 diz quem: a Secretaria decide, mas tem de ouvir o Conselho municipal (escola do município) ou estadual (escola do estado); D1/C3 dão o rito.",
+   "rotulo_original": "D1/C3",
    "esperado": [
+    "C6",
     "D1",
     "C3"
    ],
-   "parcial_na_base": false,
-   "justificativa": "D1/C3: a Secretaria justifica e o Conselho de Educação (municipal ou estadual, conforme a rede) precisa se manifestar."
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): D1/C3 -> C6/D1/C3. registro novo: C6 responde 'prefeito ou governo' explicitamente pela rede da escola"
   },
   {
    "id": "C06",
    "persona": "mae-agricultora",
    "tipo": "cega",
    "pergunta": "se fechar quem paga o onibus e tem monitor pra cuidar das criança no onibus?",
+   "parcial_na_base": true,
+   "justificativa": "T2/T3: quem paga o ônibus; T6 é o único registro que fala de monitor (não obrigatório pela lei nacional, depende da regra local), mas no contexto de aluno com deficiência.",
+   "rotulo_original": "T2/T3",
    "esperado": [
     "T2",
-    "T3"
+    "T3",
+    "T6"
    ],
-   "parcial_na_base": true,
-   "justificativa": "Quem paga o ônibus: T2/T3; monitor no ônibus não está na base (T4 cobre só veículo e motorista)."
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): T2/T3 -> T2/T3/T6. registro novo: T6 traz a regra do monitor; parcial porque está enquadrada em aluno com deficiência"
   },
   {
    "id": "C07",
@@ -203,9 +209,13 @@
    "persona": "avo-quilombola",
    "tipo": "cega",
    "pergunta": "tem escola quilombola no vale do ribeira q fechou",
-   "esperado_tipo": "nenhuma",
-   "parcial_na_base": false,
-   "justificativa": "Pedido de dado sobre fechamentos no Vale do Ribeira; a base não tem estatística regional."
+   "parcial_na_base": true,
+   "justificativa": "F5 é o melhor caminho: números de escolas rurais fechadas por município (os do Vale do Ribeira um a um), mas não separa quilombolas nem agrega a região.",
+   "rotulo_original": "nenhuma",
+   "esperado": [
+    "F5"
+   ],
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): nenhuma -> F5. registro novo: F5 dá fechamentos por município; parcial e limítrofe (não é recorte quilombola nem regional)"
   },
   {
    "id": "C19",
@@ -223,36 +233,45 @@
    "persona": "avo-quilombola",
    "tipo": "cega",
    "pergunta": "o conselho de educacao tem q aprovar antes de fechar",
-   "esperado": [
-    "C3",
-    "D1"
-   ],
    "parcial_na_base": false,
-   "justificativa": "C3/D1: o Conselho precisa se manifestar antes (a lei diz manifestar, não aprovar)."
+   "justificativa": "C6 responde 'aprovar': o Conselho tem de ser ouvido e pode se manifestar contra; se o parecer contrário impede depende da regra local (PR exige parecer favorável).",
+   "rotulo_original": "C3/D1",
+   "esperado": [
+    "C6",
+    "D1",
+    "C3"
+   ],
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): C3/D1 -> C6/D1/C3. registro novo: C6 trata exatamente de aprovar/parecer vinculante"
   },
   {
    "id": "C21",
    "persona": "conselheira",
    "tipo": "cega",
    "pergunta": "A Secretaria de Educação pode fechar uma escola rural sem a manifestação do Conselho Municipal de Educação?",
+   "parcial_na_base": false,
+   "justificativa": "D1/C6: a LDB exige a manifestação do Conselho antes; fechar sem ela contraria a lei.",
+   "rotulo_original": "D1/C3",
    "esperado": [
     "D1",
+    "C6",
     "C3"
    ],
-   "parcial_na_base": false,
-   "justificativa": "D1/C3: a manifestação do órgão normativo é exigida pela LDB."
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): D1/C3 -> D1/C6/C3. registro novo: C6 acrescentado: Secretaria tem de ouvir o Conselho da rede"
   },
   {
    "id": "C22",
    "persona": "conselheira",
    "tipo": "cega",
    "pergunta": "Quais documentos o Conselho deve exigir da Secretaria antes de opinar sobre o fechamento de uma escola do campo?",
-   "esperado": [
-    "D1",
-    "C3"
-   ],
    "parcial_na_base": false,
-   "justificativa": "D1 lista justificativa, diagnóstico do impacto e manifestação da comunidade; C3 traz o exemplo de rol de Santa Cruz do Sul."
+   "justificativa": "C6 é a pergunta-modelo: justificativa, estudo do impacto e opinião da comunidade em ata; C3 dá o rol de Santa Cruz do Sul.",
+   "rotulo_original": "D1/C3",
+   "esperado": [
+    "C6",
+    "C3",
+    "D1"
+   ],
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): D1/C3 -> C6/C3/D1. registro novo: C6 é a resposta direta e passa à frente"
   },
   {
    "id": "C23",
@@ -270,23 +289,29 @@
    "persona": "conselheira",
    "tipo": "cega",
    "pergunta": "O Conselho Municipal de Educação pode recusar o pedido de fechamento das escolas?",
+   "parcial_na_base": false,
+   "justificativa": "C6: o Conselho pode se manifestar contra; se o parecer contrário impede depende da regra local (no PR, só fecha com parecer favorável).",
+   "rotulo_original": "C3",
    "esperado": [
+    "C6",
     "C3"
    ],
-   "parcial_na_base": true,
-   "justificativa": "C3 descreve o papel do Conselho (manifestar-se avaliando justificativa, diagnóstico e comunidade), mas a base não diz se o parecer contrário vincula ou impede o fechamento."
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): C3 -> C6/C3. registro novo: C6 responde o que antes era lacuna (vinculação do parecer); parcial passa a false"
   },
   {
    "id": "C25",
    "persona": "conselheira",
    "tipo": "cega",
    "pergunta": "Uma justificativa de duas páginas, sem nenhum número, é suficiente segundo a lei?",
+   "parcial_na_base": false,
+   "justificativa": "D1/C6: a lei exige também o diagnóstico do impacto e a manifestação da comunidade, então a justificativa sozinha não basta; D6: a lei não fixa formato.",
+   "rotulo_original": "D1/D6",
    "esperado": [
     "D1",
-    "D6"
+    "D6",
+    "C6"
    ],
-   "parcial_na_base": false,
-   "justificativa": "D1: a lei exige também diagnóstico do impacto e manifestação da comunidade, então só a justificativa não basta; D6: a lei não fixa formato."
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): D1/D6 -> D1/D6/C6. registro novo: acréscimo menor: C6 orienta o Conselho a conferir os três documentos"
   },
   {
    "id": "C26",
@@ -392,9 +417,13 @@
    "persona": "professora",
    "tipo": "cega",
    "pergunta": "os alunos com deficiencia tem direito a monitor no transporte escolar?",
-   "esperado_tipo": "nenhuma",
    "parcial_na_base": false,
-   "justificativa": "A base não trata de monitor nem de alunos com deficiência no transporte (T1 só diz que o transporte é direito)."
+   "justificativa": "T6: monitor no veículo não é obrigatório pela lei nacional (depende da regra local), mas o veículo tem de ser acessível e a LBI garante profissional de apoio.",
+   "rotulo_original": "nenhuma",
+   "esperado": [
+    "T6"
+   ],
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): nenhuma -> T6. registro novo: T6 cobre exatamente monitor e aluno com deficiência no transporte"
   },
   {
    "id": "C36",
@@ -463,45 +492,57 @@
    "persona": "estudante",
    "tipo": "cega",
    "pergunta": "os aluno pode fazer alguma coisa pra n fechar a escola",
+   "parcial_na_base": false,
+   "justificativa": "Alunos são comunidade escolar (C2); C7 dá o caminho do estudante (grêmio, pedido com responsável, Defensoria/MP); C1 pedir documentos; C4 recorrer.",
+   "rotulo_original": "C2/C1/C4",
    "esperado": [
     "C2",
+    "C7",
     "C1",
     "C4"
    ],
-   "parcial_na_base": false,
-   "justificativa": "Alunos são comunidade escolar (C2); também podem pedir documentos (C1) e recorrer (C4)."
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): C2/C1/C4 -> C2/C7/C1/C4. registro novo: C7 trata de estudante/grêmio"
   },
   {
    "id": "C43",
    "persona": "estudante",
    "tipo": "cega",
    "pergunta": "eu tenho 16 anos posso pedir informação pra prefeitura ou tem q ser meus pais",
+   "parcial_na_base": false,
+   "justificativa": "C7 é a pergunta-modelo: menor de 18 pedindo informação, com os caminhos seguros; C1 dá o procedimento da LAI.",
+   "rotulo_original": "C1",
    "esperado": [
+    "C7",
     "C1"
    ],
-   "parcial_na_base": false,
-   "justificativa": "C1: qualquer pessoa pode pedir pela LAI (não menciona idade, mas não exige ser maior nem pais)."
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): C1 -> C7/C1. registro novo: C7 responde a idade, que C1 não tratava"
   },
   {
    "id": "C44",
    "persona": "estudante",
    "tipo": "cega",
    "pergunta": "e o barco escolar se fechar a escola vai ter barco pra levar a gente pra outra",
-   "esperado": [
-    "T1",
-    "T3"
-   ],
    "parcial_na_base": false,
-   "justificativa": "T1: transporte escolar é dever do Estado; T3: o Caminho da Escola financia barcos."
+   "justificativa": "T5: barco é transporte escolar, com regras e verba do PNATE; T1: transporte é dever do Estado.",
+   "rotulo_original": "T1/T3",
+   "esperado": [
+    "T5",
+    "T1"
+   ],
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): T1/T3 -> T5/T1. registro novo: T5 passa à frente; T3 sai por ficar redundante com T5"
   },
   {
    "id": "C45",
    "persona": "estudante",
    "tipo": "cega",
    "pergunta": "qnto tempo de viagem eles podem obrigar a gente a fazer pra ir pra escola",
-   "esperado_tipo": "nenhuma",
-   "parcial_na_base": false,
-   "justificativa": "A base não fixa tempo máximo de viagem; D3 vale só para crianças pequenas e anos iniciais, que a pergunta não menciona."
+   "parcial_na_base": true,
+   "justificativa": "D3 é o melhor caminho: a norma nacional não fixa tempo máximo e manda cada sistema fixar o seu (perguntar à Secretaria), embora o registro trate de crianças pequenas.",
+   "rotulo_original": "nenhuma",
+   "esperado": [
+    "D3"
+   ],
+   "rotulo_atualizado": "05/11, juiz 2 (cego às respostas, base com 25 registros): nenhuma -> D3. rótulo antigo errado/incompleto mesmo com a base antiga: incoerente com C27, rotulada D3 com a mesma lacuna; limítrofe"
   },
   {
    "id": "C46",

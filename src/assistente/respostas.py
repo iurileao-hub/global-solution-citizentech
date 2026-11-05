@@ -46,8 +46,16 @@ ETAPA = {"creche": "creche", "pre_escola": "pré-escola", "anos_iniciais": "anos
          "anos_finais": "anos finais (6º ao 9º ano)", "medio": "ensino médio"}
 
 
-def _par(texto: str, recuo: str = "") -> str:
-    return textwrap.fill(texto, LARGURA, initial_indent=recuo, subsequent_indent=recuo)
+def _par(texto: str, recuo: str = "", seguinte: str | None = None) -> str:
+    """Quebra em LARGURA colunas sem cortar palavra nem endereço: um link cortado no meio não se copia
+    (achado da 3ª rodada, num terminal mais largo que o texto, que o cortava sozinho)."""
+    return textwrap.fill(texto, LARGURA, initial_indent=recuo,
+                         subsequent_indent=recuo if seguinte is None else seguinte,
+                         break_long_words=False, break_on_hyphens=False)
+
+
+def _item(rid: str, pergunta: str) -> str:
+    return _par(f"[{rid}] {pergunta}", "  ", "       ")
 
 
 def _fonte(r: dict) -> str:
@@ -75,7 +83,7 @@ def orientacao(base: Base, rid: str, modelo: str = "B", extras: list[str] | None
     if modelo == "A":
         return "\n".join([_par(r["orientacao"])] + ([numeros] if numeros else []) + [_par(_fonte(r)), RODAPE])
     tema = base.temas[r["tema"]]
-    linhas = [f"Assunto: {r['pergunta']}  [{tema['nome']}]", "", _par(r["orientacao"])]
+    linhas = [_par(f"Assunto: {r['pergunta']}  [{tema['nome']}]", "", "  "), "", _par(r["orientacao"])]
     if numeros:
         linhas += ["", numeros]
     linhas += ["", _par(_fonte(r))]
@@ -83,7 +91,7 @@ def orientacao(base: Base, rid: str, modelo: str = "B", extras: list[str] | None
         linhas += ["", _par("Confirme: " + r["confirmar"])]
     rel = r.get("relacionados", [])[:3]
     if rel:
-        linhas += ["", "Para continuar:"] + [f"  [{x}] {base.registros[x]['pergunta']}" for x in rel]
+        linhas += ["", "Para continuar:"] + [_item(x, base.registros[x]["pergunta"]) for x in rel]
     if extras:
         linhas += ["", sugestoes(base, extras)]
     return "\n".join(linhas + ["", RODAPE])
@@ -91,7 +99,7 @@ def orientacao(base: Base, rid: str, modelo: str = "B", extras: list[str] | None
 
 def ambigua(base: Base, ids: list[str]) -> str:
     linhas = ["Sua pergunta combina com mais de um assunto. Qual deles?"]
-    linhas += [f"  [{x}] {base.registros[x]['pergunta']}" for x in ids]
+    linhas += [_item(x, base.registros[x]["pergunta"]) for x in ids]
     return "\n".join(linhas + ["Digite o código entre colchetes, ou reformule a pergunta."])
 
 
@@ -102,11 +110,13 @@ def sem_resposta(base: Base) -> str:
              "Prefiro dizer isso a inventar uma resposta."),
         _par(f"Os assuntos que conheço são: {temas}. Você pode escolher um deles no menu, reformular a "
              "pergunta com outras palavras, ou consultar uma escola pelo nome."),
+        _par("Para uma dúvida fora desses assuntos: a Secretaria de Educação responde pela escola e pela "
+             "rede; a Defensoria Pública dá orientação jurídica de graça."),
         RODAPE])
 
 
 def sugestoes(base: Base, ids: list[str]) -> str:
-    return "Talvez também interesse:\n" + "\n".join(f"  [{x}] {base.registros[x]['pergunta']}" for x in ids)
+    return "Talvez também interesse:\n" + "\n".join(_item(x, base.registros[x]["pergunta"]) for x in ids)
 
 
 def _tempo(minutos: float) -> str:
