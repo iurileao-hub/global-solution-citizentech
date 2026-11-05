@@ -443,7 +443,7 @@ def fundir(indice: Path = INDICE, dir_rotas: Path = DIR_ROTAS) -> Counter:
         elif "erro" in x:
             cont["erro"] += 1
         else:
-            e["rota"] = rederivar_aviso(x["rota"], e["uf"])
+            e["rota"] = rederivar_aviso(x["rota"], e.get("uf") or "")
             cont["com_rota" if x["rota"]["receptoras"] else "sem_rota_com_aviso"] += 1
     doc["campos"]["rota"] = ("resumo das receptoras com rota calculada (preenchido pelo pré-cálculo, "
                              "scripts/precalcular_rotas.py) ou null")
