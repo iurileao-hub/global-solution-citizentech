@@ -1,5 +1,5 @@
 {
- "descricao": "50 perguntas escritas por 5 personas SIMULADAS (agentes) sem ver a base; rótulo esperado definido por um juiz que leu a base mas não viu as respostas do assistente. Em 05/11 um segundo juiz, também cego às respostas, rerrotulou as 50 contra a base atual (25 registros); 13 rótulos mudaram, e cada pergunta mudada guarda o rótulo original em 'rotulo_original'.",
+ "descricao": "50 perguntas escritas por 5 personas SIMULADAS (agentes) sem ver a base; rótulo esperado definido por um juiz que leu a base mas não viu as respostas do assistente. Em 05/11 um segundo juiz, também cego às respostas, rerrotulou as 50 contra a base atual (25 registros); 13 rótulos mudaram, e cada pergunta mudada guarda o rótulo original em 'rotulo_original'. Em 05/11 um terceiro juiz cego rerrotulou contra a base de 27 registros (2 mudanças).",
  "perguntas": [
   {
    "id": "C01",
@@ -94,12 +94,15 @@
    "persona": "mae-agricultora",
    "tipo": "cega",
    "pergunta": "tem que ter reuniao com os pais antes? eles falaram so uma vez",
+   "parcial_na_base": false,
+   "justificativa": "C2/D1: a comunidade escolar tem de se manifestar antes, com ata; C6 responde o 'só uma vez': a lei nacional não diz como ouvir nem quantas vezes, e manda ver a norma do Conselho local.",
+   "rotulo_original": "C2/D1",
    "esperado": [
     "C2",
+    "C6",
     "D1"
    ],
-   "parcial_na_base": false,
-   "justificativa": "C2/D1: a comunidade escolar tem de se manifestar antes, com ata; a base não diz quantas reuniões bastam."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C2/D1 -> C2/C6/D1. registro alterado: C6 agora diz que a lei nacional não define como a comunidade se manifesta nem prazo, o que responde 'falaram só uma vez'"
   },
   {
    "id": "C09",
@@ -338,12 +341,15 @@
    "persona": "conselheira",
    "tipo": "cega",
    "pergunta": "A comunidade precisa ser ouvida antes do fechamento? Como deve ser feita essa consulta?",
+   "parcial_na_base": true,
+   "justificativa": "Sim, deve ser ouvida (C2/D1); sobre como, C6 diz que a lei nacional não define forma nem prazo e remete às regras do Conselho local (exemplo em C3).",
+   "rotulo_original": "C2/D1",
    "esperado": [
     "C2",
+    "C6",
     "D1"
    ],
-   "parcial_na_base": true,
-   "justificativa": "Sim, deve ser ouvida (C2/D1); sobre como, a base só recomenda ata com lista de presentes e não traz rito nacional."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C2/D1 -> C2/C6/D1. registro alterado: C6 passou a tratar de como a comunidade se manifesta (lei nacional silente, regra local), parte da pergunta que antes ficava sem registro"
   },
   {
    "id": "C29",

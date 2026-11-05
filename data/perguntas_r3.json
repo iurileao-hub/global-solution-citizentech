@@ -1,67 +1,80 @@
 {
- "descricao": "60 perguntas escritas por 6 personas SIMULADAS (agentes) da 3ª rodada, sem ver a base; rótulo esperado definido por um juiz que leu a base mas não viu as respostas do assistente.",
+ "descricao": "60 perguntas escritas por 6 personas SIMULADAS (agentes) da 3ª rodada, sem ver a base; rótulo esperado definido por um juiz que leu a base mas não viu as respostas do assistente. Em 05/11 um terceiro juiz cego rerrotulou contra a base de 27 registros (17 mudanças).",
  "perguntas": [
   {
    "id": "R01",
    "persona": "secretario",
    "tipo": "cega",
    "pergunta": "O que exatamente eu preciso apresentar ao Conselho Municipal de Educação para fechar uma escola rural?",
+   "parcial_na_base": false,
+   "justificativa": "D9 é a pergunta-modelo do gestor que propõe o fechamento (três documentos ao Conselho, norma local, risco de contestação); C6/D1 dão a mesma exigência; C3 o rito detalhado de Santa Cruz do Sul.",
+   "rotulo_original": "C6/D1/C3",
    "esperado": [
+    "D9",
     "C6",
     "D1",
     "C3"
    ],
-   "parcial_na_base": false,
-   "justificativa": "C6 lista o que o Conselho deve receber (justificativa, diagnóstico do impacto, manifestação da comunidade em ata); D1 dá a mesma exigência legal; C3 mostra um rito local detalhado como exemplo."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C6/D1/C3 -> D9/C6/D1/C3. registro novo: D9 é exatamente esta pergunta (gestor da Secretaria levando o pedido ao Conselho)"
   },
   {
    "id": "R02",
    "persona": "secretario",
    "tipo": "cega",
    "pergunta": "Qual o número mínimo de alunos que justifica fechar uma escola do campo?",
+   "parcial_na_base": false,
+   "justificativa": "C3 diz expressamente que a lei nacional não fixa número mínimo de alunos e que limites como o de Santa Cruz do Sul (<30) valem só onde foram criados.",
+   "rotulo_original": "C3",
    "esperado": [
     "C3"
    ],
-   "parcial_na_base": true,
-   "justificativa": "A base não traz mínimo nacional; C3 só mostra uma regra local (Santa Cruz do Sul exige menos de 30 alunos para iniciar o pedido)."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C3 -> C3. registro alterado: C3 agora afirma que não há mínimo nacional (antes a base só mostrava a regra local, sem dizer isso)"
   },
   {
    "id": "R03",
    "persona": "secretario",
    "tipo": "cega",
    "pergunta": "Posso fechar só algumas turmas (por exemplo o 6º ao 9º) e manter a escola aberta?",
+   "parcial_na_base": false,
+   "justificativa": "D1 agora trata do fechamento parcial (anos finais): a LDB não diz expressamente, mas o TCE-ES aplicou a mesma regra em Muniz Freire e a norma do PR inclui o fechamento aos poucos; C5 detalha o caso.",
+   "rotulo_original": "C5/D1",
    "esperado": [
-    "C5",
-    "D1"
+    "D1",
+    "C5"
    ],
-   "parcial_na_base": true,
-   "justificativa": "Nenhum registro trata de fechamento parcial em tese; C5 mostra o fim do ensino fundamental de uma escola barrado por falta do rito, e D1 dá o rito."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C5/D1 -> D1/C5. registro alterado: D1 ganhou no 'confirmar' o fechamento só de parte das etapas, que antes nenhum registro tratava em tese"
   },
   {
    "id": "R04",
    "persona": "secretario",
    "tipo": "cega",
    "pergunta": "Como evitar ação do Ministério Público no fechamento de escola rural?",
+   "parcial_na_base": false,
+   "justificativa": "D9 diz ao gestor que pular etapa expõe o fechamento a contestação e cita a liminar e a cautelar de Muniz Freire; D1/C6 dão o rito; C5 o caso.",
+   "rotulo_original": "D1/C5/C6",
    "esperado": [
+    "D9",
     "D1",
     "C5",
     "C6"
    ],
-   "parcial_na_base": false,
-   "justificativa": "Evitar a ação é cumprir o rito de D1/C6; C5 mostra o caso em que o MP agiu justamente pela falta de plano, Conselho e consulta."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): D1/C5/C6 -> D9/D1/C5/C6. registro novo: D9 responde de frente a quem propõe o fechamento como não deixá-lo exposto a contestação"
   },
   {
    "id": "R05",
    "persona": "secretario",
    "tipo": "cega",
    "pergunta": "Precisa de consulta pública à comunidade? Quantas reuniões e com quem?",
+   "parcial_na_base": true,
+   "justificativa": "D9: a manifestação da comunidade escolar vai ao Conselho e a lei nacional não diz como ouvi-la; C2 diz com quem (pais, alunos, professores, funcionários) e pede ata; número de reuniões só existe em norma local (C3).",
+   "rotulo_original": "C2/D1/C3",
    "esperado": [
+    "D9",
     "C2",
     "D1",
     "C3"
    ],
-   "parcial_na_base": true,
-   "justificativa": "C2 e D1 dizem que a comunidade escolar (pais, alunos, professores, funcionários) tem de se manifestar, em ata; número de reuniões não está na base, só o exemplo local de assembleia em C3."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C2/D1/C3 -> D9/C2/D1/C3. registro novo: D9 responde ao gestor que a lei não define como ouvir a comunidade e manda ver a norma do Conselho"
   },
   {
    "id": "R06",
@@ -125,56 +138,68 @@
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "prefeitura pode fechar escola da aldeia sem perguntar comunidade?",
+   "parcial_na_base": false,
+   "justificativa": "D8: o governo deve consultar o povo indígena antes de medidas que o afetem (consulta prévia); D1 exige manifestação da comunidade antes de fechar.",
+   "rotulo_original": "D5/D1",
    "esperado": [
-    "D5",
+    "D8",
     "D1"
    ],
-   "parcial_na_base": false,
-   "justificativa": "D5 garante a consulta prévia aos povos indígenas (Convenção 169 da OIT); D1 exige manifestação da comunidade antes de fechar."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): D5/D1 -> D8/D1. registro novo/alterado: o D5 antigo (indígena+quilombola) virou D5 só quilombola; o indígena agora é D8"
   },
   {
    "id": "R12",
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "escola indigena fechar, criança ir escola da cidade?",
+   "parcial_na_base": false,
+   "justificativa": "D8: a escola indígena fica nas terras da comunidade; D3 diz que a nucleação deve levar do campo para o campo, não para a cidade.",
+   "rotulo_original": "D5/D3",
    "esperado": [
-    "D5",
+    "D8",
     "D3"
    ],
-   "parcial_na_base": false,
-   "justificativa": "D5 põe a escola indígena no território indígena; D3 diz que a nucleação deve levar do campo para o campo, não para a cidade."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): D5/D3 -> D8/D3. registro novo/alterado: conteúdo indígena saiu do D5 para o D8"
   },
   {
    "id": "R13",
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "escola da cidade ensinar em guarani?",
-   "esperado_tipo": "nenhuma",
-   "parcial_na_base": false,
-   "justificativa": "Nenhum registro trata de língua de ensino ou ensino em guarani."
+   "parcial_na_base": true,
+   "justificativa": "D8 diz que o ensino na escola indígena pode usar a língua materna do povo além do português; não trata de escola da cidade.",
+   "rotulo_original": "nenhuma",
+   "esperado": [
+    "D8"
+   ],
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): nenhuma -> D8. registro novo: D8 trata de língua materna/ensino bilíngue, que nenhum registro cobria (era 'nenhuma')"
   },
   {
    "id": "R14",
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "quem defende indigena quando querer fechar escola",
+   "parcial_na_base": false,
+   "justificativa": "D8: Ministério Público Federal e a própria comunidade e suas organizações podem ir à Justiça; C4 detalha MP e Defensoria.",
+   "rotulo_original": "D5/C4",
    "esperado": [
-    "D5",
+    "D8",
     "C4"
    ],
-   "parcial_na_base": false,
-   "justificativa": "D5 indica Defensoria, MPF e organizações do próprio povo; C4 detalha MP e Defensoria."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): D5/C4 -> D8/C4. registro novo/alterado: conteúdo indígena saiu do D5 para o D8, que agora nomeia o MPF e a legitimidade da comunidade"
   },
   {
    "id": "R15",
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "funai ajudar escola da aldeia?",
+   "parcial_na_base": false,
+   "justificativa": "D8: a FUNAI não administra escolas, mas acompanha a educação escolar indígena e pode ser avisada.",
+   "rotulo_original": "D5",
    "esperado": [
-    "D5"
+    "D8"
    ],
-   "parcial_na_base": true,
-   "justificativa": "A base não fala da FUNAI; D5 dá o melhor caminho de apoio que tem (Defensoria, MPF, organizações do povo)."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): D5 -> D8. registro novo: D8 fala da FUNAI explicitamente (antes a base não falava e o rótulo era D5 parcial)"
   },
   {
    "id": "R16",
@@ -190,24 +215,28 @@
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "tem lei para escola indigena?",
-   "esperado": [
-    "D5"
-   ],
    "parcial_na_base": false,
-   "justificativa": "D5 resume as regras próprias da escola indígena e a consulta prévia."
+   "justificativa": "D8 resume as regras próprias da escola indígena (terras da comunidade, língua materna, consulta prévia, quem oferece, quem defende).",
+   "rotulo_original": "D5",
+   "esperado": [
+    "D8"
+   ],
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): D5 -> D8. registro novo/alterado: conteúdo indígena saiu do D5 para o D8"
   },
   {
    "id": "R18",
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "comunidade precisa fazer reuniao antes fechar escola?",
+   "parcial_na_base": false,
+   "justificativa": "C2 e D1: a comunidade escolar tem de se manifestar, registrada em ata; D8 acrescenta a consulta prévia no caso indígena.",
+   "rotulo_original": "C2/D1/D5",
    "esperado": [
     "C2",
     "D1",
-    "D5"
+    "D8"
    ],
-   "parcial_na_base": false,
-   "justificativa": "C2 e D1: a comunidade escolar tem de se manifestar, registrada em ata; D5 acrescenta a consulta prévia no caso indígena."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C2/D1/D5 -> C2/D1/D8. registro novo/alterado: a consulta prévia indígena saiu do D5 para o D8"
   },
   {
    "id": "R19",
@@ -225,11 +254,13 @@
    "persona": "guarani",
    "tipo": "cega",
    "pergunta": "quantas escola indigena fechar no mato grosso do sul",
+   "parcial_na_base": false,
+   "justificativa": "F5 dá escolas rurais fechadas em MS com o recorte de escolas indígenas por estado.",
+   "rotulo_original": "F5",
    "esperado": [
     "F5"
    ],
-   "parcial_na_base": true,
-   "justificativa": "F5 dá escolas rurais de MS, sem separar as indígenas."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): F5 -> F5. registro alterado: F5 agora traz, por estado, o recorte de escolas indígenas e quilombolas (antes 'sem separar as indígenas')"
   },
   {
    "id": "R21",
@@ -259,11 +290,13 @@
    "persona": "motorista",
    "tipo": "cega",
    "pergunta": "prefeitura pode mandar rodar com onibus velho? o meu tem mais de 20 ano",
+   "parcial_na_base": false,
+   "justificativa": "T4: a lei nacional não fixa idade máxima; o Caminho da Escola recomenda até 10 anos, há regras locais (Goiás: 15 anos para ônibus) e a inspeção semestral é obrigatória.",
+   "rotulo_original": "T4",
    "esperado": [
     "T4"
    ],
-   "parcial_na_base": true,
-   "justificativa": "T4 dá as regras do veículo (inspeção semestral etc.), mas não fala de idade da frota."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): T4 -> T4. registro alterado: T4 passou a tratar da idade do veículo (antes 'não fala de idade da frota')"
   },
   {
    "id": "R24",
@@ -290,11 +323,13 @@
    "persona": "motorista",
    "tipo": "cega",
    "pergunta": "tem idade maxima pro onibus escolar rodar",
+   "parcial_na_base": false,
+   "justificativa": "T4: não há idade máxima na lei nacional; Caminho da Escola recomenda até 10 anos e estados podem fixar (Goiás: 15 anos ônibus, 10 os demais).",
+   "rotulo_original": "T4",
    "esperado": [
     "T4"
    ],
-   "parcial_na_base": true,
-   "justificativa": "T4 traz as regras do veículo, mas não diz se há idade máxima."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): T4 -> T4. registro alterado: T4 passou a responder exatamente se há idade máxima"
   },
   {
    "id": "R27",
@@ -492,11 +527,13 @@
    "persona": "radialista",
    "tipo": "cega",
    "pergunta": "ta aumentando ou diminuindo o fechamento de escola rural no piaui nos ultimos anos?",
+   "parcial_na_base": false,
+   "justificativa": "F5 dá a série anual de escolas rurais ativas, extintas e paralisadas por estado, o que mostra a tendência no Piauí.",
+   "rotulo_original": "F5",
    "esperado": [
     "F5"
    ],
-   "parcial_na_base": true,
-   "justificativa": "F5 dá o total do período, não a tendência ano a ano."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): F5 -> F5. registro alterado: F5 agora tem série anual (antes só o total do período)"
   },
   {
    "id": "R45",
@@ -614,11 +651,13 @@
    "persona": "advogada",
    "tipo": "cega",
    "pergunta": "Quem tem legitimidade para propor ação civil pública contra o fechamento: sindicato, associação de pais, Ministério Público, Defensoria?",
+   "parcial_na_base": false,
+   "justificativa": "C4 lista MP, Defensoria e associação (com 1 ano e finalidade estatutária, prazo dispensável pelo juiz) e avisa que a lei não cita sindicato.",
+   "rotulo_original": "C4",
    "esperado": [
     "C4"
    ],
-   "parcial_na_base": true,
-   "justificativa": "C4 cita MP (ação civil pública) e Defensoria; não trata de sindicato nem de associação de pais."
+   "rotulo_atualizado": "05/11, juiz 3 (cego às respostas, base com 27 registros): C4 -> C4. registro alterado: C4 ganhou associação de pais e a ressalva sobre sindicato (antes 'não trata de sindicato nem de associação')"
   },
   {
    "id": "R56",

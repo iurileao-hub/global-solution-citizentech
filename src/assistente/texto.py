@@ -37,7 +37,7 @@ pode podem gente mesmo coisa alguma algum algo quero queria saber sei dizer diz 
 posso podemos poder precisa precisam preciso deve devem devia feita feito acontece acontecer aconteceu
 forem for fosse outra outro outras outros vao tinha adianta ne oi ola bom dia boa tarde noite
 obrigada obrigado obg viu ta to favor gostaria ainda tipo exemplo algumas alguns alguem cada todo toda
-todos todas foram existe existem desde querer pergunta
+todos todas foram existe existem desde querer pergunta sou estou somos neto neta netos netas sobrinho sobrinha
 """.split())
 
 # sigla do tema dita letra a letra (o reconhecimento de voz escreve "elê dê bê")

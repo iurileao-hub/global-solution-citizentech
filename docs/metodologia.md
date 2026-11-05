@@ -64,7 +64,7 @@ O resultado "antes" é o honesto. Os 68% mostraram que o filtro criado nos teste
 
 Os agentes também acharam defeitos de tela que se repetiam entre as personas (nome da escola junto com a cidade, convite para digitar um código quando nenhum aparecia, palavras técnicas sem explicação) e quatro assuntos que a base não cobria. Os assuntos viraram orientações novas, conferidas no texto oficial: barco escolar, o que o Conselho deve exigir, aluno com deficiência no transporte e adolescente pedindo informação.
 
-Depois das quatro orientações novas, o conjunto às cegas chegou a 92%. Três rótulos do juiz foram atualizados, e a mudança ficou anotada no próprio arquivo: eram perguntas sobre quantas escolas fecharam, que a base não cobria quando o juiz rotulou.
+Depois das orientações novas, um erro de registro apareceu: o 92% anotado para o conjunto às cegas tinha sido medido antes de três delas entrarem na base. Rodado de novo, o mesmo código dava 86% com o gabarito antigo. A diferença vinha do gabarito: as orientações novas respondiam melhor perguntas rotuladas antes delas. Daí saiu uma regra para as rodadas seguintes. **O resultado "antes" fica congelado com o rótulo original. Para medir o estado atual, um juiz novo, que lê a base mas não vê as respostas, rotula de novo**, e cada pergunta mudada guarda o rótulo anterior. Corrigir o gabarito à mão, vendo as respostas do programa, seria corrigir a prova olhando a do aluno. Com o gabarito do segundo juiz (13 rótulos mudaram), a versão acertou 92%.
 
 **5. Terceira rodada.** Para medir o programa corrigido com honestidade, seis personas novas, escolhidas para cobrir quem as primeiras deixavam de fora, escreveram 60 perguntas que nem a equipe nem o programa tinham visto:
 - um secretário municipal de educação que quer fechar escolas, o lado oposto ao das primeiras personas e um teste de neutralidade;
@@ -76,12 +76,12 @@ Depois das quatro orientações novas, o conjunto às cegas chegou a 92%. Três 
 
 Um juiz novo rotulou as 60 perguntas sem ver as respostas, e o programa foi medido **antes de qualquer ajuste**.
 
-| Medida nas 60 perguntas da terceira rodada | Antes dos ajustes |
-|---|---|
-| Acerto | 52% |
-| "Não sei" quando a base tinha a resposta | 20 |
-| Respostas erradas dadas com segurança | 3 |
-| Respostas erradas com aviso de que a pergunta não estava toda coberta | 4 |
+| Medida nas 60 perguntas da terceira rodada | Antes dos ajustes | Depois dos ajustes |
+|---|---|---|
+| Acerto | 52% | 70% |
+| "Não sei" quando a base tinha a resposta | 20 | 6 |
+| Respostas erradas dadas com segurança | 3 | 2 |
+| Respostas erradas com aviso de que a pergunta não estava toda coberta | 4 | 6 |
 
 A queda de 92% para 52% é a lição principal da validação: **o acerto nas perguntas usadas para ajustar não se transfere para perguntas novas**. A direção do erro, porém, foi a desejada. De 29 perguntas não acertadas, 20 terminaram em "não sei" e só 3 em resposta errada sem aviso; o programa falha calando, não inventando. As causas, por ordem de peso:
 - a grafia do reconhecimento de voz ("fexar") derrubou 5 das 10 perguntas da avó;
@@ -89,7 +89,31 @@ A queda de 92% para 52% é a lição principal da validação: **o acerto nas pe
 - "Rio Grande do Sul" foi lido como o município de Rio Grande, sem aviso, o defeito mais grave da rodada, porque o número sai errado com cara de certo;
 - o aviso de cobertura parcial listava palavras de cortesia ("obrigada", "viu") e o próprio tema ("fechar") como se fossem o assunto que faltava.
 
-A advogada apontou afirmações que diziam mais do que a norma (por exemplo, qual Conselho é competente quando o município não tem sistema próprio de ensino), e o secretário apontou que a base fala só com a comunidade, sem caminho para quem tem de cumprir o rito. Esses pontos voltam à conferência de fontes antes de entrar na base.
+A advogada apontou afirmações que diziam mais do que a norma, e o secretário apontou que a base fala só com a comunidade, sem caminho para quem tem de cumprir o rito. Um agente conferiu 12 pontos no texto oficial e achou dois erros de verdade: o Conselho Municipal só é o competente se o município tem sistema próprio de ensino (senão é o Estadual), e a ata da reunião com a comunidade não é exigência da lei nacional. Outros pontos eram imprecisões que mudavam o sentido. O "sim, deu certo recorrer" do caso de Muniz Freire se apoiava em liminar e cautelar, que são provisórias, e virou "sim, por enquanto". A orientação sobre a quem recorrer passou a dizer que uma associação de pais também pode propor a ação civil pública.
+
+Os ajustes, em ordem de efeito:
+- **Mecânica da busca:**
+  - o nome do lugar citado deixou de contar como assunto;
+  - "x" e "ch" passaram a ser a mesma letra, nos dois lados da comparação;
+  - a sigla ditada letra a letra virou sigla;
+  - o nome do estado passou a valer antes do de município;
+  - perguntas de contagem ("quantas fecharam", "está aumentando?") passaram a ir para os números.
+- **Conteúdo:**
+  - as correções da conferência;
+  - a orientação indígena separada da quilombola;
+  - o caminho do gestor;
+  - a série anual de fechamentos e o recorte de escolas indígenas e quilombolas, com aviso de que é um piso.
+- **Tela:**
+  - menu que aceita frase e número por extenso;
+  - município com a sigla do estado junto;
+  - links que não se partem ao meio.
+
+Três achados dessa etapa mostram por que cada mudança foi medida antes de ser aceita:
+- "Própria" e "Modelo" são nomes de município, e sumiam das perguntas quando o programa passou a apagar o lugar citado. O nome agora só conta como lugar com uma preposição antes ou a sigla do estado depois.
+- A primeira contagem de escolas indígenas fechadas deu zero no Brasil inteiro, porque o Censo só marca a localização diferenciada enquanto a escola funciona.
+- Uma variante controlada, que tirava "fechar" da conta da cobertura, ganhava 1 pergunta na terceira rodada e perdia 4 nas antigas. Ficou de fora.
+
+Os 70% são otimistas pelo mesmo motivo das rodadas anteriores. Além disso, um terceiro juiz cego refez 17 rótulos depois das orientações novas (as perguntas indígenas, por exemplo, passaram para a orientação indígena). No conjunto às cegas anterior, os mesmos ajustes deixaram o acerto em 88%, contra 92%: as perguntas novas ganharam e as antigas perderam um pouco. Essa troca só aparece porque a medida é feita em dois conjuntos. O número honesto do programa corrigido só viria de uma quarta leva de perguntas, ou, melhor, de pessoas reais.
 
 Uma falha do próprio teste também entrou no registro: os agentes rodavam ao mesmo tempo e alguns gravaram um script auxiliar com o mesmo nome numa pasta compartilhada, então teclas de uma persona chegaram ao terminal de outra. Quem percebeu refez as tarefas num terminal isolado. Sessões separadas não bastaram; cada agente precisa de um terminal próprio e de arquivos com nome único.
 

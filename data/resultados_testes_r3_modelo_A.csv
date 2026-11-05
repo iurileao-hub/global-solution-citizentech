@@ -1,61 +1,61 @@
 id,tipo,pergunta,esperado,obtido,classificacao,tempo_ms,fmt_cita_fonte,fmt_data_verificacao,fmt_aviso_nao_oficial,fmt_pede_confirmacao,fmt_oferece_continuidade,fmt_linhas,fmt_palavras_por_frase
-R01,cega,O que exatamente eu preciso apresentar ao Conselho Municipal de Educação para fechar uma escola rural?,C6/D1/C3,unica:C3 (com aviso de parcial),acerto,2.694,True,True,True,False,False,15,18.8
-R02,cega,Qual o número mínimo de alunos que justifica fechar uma escola do campo?,C3,ambigua:D1/F5,erro,3.003,False,False,False,,False,4,8.8
-R03,cega,Posso fechar só algumas turmas (por exemplo o 6º ao 9º) e manter a escola aberta?,C5/D1,nenhuma,erro,2.318,False,False,True,,False,9,15.2
-R04,cega,Como evitar ação do Ministério Público no fechamento de escola rural?,D1/C5/C6,unica:C4,erro,2.135,True,True,True,,False,9,16.0
-R05,cega,Precisa de consulta pública à comunidade? Quantas reuniões e com quem?,C2/D1/C3,unica:C2,acerto,1.201,True,True,True,,False,10,12.0
-R06,cega,Qual lei fala do fechamento de escola do campo? É a 12.960?,D1/D6,unica:D1,acerto,2.081,True,True,True,False,False,10,15.5
-R07,cega,Quanto a prefeitura economiza fechando uma escola com 15 alunos e levando para a escola-polo?,nenhuma,nenhuma,acerto,2.309,False,False,True,,False,9,15.2
-R08,cega,"O transporte escolar até a cidade tem tempo máximo de viagem? Quem paga, o município ou o estado?",D3/T2/T3,unica:D3,acerto,1.524,True,True,True,False,False,10,15.9
-R09,cega,"Se o Conselho Municipal aprovar, ainda precisa de autorização do Conselho Estadual de Goiás?",C6/C3,unica:C3,acerto,1.433,True,True,True,False,False,11,19.2
-R10,cega,Quantas escolas rurais fecharam em Goiás e algum município foi processado por isso?,F5,unica:F5,acerto,2.409,True,True,True,False,False,19,28.5
-R11,cega,prefeitura pode fechar escola da aldeia sem perguntar comunidade?,D5/D1,unica:D1 (com aviso de parcial),acerto,2.175,True,True,True,False,False,14,16.1
-R12,cega,"escola indigena fechar, criança ir escola da cidade?",D5/D3,unica:D3 (com aviso de parcial),acerto,8.455,True,True,True,False,False,14,16.2
-R13,cega,escola da cidade ensinar em guarani?,nenhuma,nenhuma,acerto,1.081,False,False,True,,False,9,15.2
-R14,cega,quem defende indigena quando querer fechar escola,D5/C4,unica:C4,acerto,1.945,True,True,True,,False,9,16.0
-R15,cega,funai ajudar escola da aldeia?,D5,nenhuma,erro,1.031,False,False,True,,False,9,15.2
-R16,cega,professora da aldeia perder trabalho se escola fechar?,nenhuma,nenhuma,acerto,2.229,False,False,True,,False,9,15.2
-R17,cega,tem lei para escola indigena?,D5,ambigua:D1/D5/D6,parcial,0.968,False,False,False,,False,5,8.7
-R18,cega,comunidade precisa fazer reuniao antes fechar escola?,C2/D1/D5,unica:C2,acerto,2.054,True,True,True,,False,10,12.0
-R19,cega,"onibus levar criança longe, muito tempo estrada, pode?",D3,unica:D3,acerto,1.156,True,True,True,False,False,10,15.9
-R20,cega,quantas escola indigena fechar no mato grosso do sul,F5,unica:F5,acerto,2.039,True,True,True,False,False,18,29.0
-R21,cega,QUANTAS HORAS CRIANÇA PODE FICAR DENTRO DO ONIBUS,D3,unica:D3 (com aviso de parcial),acerto,1.227,True,True,True,False,False,14,16.3
-R22,cega,se a escola fechar a rota dobra quem paga o combustivel a mais,T3/T2,nenhuma,erro,2.079,False,False,True,,False,9,15.2
-R23,cega,prefeitura pode mandar rodar com onibus velho? o meu tem mais de 20 ano,T4,nenhuma,erro,1.227,False,False,True,,False,9,15.2
-R24,cega,quais documento o motorista de onibus escolar precisa ter,T4,unica:T4,acerto,1.133,True,True,True,,False,9,18.0
-R25,cega,meu contrato e terceirizado se fechar a escola eu perco o serviço?,nenhuma,unica:C6 (com aviso de parcial),erro_avisado,2.365,True,True,True,False,False,17,16.5
-R26,cega,tem idade maxima pro onibus escolar rodar,T4,unica:D3 (com aviso de parcial),erro_avisado,1.193,True,True,True,False,False,14,16.2
-R27,cega,estrada ruim de mais quem tem que arrumar a estrada da rota,nenhuma,unica:F2 (com aviso de parcial),erro_avisado,1.255,True,True,True,False,False,12,17.9
-R28,cega,criança pequena pode ir sozinha no onibus sem monitor,T6/D3,unica:D3 (com aviso de parcial),acerto,1.572,True,True,True,False,False,14,16.3
-R29,cega,precisa de curso pra dirigir onibus escolar qual curso,T4,unica:T4,acerto,1.125,True,True,True,,False,9,18.0
-R30,cega,a escola da minha rota vai fechar como eu sei antes,C1/D1,ambigua:D1/F2,parcial,3.086,False,False,False,,False,4,8.2
-R31,cega,bom dia a escola dos meus neto vai fexar e eu queria saber se eles vão ter que acordar de madrugada pra pegar o ônibus obrigada viu,D3,nenhuma,erro,3.557,False,False,True,,False,9,15.2
-R32,cega,bom dia se a escola fexar meus neto vão ter merenda na outra escola ou não,D7,nenhuma,erro,2.999,False,False,True,,False,9,15.2
-R33,cega,bom dia com quem eu falo pra não deixar a escola fexar é com a dona da secretaria ou com o prefeito,C2/C6/C4,unica:C1 (com aviso de parcial),erro_avisado,4.015,True,True,True,False,False,14,13.7
-R34,cega,bom dia a prefeitura pode fexar a escola sem falar com a gente da comunidade,D1/C2,unica:D1 (com aviso de parcial),acerto,3.045,True,True,True,False,False,14,16.0
-R35,cega,bom dia o promotor da justiça pode ajudar a gente a escola do sítio não fexar,C4/C5,unica:C4,acerto,2.999,True,True,True,,False,9,16.0
-R36,cega,bom dia o que é que a elê dê bê fala sobre fexar escola do campo,D1/D6,unica:D1,acerto,2.92,True,True,True,False,False,10,15.5
-R37,cega,bom dia quanto tempo meus neto vão ficar dentro do ônibus até chegar na escola da cidade é longe,D3,unica:D3 (com aviso de parcial),acerto,2.248,True,True,True,False,False,14,16.6
-R38,cega,bom dia quem paga o ônibus da escola é a prefeitura ou é o estado obrigada viu,T2/T3,unica:T2,acerto,1.992,True,True,True,,False,8,10.7
-R39,cega,bom dia quantas escola do campo fexaram aqui em pernambuco,F5,unica:F5,acerto,2.898,True,True,True,False,False,19,28.5
-R40,cega,bom dia se a escola fexar a professora deles vai junto pra outra escola ou fica sem,nenhuma,nenhuma,acerto,3.037,False,False,True,,False,9,15.2
-R41,cega,quantas escolas rurais fecharam no piaui? me da o numero,F5,unica:F5,acerto,2.174,True,True,True,False,False,19,28.5
-R42,cega,"e em oeiras, quantas escolas do campo foram fechadas?",F5,unica:F5,acerto,2.188,True,True,True,False,False,20,24.4
-R43,cega,desde quando ta fechando escola no interior do piaui,F5,unica:F5 (com aviso de parcial),acerto,3.977,True,True,True,False,False,23,25.6
-R44,cega,ta aumentando ou diminuindo o fechamento de escola rural no piaui nos ultimos anos?,F5,unica:F5 (com aviso de parcial),acerto,3.468,True,True,True,False,False,23,26.0
-R45,cega,qual a fonte desses numeros? posso citar no ar?,F1/F5,unica:F1 (com aviso de parcial),acerto,1.148,True,True,True,,False,11,13.4
-R46,cega,quantos alunos ficaram sem escola perto de casa em oeiras,F5,unica:D4 (com aviso de parcial),erro_avisado,1.259,True,True,True,,False,11,12.2
-R47,cega,a prefeitura pode fechar escola da zona rural sem ouvir a comunidade?,D1/C2,unica:D1 (com aviso de parcial),acerto,2.487,True,True,True,False,False,14,16.1
-R48,cega,o que o ouvinte pode fazer se a escola do povoado dele for fechar,C2/C1/C4,unica:C2 (com aviso de parcial),acerto,2.352,True,True,True,,False,14,13.3
-R49,cega,quanto tempo de onibus as criancas estao andando depois que fecharam a escola,nenhuma,unica:D3 (com aviso de parcial),erro_avisado,2.345,True,True,True,False,False,14,16.2
-R50,cega,qual cidade do piaui fechou mais escola do campo,F5,unica:F5,acerto,2.121,True,True,True,False,False,19,28.5
-R51,cega,"Qual o dispositivo legal que exige manifestação prévia antes do fechamento de escola do campo? É o parágrafo único do art. 28 da LDB, incluído pela Lei 12.960/2014?",D1/D6,unica:D1,acerto,3.008,True,True,True,False,False,10,15.5
-R52,cega,A manifestação do órgão normativo (Conselho Municipal ou Estadual de Educação) é vinculante ou meramente opinativa?,C6,unica:C3,erro,1.72,True,True,True,False,False,11,19.2
-R53,cega,A Resolução CNE/CEB 2/2008 continua em vigor? Foi revogada ou alterada por norma posterior?,D3,nenhuma,erro,1.612,False,False,True,,False,9,15.2
-R54,cega,Cabe mandado de segurança contra o ato do prefeito que fecha a escola sem ouvir o Conselho? Qual o prazo decadencial?,nenhuma,nenhuma,acerto,2.556,False,False,True,,False,9,15.2
-R55,cega,"Quem tem legitimidade para propor ação civil pública contra o fechamento: sindicato, associação de pais, Ministério Público, Defensoria?",C4,nenhuma,erro,2.682,False,False,True,,False,9,15.2
-R56,cega,Existe jurisprudência do TJRS ou do STJ anulando fechamento de escola do campo por falta de consulta à comunidade?,C5,nenhuma,erro,2.54,False,False,True,,False,9,15.2
-R57,cega,O que conta como 'diagnóstico do impacto da ação' exigido pela lei? Há algum conteúdo mínimo definido em norma?,D6,unica:D1 (com aviso de parcial),erro_avisado,1.655,True,True,True,False,False,14,16.5
-R58,cega,"Qual o prazo para a prefeitura responder a um pedido de acesso à informação pela Lei 12.527/2011, e a quem recorrer se ela não responder?",C1,unica:C1,acerto,1.687,True,True,True,False,False,10,12.6
-R59,cega,"Quantas escolas do campo foram fechadas no Rio Grande do Sul nos últimos dez anos, segundo o Censo Escolar do INEP?",F5,unica:F5 (com aviso de parcial),acerto,2.751,True,True,True,False,False,23,26.4
-R60,cega,"O Decreto 7.352/2010, que trata da Política de Educação do Campo, ainda está vigente e o que ele diz sobre transporte escolar e nucleação?",D3/D2,nenhuma,erro,1.704,False,False,True,,False,9,15.2
+R01,cega,O que exatamente eu preciso apresentar ao Conselho Municipal de Educação para fechar uma escola rural?,D9/C6/D1/C3,unica:C3 (com aviso de parcial),acerto,2.723,True,True,True,False,False,18,21.2
+R02,cega,Qual o número mínimo de alunos que justifica fechar uma escola do campo?,C3,ambigua:D1/F5,erro,3.004,False,False,False,,False,4,8.8
+R03,cega,Posso fechar só algumas turmas (por exemplo o 6º ao 9º) e manter a escola aberta?,D1/C5,nenhuma,erro,2.3,False,False,True,,False,9,15.2
+R04,cega,Como evitar ação do Ministério Público no fechamento de escola rural?,D9/D1/C5/C6,unica:C4,erro,2.229,True,True,True,False,False,13,14.2
+R05,cega,Precisa de consulta pública à comunidade? Quantas reuniões e com quem?,D9/C2/D1/C3,unica:C2,acerto,1.191,True,True,True,,False,10,12.0
+R06,cega,Qual lei fala do fechamento de escola do campo? É a 12.960?,D1/D6,unica:D1,acerto,2.115,True,True,True,False,False,11,17.5
+R07,cega,Quanto a prefeitura economiza fechando uma escola com 15 alunos e levando para a escola-polo?,nenhuma,nenhuma,acerto,2.332,False,False,True,,False,9,15.2
+R08,cega,"O transporte escolar até a cidade tem tempo máximo de viagem? Quem paga, o município ou o estado?",D3/T2/T3,unica:D3,acerto,1.507,True,True,True,False,False,10,15.9
+R09,cega,"Se o Conselho Municipal aprovar, ainda precisa de autorização do Conselho Estadual de Goiás?",C6/C3,unica:C3,acerto,1.45,True,True,True,False,False,14,22.3
+R10,cega,Quantas escolas rurais fecharam em Goiás e algum município foi processado por isso?,F5,unica:F5,acerto,2.484,True,True,True,False,False,23,24.2
+R11,cega,prefeitura pode fechar escola da aldeia sem perguntar comunidade?,D8/D1,unica:D1 (com aviso de parcial),acerto,2.205,True,True,True,False,False,15,17.6
+R12,cega,"escola indigena fechar, criança ir escola da cidade?",D8/D3,unica:D3 (com aviso de parcial),acerto,8.439,True,True,True,False,False,14,16.2
+R13,cega,escola da cidade ensinar em guarani?,D8,nenhuma,erro,1.065,False,False,True,,False,9,15.2
+R14,cega,quem defende indigena quando querer fechar escola,D8/C4,unica:C4,acerto,2.025,True,True,True,False,False,13,14.2
+R15,cega,funai ajudar escola da aldeia?,D8,unica:D8,acerto,1.124,True,True,True,False,False,15,12.2
+R16,cega,professora da aldeia perder trabalho se escola fechar?,nenhuma,nenhuma,acerto,2.211,False,False,True,,False,9,15.2
+R17,cega,tem lei para escola indigena?,D8,ambigua:D1/D6/D8,parcial,0.953,False,False,False,,False,5,8.3
+R18,cega,comunidade precisa fazer reuniao antes fechar escola?,C2/D1/D8,unica:C2,acerto,2.061,True,True,True,,False,10,12.0
+R19,cega,"onibus levar criança longe, muito tempo estrada, pode?",D3,unica:D3,acerto,1.178,True,True,True,False,False,10,15.9
+R20,cega,quantas escola indigena fechar no mato grosso do sul,F5,unica:F5,acerto,2.197,True,True,True,False,False,27,26.9
+R21,cega,QUANTAS HORAS CRIANÇA PODE FICAR DENTRO DO ONIBUS,D3,unica:D3 (com aviso de parcial),acerto,1.216,True,True,True,False,False,14,16.3
+R22,cega,se a escola fechar a rota dobra quem paga o combustivel a mais,T3/T2,unica:T3 (com aviso de parcial),acerto,2.213,True,True,True,,False,14,18.1
+R23,cega,prefeitura pode mandar rodar com onibus velho? o meu tem mais de 20 ano,T4,nenhuma,erro,1.212,False,False,True,,False,9,15.2
+R24,cega,quais documento o motorista de onibus escolar precisa ter,T4,unica:T4,acerto,1.256,True,True,True,False,False,17,16.5
+R25,cega,meu contrato e terceirizado se fechar a escola eu perco o serviço?,nenhuma,unica:C6 (com aviso de parcial),erro_avisado,2.384,True,True,True,False,False,21,15.8
+R26,cega,tem idade maxima pro onibus escolar rodar,T4,unica:T4 (com aviso de parcial),acerto,1.27,True,True,True,False,False,21,16.6
+R27,cega,estrada ruim de mais quem tem que arrumar a estrada da rota,nenhuma,unica:F2 (com aviso de parcial),erro_avisado,1.261,True,True,True,False,False,12,17.9
+R28,cega,criança pequena pode ir sozinha no onibus sem monitor,T6/D3,unica:D3 (com aviso de parcial),acerto,1.597,True,True,True,False,False,14,16.3
+R29,cega,precisa de curso pra dirigir onibus escolar qual curso,T4,unica:T4,acerto,1.278,True,True,True,False,False,17,16.5
+R30,cega,a escola da minha rota vai fechar como eu sei antes,C1/D1,ambigua:D1/F2,parcial,3.117,False,False,False,,False,4,8.2
+R31,cega,bom dia a escola dos meus neto vai fexar e eu queria saber se eles vão ter que acordar de madrugada pra pegar o ônibus obrigada viu,D3,unica:D3,acerto,3.592,True,True,True,False,False,10,15.9
+R32,cega,bom dia se a escola fexar meus neto vão ter merenda na outra escola ou não,D7,ambigua:D1/D7,parcial,3.862,False,False,False,,False,4,8.4
+R33,cega,bom dia com quem eu falo pra não deixar a escola fexar é com a dona da secretaria ou com o prefeito,C2/C6/C4,unica:C1 (com aviso de parcial),erro_avisado,3.332,True,True,True,False,False,14,13.7
+R34,cega,bom dia a prefeitura pode fexar a escola sem falar com a gente da comunidade,D1/C2,unica:D1 (com aviso de parcial),acerto,3.08,True,True,True,False,False,15,17.5
+R35,cega,bom dia o promotor da justiça pode ajudar a gente a escola do sítio não fexar,C4/C5,unica:C4,acerto,3.095,True,True,True,False,False,13,14.2
+R36,cega,bom dia o que é que a elê dê bê fala sobre fexar escola do campo,D1/D6,unica:D1,acerto,2.959,True,True,True,False,False,11,17.5
+R37,cega,bom dia quanto tempo meus neto vão ficar dentro do ônibus até chegar na escola da cidade é longe,D3,unica:D3 (com aviso de parcial),acerto,2.236,True,True,True,False,False,14,16.4
+R38,cega,bom dia quem paga o ônibus da escola é a prefeitura ou é o estado obrigada viu,T2/T3,unica:T2,acerto,1.975,True,True,True,,False,8,10.7
+R39,cega,bom dia quantas escola do campo fexaram aqui em pernambuco,F5,unica:F5,acerto,2.997,True,True,True,False,False,23,24.2
+R40,cega,bom dia se a escola fexar a professora deles vai junto pra outra escola ou fica sem,nenhuma,nenhuma,acerto,3.012,False,False,True,,False,9,15.2
+R41,cega,quantas escolas rurais fecharam no piaui? me da o numero,F5,unica:F5,acerto,2.263,True,True,True,False,False,23,24.2
+R42,cega,"e em oeiras, quantas escolas do campo foram fechadas?",F5,unica:F5,acerto,2.301,True,True,True,False,False,24,22.0
+R43,cega,desde quando ta fechando escola no interior do piaui,F5,unica:F5 (com aviso de parcial),acerto,4.016,True,True,True,False,False,27,22.9
+R44,cega,ta aumentando ou diminuindo o fechamento de escola rural no piaui nos ultimos anos?,F5,unica:F5 (com aviso de parcial),acerto,2.605,True,True,True,False,False,27,23.0
+R45,cega,qual a fonte desses numeros? posso citar no ar?,F1/F5,unica:F1 (com aviso de parcial),acerto,1.175,True,True,True,,False,11,13.4
+R46,cega,quantos alunos ficaram sem escola perto de casa em oeiras,F5,unica:D4 (com aviso de parcial),erro_avisado,1.324,True,True,True,,False,14,14.7
+R47,cega,a prefeitura pode fechar escola da zona rural sem ouvir a comunidade?,D1/C2,unica:D1 (com aviso de parcial),acerto,2.501,True,True,True,False,False,15,17.6
+R48,cega,o que o ouvinte pode fazer se a escola do povoado dele for fechar,C2/C1/C4,unica:C2 (com aviso de parcial),acerto,2.297,True,True,True,,False,14,13.3
+R49,cega,quanto tempo de onibus as criancas estao andando depois que fecharam a escola,nenhuma,unica:D3 (com aviso de parcial),erro_avisado,2.333,True,True,True,False,False,14,16.2
+R50,cega,qual cidade do piaui fechou mais escola do campo,F5,unica:F5,acerto,2.183,True,True,True,False,False,23,24.2
+R51,cega,"Qual o dispositivo legal que exige manifestação prévia antes do fechamento de escola do campo? É o parágrafo único do art. 28 da LDB, incluído pela Lei 12.960/2014?",D1/D6,unica:D1,acerto,3.006,True,True,True,False,False,11,17.5
+R52,cega,A manifestação do órgão normativo (Conselho Municipal ou Estadual de Educação) é vinculante ou meramente opinativa?,C6,unica:C3,erro,1.792,True,True,True,False,False,14,22.3
+R53,cega,A Resolução CNE/CEB 2/2008 continua em vigor? Foi revogada ou alterada por norma posterior?,D3,nenhuma,erro,1.613,False,False,True,,False,9,15.2
+R54,cega,Cabe mandado de segurança contra o ato do prefeito que fecha a escola sem ouvir o Conselho? Qual o prazo decadencial?,nenhuma,nenhuma,acerto,2.582,False,False,True,,False,9,15.2
+R55,cega,"Quem tem legitimidade para propor ação civil pública contra o fechamento: sindicato, associação de pais, Ministério Público, Defensoria?",C4,unica:C4,acerto,2.763,True,True,True,False,False,13,14.2
+R56,cega,Existe jurisprudência do TJRS ou do STJ anulando fechamento de escola do campo por falta de consulta à comunidade?,C5,nenhuma,erro,2.496,False,False,True,,False,9,15.2
+R57,cega,O que conta como 'diagnóstico do impacto da ação' exigido pela lei? Há algum conteúdo mínimo definido em norma?,D6,unica:D1 (com aviso de parcial),erro_avisado,1.662,True,True,True,False,False,15,18.0
+R58,cega,"Qual o prazo para a prefeitura responder a um pedido de acesso à informação pela Lei 12.527/2011, e a quem recorrer se ela não responder?",C1,unica:C1,acerto,1.681,True,True,True,False,False,10,12.6
+R59,cega,"Quantas escolas do campo foram fechadas no Rio Grande do Sul nos últimos dez anos, segundo o Censo Escolar do INEP?",F5,unica:F5 (com aviso de parcial),acerto,2.834,True,True,True,False,False,27,23.5
+R60,cega,"O Decreto 7.352/2010, que trata da Política de Educação do Campo, ainda está vigente e o que ele diz sobre transporte escolar e nucleação?",D3/D2,nenhuma,erro,1.723,False,False,True,,False,9,15.2

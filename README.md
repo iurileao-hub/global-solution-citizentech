@@ -51,9 +51,9 @@ Só a biblioteca padrão do Python (3.10 ou mais recente). Funciona sem internet
 
 A LDB (art. 28, parágrafo único, incluído pela Lei 12.960/2014) exige que o fechamento de escolas do campo, indígenas e quilombolas seja precedido de manifestação do Conselho de Educação, que deve considerar a justificativa da Secretaria, um **diagnóstico do impacto** e a **manifestação da comunidade escolar**. A lei não define como esse diagnóstico deve ser feito, e um projeto de lei para padronizá-lo (PL 3.091/2024) está parado na Câmara desde maio de 2026. Na prática, a comunidade costuma ser chamada a se manifestar sem saber quais são os seus direitos, sem os números e sem saber a quem pedir. Os números só aparecem depois, no recurso ao Ministério Público ou na auditoria do Tribunal de Contas.
 
-**Público beneficiado:** famílias e comunidade escolar de escolas do campo, indígenas e quilombolas; conselheiros municipais e escolares; quem as apoia (associações, sindicatos rurais, Defensoria).
+**Público beneficiado:** famílias e comunidade escolar de escolas do campo, indígenas e quilombolas; conselheiros municipais e escolares; quem as apoia (associações, sindicatos rurais, Defensoria); e o gestor da Secretaria que precisa cumprir o rito antes de propor um fechamento.
 
-**Temas (4) e orientações (25):**
+**Temas (4) e orientações (27):**
 
 | Tema | Subtemas | Exemplos de pergunta |
 |---|---|---|
@@ -70,7 +70,7 @@ O problema foi escolhido por um processo explícito, antes de qualquer decisão 
 
 | Arquivo | Conteúdo |
 |---|---|
-| `base_orientacoes.json` | 25 orientações, 4 temas. Cada registro tem `id`, `tema`, `subtema`, `pergunta`, `palavras_chave` (com sinônimos populares: "roça", "van", "merenda"), `orientacao`, `referencia` (título e URL oficial), `data_verificacao`, `confirmar` (o que a pessoa deve confirmar) e `relacionados` |
+| `base_orientacoes.json` | 27 orientações, 4 temas. Cada registro tem `id`, `tema`, `subtema`, `pergunta`, `palavras_chave` (com sinônimos populares: "roça", "van", "merenda"), `orientacao`, `referencia` (título e URL oficial), `data_verificacao`, `confirmar` (o que a pessoa deve confirmar) e `relacionados` |
 | `escolas_campo.json.gz` | Índice nacional de escolas do campo (2,6 MB comprimido), gerado do Censo 2025 por `scripts/gerar_indice_escolas.py` |
 | `perguntas_teste.json` | 20 perguntas de teste com a resposta esperada |
 | `perguntas_cegas.json` | 50 perguntas escritas às cegas por personas simuladas, com o rótulo do juiz |
@@ -88,7 +88,7 @@ O problema foi escolhido por um processo explícito, antes de qualquer decisão 
 - **Grafo de assuntos:** cada orientação aponta para outras em `relacionados` (por exemplo D1 → C1, C2, F1; T1 → T2, T3, T4), e cada tema aponta para temas vizinhos. É o que alimenta "Para continuar", a navegação entre assuntos. Uma escola quilombola ou indígena liga, pela base (`ligacoes_escola`), à orientação sobre povos e comunidades tradicionais.
 - **Índice invertido** (termo → registros onde ele aparece), como o índice remissivo de um livro.
 
-**Estratégia de busca (orientações).** O texto digitado é normalizado (minúsculas, sem acento, sem palavras vazias, sem números) e cortado no **radical** de 5 letras ("fechamento", "fecharam" e "fechar" viram "fecha"). Cada orientação pontua pela soma dos pesos dos termos que casam: palavra-chave 3, pergunta modelo 2, subtema 1, mais 1 ponto por palavra que casa **inteira**. Termos presentes em mais da metade dos registros ("escola") são ignorados. Uma orientação só é candidata se casar ao menos 40% dos termos da pergunta.
+**Estratégia de busca (orientações).** O texto digitado é normalizado (minúsculas, sem acento, sem palavras vazias, sem números) e cortado no **radical** de 5 letras ("fechamento", "fecharam" e "fechar" viram "fecha"). Cada orientação pontua pela soma dos pesos dos termos que casam: palavra-chave 3, pergunta modelo 2, subtema 1, mais 1 ponto por palavra que casa **inteira**. Termos presentes em mais da metade dos registros ("escola") são ignorados, e o nome do lugar citado ("no Piauí") também, porque diz onde e não o assunto. O título da norma citada entra no índice com peso 1, para que "Resolução CNE/CEB 2/2008" chegue à orientação que a usa. Antes do radical, "x" vira "ch" dos dois lados, porque o reconhecimento de voz escreve "fexar", e siglas ditas letra a letra ("elê dê bê") viram a sigla. Uma orientação só responde se casar ao menos 34% dos termos da pergunta. Entre 34% e 60%, ela responde e avisa quais palavras da pergunta ficaram sem cobertura.
 
 **Várias correspondências.** Ordena-se por pontuação, depois por número de termos casados, depois pela ordem da base. Se duas ou mais empatam no topo e são do **mesmo subtema** (elas se completam, como "quem é responsável" e "de onde vem o dinheiro" do transporte), o assistente responde a primeira e sugere a outra. Se são de **subtemas diferentes**, mostra as opções e pede para escolher. Abaixo do limiar, responde que não há base suficiente.
 
@@ -178,7 +178,7 @@ Os 68% são o número honesto. O filtro de cobertura criado nos testes da equipe
 
 Notas médias de 1 a 5: facilidade 3,8; entendimento 3,4; confiança 4,0. A nota de entendimento foi a mais baixa por causa do vocabulário jurídico ("órgão normativo", "nucleação", "LDB" sem explicação), que foi reescrito. A tarefa da São José falhava porque três das cinco personas escreveram o nome junto com a cidade, e o assistente passou a separar os dois.
 
-Em seguida, as orientações novas levaram o conjunto às cegas a 92%, com três rótulos atualizados e anotados no arquivo, porque eram perguntas sobre quantas escolas fecharam, que a base passou a cobrir.
+Em seguida entraram cinco orientações novas, pedidas pelas próprias personas: barco escolar, o que o Conselho deve exigir, aluno com deficiência no transporte, adolescente pedindo informação e quantas escolas fecharam por lugar. Cada orientação nova pode tornar velho o rótulo de uma pergunta antiga, porque passa a responder melhor uma pergunta rotulada antes dela. Por isso um segundo juiz, também sem ver as respostas, rotulou de novo as 50 perguntas contra a base nova; 13 rótulos mudaram, e cada pergunta guarda o rótulo original. Com esse gabarito, a versão com as orientações novas acertou 92%.
 
 **Terceiro conjunto: 60 perguntas de seis personas novas, medidas antes de qualquer ajuste.** Para medir o programa corrigido com honestidade, entraram perfis que as primeiras personas não cobriam:
 - um secretário municipal que quer fechar escolas (teste de neutralidade);
@@ -188,18 +188,26 @@ Em seguida, as orientações novas levaram o conjunto às cegas a 92%, com três
 - um radialista que precisa de números citáveis;
 - uma advogada de sindicato rural.
 
-| Nas 60 perguntas da terceira rodada | Antes dos ajustes |
-|---|---|
-| Taxa de acerto | 52% |
-| "Não sei" quando a base tinha a resposta | 20 |
-| Resposta errada sem aviso | 3 |
+| Nas 60 perguntas da terceira rodada | Antes dos ajustes | Depois dos ajustes |
+|---|---|---|
+| Taxa de acerto | 52% | 70% |
+| "Não sei" quando a base tinha a resposta | 20 | 6 |
+| Resposta errada sem aviso | 3 | 2 |
 
 O acerto de 92% nas perguntas usadas para ajustar **não se transferiu** para perguntas novas. O erro, porém, foi para o lado desejado: o programa disse "não sei" muito mais vezes do que inventou. As causas principais foram estas, e o detalhe está em [`docs/metodologia.md`](docs/metodologia.md):
 - a grafia do reconhecimento de voz ("fexar");
 - termos técnicos que a base não usa;
 - "Rio Grande do Sul" lido como o município de Rio Grande.
 
-As seis personas concluíram as seis tarefas, incluindo a nova, que pede o número de escolas fechadas no estado da persona. Três tarefas exigiram mais de uma tentativa:
+Os ajustes corrigiram essas causas no mecanismo da busca: o nome do lugar deixou de contar como assunto, "x" e "ch" passaram a ser a mesma letra, e o nome do estado passou a valer antes do nome de município. A conferência de fontes pedida pela advogada achou dois erros de conteúdo, ambos corrigidos:
+- o Conselho Municipal só é o competente se o município tem sistema próprio de ensino;
+- a ata da reunião com a comunidade não é exigência da lei nacional.
+
+Entraram também duas orientações aprovadas pela equipe: a escola indígena separada da quilombola (língua materna, consulta prévia, Ministério Público Federal) e o caminho de quem está na Secretaria e vai propor um fechamento.
+
+Os 70% são otimistas, porque os ajustes foram feitos vendo essas perguntas, e 17 rótulos foram refeitos por um terceiro juiz cego depois das orientações novas. No conjunto anterior, os mesmos ajustes deixaram o acerto em 88% (era 92%): as perguntas novas ganharam e as antigas perderam um pouco, a troca que a medida em dois conjuntos existe para mostrar. O conjunto da equipe ficou em 100%.
+
+As seis personas concluíram as seis tarefas, incluindo a nova, que pede o número de escolas fechadas no estado da persona. Duas tarefas exigiram mais de uma tentativa, e as duas causas foram corrigidas:
 - a São José de Carlos Chagas, porque duas personas escreveram "Carlos Chagas MG" no campo de município;
 - o número do Rio Grande do Sul.
 
@@ -268,7 +276,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 **Conclusões.** Um assistente pequeno, só com regras explícitas e uma base conferida, já responde as perguntas que a comunidade faz quando o fechamento é anunciado, com fonte e sem inventar. A avaliação mostrou que os erros vieram da linguagem: radicais que colidem, palavras soltas, nomes próprios. O índice invertido torna viável consultar dezenas de milhares de escolas em menos de um milissegundo, num computador comum.
 
 **Limitações.**
-- A base cobre 25 orientações. Pergunta fora delas recebe "não sei", e o vocabulário de palavras-chave foi escrito pela equipe.
+- A base cobre 27 orientações. Pergunta fora delas recebe "não sei", e o vocabulário de palavras-chave foi escrito pela equipe.
 - O radical de 5 letras é grosseiro e junta palavras diferentes; o bônus de palavra inteira atenua, mas não resolve.
 - As distâncias são piso, de escola a escola. Velocidades de ônibus são parâmetros declarados, sem medição própria.
 - Cerca de 23% das escolas do campo não têm coordenada na base pública do Ipea e ficam sem distância.

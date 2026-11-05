@@ -32,6 +32,10 @@ Erros da IA no código, achados por teste ou por uso:
 - Uma afirmação técnica sobre o roteador OSRM ("ignora o tipo de superfície") estava errada e foi corrigida depois de lido o perfil do roteador.
 - A busca de escolas descartava "São" como se fosse o verbo "são", e "Escola Municipal São José" devolvia escolas sem "São" no nome. O teste automático passava, porque só conferia que havia uma lista; o teste foi reforçado para exigir a escola certa.
 - Um commit entrou com um teste falhando, porque o resultado do teste não foi conferido de fato; o processo passou a exigir que a suíte passe antes do commit.
+- O acerto de 92% no conjunto às cegas foi gravado antes de três orientações novas entrarem na base. Rodado de novo, o mesmo código dava 86% com o gabarito antigo. A diferença não era o programa piorar: as orientações novas respondiam melhor perguntas cujo rótulo era anterior a elas. Um segundo juiz, também sem ver as respostas, rotulou de novo as 50 perguntas, e o rótulo original ficou guardado em cada uma.
+- Para tirar o nome do lugar da conta da busca, o programa passou a apagar nomes de município da pergunta. "Própria" e "Modelo" são municípios (Propriá, em Sergipe, e Modelo, em Santa Catarina), e sumiam de "escola própria" e "modelo de diagnóstico". O nome agora só conta como lugar depois de "em", "de", "no" ou antes da sigla do estado.
+- A primeira contagem de escolas indígenas e quilombolas fechadas deu zero no Brasil inteiro. O Censo só marca a localização diferenciada enquanto a escola funciona; paralisada e extinta vêm em branco. A contagem passou a usar a localização do último ano em atividade e é apresentada como piso ("pelo menos").
+- Uma URL de lei foi escrita de memória na base e trocada pela que o agente de fontes de fato abriu, antes do commit.
 
 ## O que a IA não decidiu
 

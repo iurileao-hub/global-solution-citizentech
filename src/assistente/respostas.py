@@ -60,6 +60,9 @@ def _item(rid: str, pergunta: str) -> str:
 
 def _fonte(r: dict) -> str:
     ref = r["referencia"]
+    if r.get("dados"):      # número contado pelo projeto: "conferida em" soaria como número publicado pelo órgão
+        return (f"Fonte: {ref['titulo']}: {ref['url']} . Os totais foram contados pelo projeto; o texto desta "
+                f"orientação foi conferido em {_data(r['data_verificacao'])}.")
     return f"Fonte: {ref['titulo']}. Conferida em {_data(r['data_verificacao'])} em {ref['url']}"
 
 
@@ -190,7 +193,7 @@ def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B",
         for k in chaves:
             ids += [x for x in lig.get(k, []) if x not in ids]
         if ids:
-            linhas += ["", "Para continuar:"] + [f"  [{x}] {base.registros[x]['pergunta']}" for x in ids]
+            linhas += ["", "Para continuar:"] + [_item(x, base.registros[x]["pergunta"]) for x in ids]
     if extras:
         linhas += ["", sugestoes(base, extras)]
     return "\n".join(linhas + ["", RODAPE])

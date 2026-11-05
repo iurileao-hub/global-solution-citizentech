@@ -171,6 +171,7 @@ def bloco(doc: dict, pergunta: str) -> str:
         linhas.append(_quebra(f"  Mais da metade das extinções caiu em {ano_pico}. Uma concentração assim pode ser "
                               "regularização (a rede registra de uma vez o fim de escolas que já estavam paradas); "
                               "a Secretaria de Educação sabe dizer.", "  "))
+    linhas += _povos(n, lugar, pergunta)
     if lugar is None:
         linhas.append(_quebra("Para ver o seu estado ou município, escreva o nome dele na pergunta "
                               "(por exemplo: \"quantas escolas fecharam em Minas Gerais?\")."))
@@ -178,6 +179,37 @@ def bloco(doc: dict, pergunta: str) -> str:
                           "Escolar (INEP)\". O INEP publica os dados por escola; estes totais são contados pelo "
                           "projeto."))
     return "\n".join(linhas)
+
+
+POVOS = {"indigena": ("indigena", "indigenas", "aldeia", "aldeias", "indio", "indios", "guarani", "kaiowa"),
+         "quilombola": ("quilombola", "quilombolas", "quilombo", "quilombos")}
+NOME_POVO = {"indigena": "em terra indígena", "quilombola": "em comunidade quilombola"}
+
+
+def _povos(n: dict, lugar, pergunta: str) -> list[str]:
+    """Recorte indígena/quilombola, quando a pergunta cita. É um PISO: o Censo só marca a localização
+    diferenciada enquanto a escola funciona (ver scripts/gerar_fechamentos.py)."""
+    palavras = set(normalizar(pergunta).split())
+    pedidos = [g for g, termos in POVOS.items() if palavras & set(termos)]
+    if not pedidos:
+        return []
+    if lugar and lugar[0] == "municipio":
+        return [_quebra("  O recorte de escolas indígenas e quilombolas existe só por estado e para o Brasil; "
+                        "pergunte pelo estado para ver.", "  ")]
+    linhas = []
+    for g in pedidos:
+        x = n.get("povos", {}).get(g)
+        if not x:
+            linhas.append(f"  Escolas {NOME_POVO[g]}: nenhuma registrada aqui pelo Censo.")
+            continue
+        ext, par = x["extintas_2019_2025"], x["paralisadas_2025"]
+        extintas = f"pelo menos {_mil(ext)} {'extinta' if ext == 1 else 'extintas'}" if ext else "nenhuma extinta registrada"
+        paradas = f"{_mil(par)} {'paralisada' if par == 1 else 'paralisadas'}" if par else "nenhuma paralisada"
+        linhas.append(_quebra(f"  Só escolas {NOME_POVO[g]}: {_mil(x['ativas_2025'])} em atividade em 2025; "
+                              f"{extintas} de 2019 a 2025; {paradas} em 2025.", "    "))
+    linhas.append(_quebra("  (\"Pelo menos\": o Censo só marca terra indígena ou comunidade quilombola enquanto a "
+                          "escola funciona, e a escola parada desde antes de 2019 fica fora desta conta.)", "   "))
+    return linhas
 
 
 def _quebra(texto: str, recuo: str = "") -> str:

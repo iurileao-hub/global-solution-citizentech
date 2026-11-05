@@ -67,7 +67,7 @@
    "F2"
   ],
   "indígena": [
-   "D5"
+   "D8"
   ],
   "quilombola": [
    "D5"
@@ -102,15 +102,24 @@
     "roça",
     "sítio",
     "justificativa",
-    "suficiente"
+    "suficiente",
+    "turma",
+    "turmas",
+    "etapa",
+    "séries",
+    "dispositivo",
+    "artigo"
    ],
-   "orientacao": "Antes de fechar uma escola do campo, indígena ou quilombola, o Conselho de Educação (o órgão que aprova as regras do ensino na cidade ou no estado) precisa se manifestar. Para isso, deve considerar três coisas: a justificativa da Secretaria de Educação, um diagnóstico do impacto do fechamento e a manifestação da comunidade escolar. Fechar sem esses passos contraria a LDB, a Lei de Diretrizes e Bases da Educação.",
+   "orientacao": "Antes de fechar uma escola do campo, indígena ou quilombola, o Conselho de Educação (o órgão que faz as regras do sistema de ensino da escola: o Conselho Municipal, se o município tem sistema próprio, ou o Conselho Estadual) precisa se manifestar. Para isso, deve considerar três coisas: a justificativa da Secretaria de Educação, um diagnóstico do impacto do fechamento e a manifestação da comunidade escolar. Fechar sem esses passos contraria a LDB, a Lei de Diretrizes e Bases da Educação.",
    "referencia": {
     "titulo": "LDB (Lei 9.394/1996), art. 28, parágrafo único, incluído pela Lei 12.960/2014",
-    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm",
+    "outras": [
+     "https://www.cee.pr.gov.br/sites/cee/arquivos_restritos/files/migrados/File/pdf/Pareceres_2018/CP/pa_cp_normativo_01_18.pdf"
+    ]
    },
    "data_verificacao": "2026-11-05",
-   "confirmar": "Pergunte à Secretaria se o diagnóstico do impacto foi feito e peça uma cópia (veja C1).",
+   "confirmar": "Pergunte à Secretaria se o diagnóstico do impacto foi feito e peça uma cópia (veja C1). Se a prefeitura fechar só uma parte, como os anos finais, a LDB não diz expressamente se a regra vale: no caso de Muniz Freire (veja C5), o Tribunal de Contas aplicou a mesma regra, e no Paraná a norma estadual inclui o fechamento aos poucos e a escola que deixa de abrir turmas.",
    "relacionados": [
     "C1",
     "C2",
@@ -176,7 +185,11 @@
     "horas",
     "viagem",
     "demora",
-    "educação"
+    "educação",
+    "madrugada",
+    "cedo",
+    "acordar",
+    "horário"
    ],
    "orientacao": "A educação infantil deve ser oferecida sempre na própria comunidade rural. Os anos iniciais do ensino fundamental também, como regra; só excepcionalmente podem ir para uma escola nucleada (que junta alunos de várias comunidades), e dentro do próprio campo. Nesse caso, a comunidade participa da escolha do local, e o transporte deve ter o menor tempo possível e levar do campo para o campo, não para a cidade. A norma nacional não fixa o tempo máximo em minutos: ela manda cada sistema de ensino, estadual ou municipal, fixar o seu.",
    "referencia": {
@@ -206,7 +219,7 @@
     "criança",
     "adolescente"
    ],
-   "orientacao": "Sim. O Estatuto da Criança e do Adolescente garante o acesso à escola pública e gratuita próxima de casa, e vaga na mesma escola para irmãos que estejam na mesma etapa. Os pais também têm direito de conhecer e participar das propostas educacionais.",
+   "orientacao": "Sim. O Estatuto da Criança e do Adolescente garante o acesso à escola pública e gratuita próxima de casa, e vaga na mesma escola para irmãos que estejam na mesma etapa. Os pais também têm direito de conhecer e participar das propostas educacionais. Atenção: o Estatuto não fala em fechamento de escola. Esse direito, sozinho, não impede que uma escola específica feche, mas é um argumento forte, junto com as regras do fechamento (veja D1) e da educação do campo (veja D3), para pedir que a criança continue estudando perto de casa.",
    "referencia": {
     "titulo": "ECA (Lei 8.069/1990), art. 53, V",
     "url": "https://www.planalto.gov.br/ccivil_03/leis/l8069.htm"
@@ -221,34 +234,32 @@
    "id": "D5",
    "tema": "direitos",
    "subtema": "povos",
-   "pergunta": "Escola indígena ou quilombola: há regras próprias?",
+   "pergunta": "Escola quilombola: há regras próprias?",
    "palavras_chave": [
-    "indígena",
-    "índio",
-    "aldeia",
     "quilombola",
     "quilombo",
+    "quilombolas",
     "tradicional",
     "povos",
     "consulta",
     "prévia",
     "oit",
     "convenção",
-    "diferente",
-    "quilombolas"
+    "território",
+    "diferente"
    ],
-   "orientacao": "Sim. Para escolas quilombolas, as diretrizes nacionais mandam oferecer a educação infantil e os anos iniciais sempre no próprio território quilombola; se houver nucleação, deve ser em polos quilombolas, e só excepcionalmente fora deles. Para escolas indígenas, as diretrizes põem a escola no território indígena. Nos dois casos vale a consulta prévia: a Convenção 169 da OIT garante a povos indígenas e tribais serem consultados antes de medidas que os afetem, e as normas de educação quilombola aplicam essa consulta às comunidades quilombolas.",
+   "orientacao": "Sim. Para escolas quilombolas, as diretrizes nacionais mandam oferecer a educação infantil e os anos iniciais sempre no próprio território quilombola; se houver nucleação, deve ser em polos quilombolas, e só excepcionalmente fora deles. Vale também a consulta prévia: a Convenção 169 da OIT garante a povos indígenas e tribais serem consultados antes de medidas que os afetem, e as normas de educação quilombola aplicam essa consulta às comunidades quilombolas. Para escola indígena, veja D8.",
    "referencia": {
-    "titulo": "Res. CNE/CEB 8/2012 (quilombola), arts. 26 a 30; Res. CNE/CEB 5/2012 (indígena), art. 4º; Convenção 169 da OIT, art. 6º (Decreto 10.088/2019)",
+    "titulo": "Res. CNE/CEB 8/2012 (quilombola), arts. 26 a 30; Convenção 169 da OIT, art. 6º (Decreto 10.088/2019)",
     "url": "https://www.gov.br/mec/pt-br/cne/pdf/resolucoes-do-cne/ceb/2012/rceb008_12.pdf",
     "outras": [
-     "https://www.gov.br/mec/pt-br/cne/pdf/resolucoes-do-cne/ceb/2012/rceb005_12.pdf",
      "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2019/decreto/d10088.htm"
     ]
    },
    "data_verificacao": "2026-11-05",
-   "confirmar": "Este é o tema em que a orientação geral mais precisa de apoio especializado: procure a Defensoria, o Ministério Público Federal ou organizações do seu povo ou comunidade.",
+   "confirmar": "Este é um tema em que a orientação geral precisa de apoio especializado: procure a Defensoria, o Ministério Público Federal ou as organizações da sua comunidade.",
    "relacionados": [
+    "D8",
     "D1",
     "C4"
    ]
@@ -265,11 +276,12 @@
     "diagnóstico",
     "projeto",
     "lei",
-    "pl"
+    "pl",
+    "conteúdo"
    ],
    "orientacao": "Ainda não. A LDB exige o diagnóstico, mas não diz como fazê-lo. O PL 3.091/2024, aprovado no Senado em maio de 2026, detalharia o processo: conteúdo mínimo do diagnóstico (inclusive distância e tempo de deslocamento), divulgação da consulta à comunidade com 90 dias de antecedência e prazo de 1 ano para tentar resolver os problemas antes de fechar. Mas ele NÃO é lei: aguarda andamento na Câmara. Enquanto isso, valem a LDB e as regras de cada sistema de ensino (veja C3).",
    "referencia": {
-    "titulo": "PL 3.091/2024 (Senado; na Câmara desde 21/05/2026)",
+    "titulo": "PL 3.091/2024 (texto aprovado no Senado; na Câmara desde 21/05/2026, sem andamento depois de 22/05/2026)",
     "url": "https://www25.senado.leg.br/web/atividade/materias/-/materia/164931",
     "outras": [
      "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2627196"
@@ -314,6 +326,89 @@
     "T1"
    ],
    "confirmar": "Escolas em área indígena ou quilombola recebem um valor maior por aluno para a merenda. Se a escola nova estiver fora dessa área, pergunte à Secretaria como fica a alimentação dos alunos transferidos."
+  },
+  {
+   "id": "D8",
+   "tema": "direitos",
+   "subtema": "povos",
+   "pergunta": "Escola indígena: há regras próprias?",
+   "palavras_chave": [
+    "indígena",
+    "indígenas",
+    "índio",
+    "índios",
+    "aldeia",
+    "aldeias",
+    "povo",
+    "etnia",
+    "língua",
+    "materna",
+    "bilíngue",
+    "guarani",
+    "terra",
+    "território",
+    "funai",
+    "consulta",
+    "prévia",
+    "oit"
+   ],
+   "orientacao": "Sim. Para escolas indígenas, as regras nacionais dizem que a escola fica nas terras da comunidade e que o ensino pode usar a língua materna do povo, além do português. A escola indígena é criada a pedido da comunidade ou com o acordo dela, e o governo deve consultar o povo antes de tomar medidas que o afetem (a consulta prévia). Quem oferece a escola é o estado, sozinho ou com o município; a FUNAI (Fundação Nacional dos Povos Indígenas) não administra escolas, mas acompanha a educação escolar indígena e pode ser avisada. Para defender esses direitos na Justiça, procure o Ministério Público Federal; a própria comunidade e suas organizações também podem entrar na Justiça.",
+   "referencia": {
+    "titulo": "CF, arts. 210, § 2º, 129, V, e 232; LDB, arts. 32, § 3º, 78 e 79; Decreto 6.861/2009, art. 4º; Res. CNE/CEB 5/2012, arts. 4º e 25; Convenção 169 da OIT, art. 6º (Decreto 10.088/2019); LC 75/1993, art. 37, II; Decreto 26/1991",
+    "url": "https://www.gov.br/mec/pt-br/cne/pdf/resolucoes-do-cne/ceb/2012/rceb005_12.pdf",
+    "outras": [
+     "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
+     "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2009/decreto/d6861.htm",
+     "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2019/decreto/d10088.htm",
+     "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp75.htm",
+     "https://www.planalto.gov.br/ccivil_03/decreto/1990-1994/d0026.htm",
+     "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/decreto/d11226.htm"
+    ]
+   },
+   "data_verificacao": "2026-11-05",
+   "confirmar": "Este é o tema em que a orientação geral mais precisa de apoio especializado: procure o Ministério Público Federal, a Defensoria ou as organizações do seu povo.",
+   "relacionados": [
+    "D5",
+    "D1",
+    "C4"
+   ]
+  },
+  {
+   "id": "D9",
+   "tema": "direitos",
+   "subtema": "fechamento",
+   "pergunta": "Sou da Secretaria e vou propor um fechamento: o que preciso fazer?",
+   "palavras_chave": [
+    "secretário",
+    "secretária",
+    "gestor",
+    "gestora",
+    "propor",
+    "proposta",
+    "rito",
+    "procedimento",
+    "passos",
+    "preparar",
+    "apresentar",
+    "evitar",
+    "planejar",
+    "levar"
+   ],
+   "orientacao": "Quem propõe é a Secretaria de Educação, e o pedido passa pelo Conselho de Educação do sistema de ensino da escola (o Conselho Municipal, se o município tem sistema próprio; se não tem, o Conselho Estadual). Leve ao Conselho três coisas: a justificativa do fechamento, um diagnóstico do impacto na vida dos alunos e da comunidade e a manifestação da comunidade escolar. A lei nacional não define o conteúdo do diagnóstico, não diz como ouvir a comunidade e não fixa prazo; veja se o seu Conselho tem norma própria, como Santa Cruz do Sul (RS), que pede, entre outras coisas, a matrícula dos últimos 5 anos e um mapa com as distâncias até as outras escolas (veja C3). Pular uma etapa deixa o fechamento exposto a contestação: em Muniz Freire (ES), a falta de manifestação do Conselho e de consulta à comunidade levou a uma liminar na Justiça e a uma decisão cautelar do Tribunal de Contas (veja C5). Os documentos do processo são públicos e podem ser pedidos pela Lei de Acesso à Informação (veja C1).",
+   "referencia": {
+    "titulo": "LDB (Lei 9.394/1996), arts. 11, 18 e 28, parágrafo único; TCE-ES, Decisão 02423/2025-2",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm",
+    "outras": [
+     "https://www.mpc.es.gov.br/wp-content/uploads/2025/07/Processo-763-2025-Decisao-em-representacao-MPC-fechamento-escola-rural-Muniz-Freire.pdf"
+    ]
+   },
+   "data_verificacao": "2026-11-05",
+   "confirmar": "Confirme com a assessoria jurídica do município e com o Conselho qual norma local se aplica e se ela fixa prazos.",
+   "relacionados": [
+    "D1",
+    "C6",
+    "C5"
+   ]
   },
   {
    "id": "C1",
@@ -409,11 +504,14 @@
     "órgão",
     "normativo",
     "aprovar",
-    "parecer"
+    "parecer",
+    "mínimo",
+    "quantidade",
+    "sistema"
    ],
-   "orientacao": "O Conselho de Educação (municipal ou estadual, conforme a rede da escola) é o órgão normativo que precisa se manifestar antes do fechamento, avaliando a justificativa, o diagnóstico e a posição da comunidade. Alguns conselhos detalharam esse rito. Em Santa Cruz do Sul (RS), por exemplo, o pedido exige matrícula dos últimos 5 anos, mapa com as distâncias até as outras escolas, diagnóstico do impacto e ata de assembleia da comunidade convocada com 15 dias de antecedência, e só pode começar se a escola tiver menos de 30 alunos.",
+   "orientacao": "O Conselho de Educação (o municipal, se o município tem sistema próprio de ensino; o estadual, para escolas do estado e para municípios sem sistema próprio) é o órgão normativo que precisa se manifestar antes do fechamento, avaliando a justificativa, o diagnóstico e a posição da comunidade. Alguns conselhos detalharam esse rito. Em Santa Cruz do Sul (RS), por exemplo, o pedido exige matrícula dos últimos 5 anos, mapa com as distâncias até as outras escolas, diagnóstico do impacto e ata de assembleia da comunidade convocada com 15 dias de antecedência, e só pode começar se a escola tiver menos de 30 alunos. A lei nacional não fixa um número mínimo de alunos para manter ou fechar uma escola: limites como esse valem só onde foram criados.",
    "referencia": {
-    "titulo": "LDB, art. 28, parágrafo único; CME de Santa Cruz do Sul/RS, Resolução 03/2016",
+    "titulo": "LDB, arts. 11, 18 e 28, parágrafo único; CME de Santa Cruz do Sul/RS, Resolução 03/2016",
     "url": "https://www.santacruz.rs.gov.br/upload_page/121/arquivos/educacao/conselho/16/Res0316.pdf"
    },
    "data_verificacao": "2026-11-05",
@@ -447,18 +545,30 @@
     "impedir",
     "evitar",
     "barrar",
-    "fecharam"
+    "fecharam",
+    "legitimidade",
+    "associação",
+    "sindicato",
+    "ação",
+    "civil",
+    "propor",
+    "entidade"
    ],
-   "orientacao": "É possível levar o caso ao Ministério Público (a promotoria da educação ou da infância), que pode investigar e entrar na Justiça em nome da coletividade (ação civil pública), ou à Defensoria Pública, que orienta e defende de graça quem precisa. Leve o que tiver: datas, a resposta da prefeitura, atas de reunião e os números da escola.",
+   "orientacao": "É possível levar o caso ao Ministério Público (a promotoria da educação ou da infância). Qualquer pessoa pode avisar o Ministério Público, que pode investigar e entrar na Justiça em nome da coletividade (ação civil pública). A Defensoria Pública orienta e defende de graça quem precisa, e também pode propor essa ação. Uma associação (de pais, de moradores) também pode, se existir há pelo menos 1 ano e tiver no estatuto a defesa dos direitos de crianças e adolescentes; o juiz pode dispensar o prazo de 1 ano em caso de grande interesse social. Leve o que tiver: datas, a resposta da prefeitura, atas de reunião e os números da escola.",
    "referencia": {
-    "titulo": "Constituição Federal, arts. 129, III, e 134; Lei 7.347/1985",
-    "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+    "titulo": "Constituição Federal, arts. 129, III, e 134; Lei 7.347/1985, arts. 5º e 6º; ECA, arts. 208 e 210",
+    "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
+    "outras": [
+     "https://www.planalto.gov.br/ccivil_03/leis/l7347compilada.htm",
+     "https://www.planalto.gov.br/ccivil_03/leis/l8069.htm"
+    ]
    },
    "data_verificacao": "2026-11-05",
    "relacionados": [
     "C5",
     "C1"
-   ]
+   ],
+   "confirmar": "Se um sindicato ou outra entidade quiser entrar na Justiça, confirme com um advogado ou com a Defensoria se ela tem legitimidade (o direito de propor a ação). A lei não cita sindicatos na lista."
   },
   {
    "id": "C5",
@@ -478,15 +588,21 @@
     "muniz",
     "freire",
     "durval",
-    "máximo"
+    "máximo",
+    "jurisprudência",
+    "justiça",
+    "juiz",
+    "processo",
+    "anular",
+    "decisão"
    ],
-   "orientacao": "Sim. Em 2025, em Muniz Freire (ES), a prefeitura anunciou o fim do ensino fundamental na EMEF Durval Máximo sem plano, sem manifestação do Conselho Municipal de Educação e sem consulta à comunidade. A área técnica do Tribunal de Contas estimou que os alunos percorreriam até 52 km por dia em estradas precárias. A medida foi barrada por liminar em ação do Ministério Público e por decisão cautelar do Tribunal, que exigiu um plano de ação aprovado pelo Conselho e feito com a comunidade escolar.",
+   "orientacao": "Sim, por enquanto. Em 2025, em Muniz Freire (ES), a prefeitura anunciou o fim do ensino fundamental (anos iniciais e finais) na EMEF Durval Máximo, mantendo só a pré-escola. Não houve plano, manifestação do Conselho Municipal de Educação nem consulta à comunidade. O Ministério Público do ES entrou com uma ação civil pública (processo coletivo na Justiça), e o juiz deu uma liminar (decisão urgente e provisória, antes do julgamento final) mandando manter as aulas. Depois, o Tribunal de Contas do ES deu uma decisão cautelar (também provisória): o município não pode tirar o ensino fundamental da escola até haver um plano de ação com a Secretaria de Estado da Educação, aprovado pelo Conselho Municipal e feito com a comunidade escolar. A área técnica do Tribunal estimou que os alunos percorreriam até 52 km por dia em estradas precárias.",
    "referencia": {
     "titulo": "TCE-ES, Decisão 02423/2025-2 (republicada pelo Ministério Público de Contas do ES; conferência no TCE-ES: C07E8-7F63C-2A48A)",
     "url": "https://www.mpc.es.gov.br/wp-content/uploads/2025/07/Processo-763-2025-Decisao-em-representacao-MPC-fechamento-escola-rural-Muniz-Freire.pdf"
    },
    "data_verificacao": "2026-11-05",
-   "confirmar": "É um caso; cada situação é julgada pelos seus fatos.",
+   "confirmar": "É um caso; cada situação é julgada pelos seus fatos. As duas decisões são provisórias e podem mudar: não encontramos o julgamento final. O número da ação na Justiça do ES é 5000143-17.2025.8.08.0037.",
    "relacionados": [
     "C4",
     "F2"
@@ -564,7 +680,10 @@
     "ônibus",
     "fiscaliza",
     "fiscalizar",
-    "fundeb"
+    "fundeb",
+    "combustível",
+    "diesel",
+    "custo"
    ],
    "orientacao": "Além do dinheiro próprio de estados e municípios, o governo federal ajuda por dois programas do FNDE: o PNATE repassa dinheiro para custear o transporte de alunos que moram na zona rural (combustível, manutenção, serviço contratado), e o Caminho da Escola financia ônibus, barcos e bicicletas próprios para essas regiões. Quem fiscaliza o transporte escolar é o Conselho do Fundeb da sua cidade ou estado.",
    "referencia": {
@@ -597,19 +716,29 @@
     "vistoria",
     "regras",
     "segurança",
-    "faixa"
+    "faixa",
+    "velho",
+    "idade",
+    "antigo",
+    "fabricação"
    ],
-   "orientacao": "O veículo precisa de autorização do órgão de trânsito do estado, registro como veículo de passageiros, inspeção a cada seis meses, faixa amarela com a palavra ESCOLAR, registrador de velocidade e cinto de segurança para cada lugar, sem levar mais alunos do que a lotação. O motorista precisa ter mais de 21 anos, habilitação na categoria D, curso especializado e no máximo uma infração gravíssima nos últimos 12 meses.",
+   "orientacao": "O veículo precisa de autorização do órgão de trânsito do estado, registro como veículo de passageiros, inspeção a cada seis meses, faixa amarela com a palavra ESCOLAR, registrador de velocidade e cinto de segurança para cada lugar, sem levar mais alunos do que a lotação. O motorista precisa ter mais de 21 anos, habilitação na categoria D, curso especializado e no máximo uma infração gravíssima nos últimos 12 meses. A lei nacional não fixa idade máxima para o veículo escolar. O programa federal Caminho da Escola recomenda usar os ônibus dele por até dez anos, e as diretrizes da educação do campo mandam considerar a idade e o estado dos veículos no planejamento. Estados e municípios podem ter regra própria: em Goiás, por exemplo, uma portaria do Detran de 2018 fixou no máximo 15 anos de fabricação para ônibus e 10 anos para os outros veículos.",
    "referencia": {
-    "titulo": "Código de Trânsito Brasileiro, arts. 136 a 139",
-    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+    "titulo": "Código de Trânsito Brasileiro, arts. 136 a 139; Res. CD/FNDE 1/2021 (Caminho da Escola); Res. CNE/CEB 2/2008, art. 10; Detran-GO, Portaria 727/2018",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm",
+    "outras": [
+     "https://www.gov.br/fnde/resolveuid/ddedcb393e2e4b8b97c74396fca7b0e0",
+     "https://www.gov.br/mec/pt-br/cne/pdf/resolucoes-do-cne/ceb/2008/rceb002_08.pdf",
+     "https://goias.gov.br/detran/wp-content/uploads/sites/8/2023/08/20180919-727-2018-GP-DO.pdf"
+    ]
    },
    "data_verificacao": "2026-11-05",
    "relacionados": [
     "T1",
     "F2",
     "T5"
-   ]
+   ],
+   "confirmar": "Pergunte ao Detran do seu estado e à prefeitura se há idade máxima para o veículo escolar e quando foi a última inspeção semestral."
   },
   {
    "id": "F1",
@@ -749,14 +878,17 @@
     "município",
     "cidade",
     "aqui",
-    "região"
+    "região",
+    "aumentando",
+    "diminuindo",
+    "tendência"
    ],
-   "orientacao": "O Censo Escolar mostra, ano a ano, quantas escolas públicas rurais estão em atividade, quantas foram extintas (encerradas de vez, por ato da Secretaria) e quantas estão paralisadas (sem aulas, mas sem extinção formal). Uma escola paralisada há muitos anos costuma estar fechada na prática, sem o ato formal e, talvez, sem o rito que a lei exige.",
+   "orientacao": "O Censo Escolar mostra, ano a ano, quantas escolas públicas rurais estão em atividade, quantas foram informadas como extintas (atividades encerradas de vez) e quantas como paralisadas (atividades suspensas por um tempo, sem extinção). Quem informa a situação é a própria escola, com a rede de ensino. Pelas regras do INEP, uma escola pública só é extinta por ato da Secretaria de Educação, mas o Censo não mostra esse ato. Uma escola paralisada há muitos anos costuma estar fechada na prática, sem o ato formal e, talvez, sem o rito que a lei exige.",
    "referencia": {
     "titulo": "INEP, microdados do Censo Escolar 2019 a 2025 (contagem do projeto)",
     "url": "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-escolar"
    },
-   "data_verificacao": "2026-11-04",
+   "data_verificacao": "2026-11-05",
    "confirmar": "São números de escolas, não de crianças. Uma escola extinta pode ter sido juntada a outra (nucleada) ou fechada de vez; o Censo não diz qual.",
    "relacionados": [
     "F4",
@@ -863,18 +995,22 @@
     "conselheiro",
     "conselho",
     "impedir",
-    "barrar"
+    "barrar",
+    "vinculante",
+    "opinativo",
+    "opinativa",
+    "obrigatório"
    ],
-   "orientacao": "Antes de fechar uma escola do campo, indígena ou quilombola, a Secretaria de Educação tem de ouvir o Conselho de Educação: o municipal, se a escola é do município, ou o estadual, se é do estado. O Conselho deve receber e analisar três coisas: a justificativa da Secretaria, um estudo do impacto do fechamento na vida dos alunos e da comunidade (o diagnóstico) e a opinião da comunidade escolar, registrada em ata. O Conselho pode se manifestar contra o fechamento. A lei nacional não diz se um parecer contrário impede o fechamento: isso depende das regras do seu estado ou município. No Paraná, por exemplo, a regra estadual só autoriza o fechamento com parecer favorável.",
+   "orientacao": "Antes de fechar uma escola do campo, indígena ou quilombola, a Secretaria de Educação tem de ouvir o Conselho de Educação do sistema de ensino da escola. Escola do estado: Conselho Estadual. Escola do município: Conselho Municipal, se o município criou o próprio sistema de ensino; se não criou, quem se manifesta é o Conselho Estadual. O Conselho deve considerar três coisas: a justificativa da Secretaria, um estudo do impacto do fechamento na vida dos alunos e da comunidade (o diagnóstico) e a manifestação da comunidade escolar. A lei nacional não diz como a comunidade deve se manifestar nem fixa prazo; muitos conselhos têm regra própria (veja C3). O Conselho pode se manifestar contra o fechamento. A lei nacional não diz se um parecer contrário impede o fechamento: isso depende das regras do seu estado ou município. No Paraná, por exemplo, a regra estadual só autoriza o fechamento com parecer favorável.",
    "referencia": {
-    "titulo": "LDB, art. 28, parágrafo único; CEE/PR, Parecer Normativo 01/2018 (Deliberação 03/13, art. 80, § 2º); TCE-ES, Decisão 02423/2025-2",
+    "titulo": "LDB, arts. 11, 18 e 28, parágrafo único; CEE/PR, Parecer Normativo 01/2018 (Deliberação 03/13, art. 80, § 2º); TCE-ES, Decisão 02423/2025-2",
     "url": "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm",
     "outras": [
      "https://www.cee.pr.gov.br/sites/cee/arquivos_restritos/files/migrados/File/pdf/Pareceres_2018/CP/pa_cp_normativo_01_18.pdf"
     ]
    },
    "data_verificacao": "2026-11-05",
-   "confirmar": "Peça ao Conselho a norma local sobre fechamento de escolas e confira se o pedido da Secretaria chegou com os três documentos e no prazo. Para saber se um parecer contrário impede o fechamento no seu sistema, consulte o Ministério Público ou a Defensoria.",
+   "confirmar": "Pergunte ao Conselho Municipal se o seu município tem sistema próprio de ensino; se não tiver, o pedido deve ir ao Conselho Estadual. Peça ao Conselho a norma local sobre fechamento de escolas e confira se o pedido da Secretaria chegou com os três documentos, e no prazo que essa norma fixar, se fixar algum. Se a dúvida for se um parecer contrário impede o fechamento, a norma local responde; para interpretá-la, procure a assessoria jurídica do Conselho ou do município, o Ministério Público ou a Defensoria.",
    "relacionados": [
     "C3",
     "D1",
