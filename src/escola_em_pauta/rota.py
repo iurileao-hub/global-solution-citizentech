@@ -69,12 +69,19 @@ def dijkstra(g: Grafo, origem: int, destino: int) -> Caminho | None:
     return Caminho(minutos=tempo[destino], km=km, km_chao=km_chao, nos=nos[::-1])
 
 
-def dijkstra_muitos(adj: dict[int, list], origem: int, alvos: set[int]) -> dict[int, tuple[float, float, float]]:
+def dijkstra_muitos(adj: dict[int, list], origem: int, alvos: set[int],
+                    anterior: dict[int, int] | None = None) -> dict[int, tuple[float, float, float]]:
     """Um Dijkstra só, da origem até TODOS os alvos: {alvo: (minutos, km, km_chao)}.
 
     O Dijkstra já calcula o menor caminho para cada nó que fecha; basta não parar
     no primeiro destino. Km e km de chão vão "de carona" na relaxação das arestas
     (o caminho é escolhido pelo tempo), então não é preciso reconstruir o trajeto.
+
+    `anterior` (opcional): um dict que o Dijkstra preenche com o PREDECESSOR de cada nó
+    alcançado (nó -> de onde veio no melhor caminho). É a "árvore de caminhos mínimos"
+    a partir da origem; com ela, `caminho()` reconstrói o trajeto até qualquer alvo, para
+    desenhar no mapa. Custa uma atribuição de inteiro a cada melhora, e os números
+    devolvidos são exatamente os mesmos com ou sem ele.
     """
     melhor: dict[int, tuple[float, float, float]] = {origem: (0.0, 0.0, 0.0)}
     fechados: set[int] = set()
@@ -91,8 +98,18 @@ def dijkstra_muitos(adj: dict[int, list], origem: int, alvos: set[int]) -> dict[
             novo = t + minutos
             if novo < melhor.get(v, (math.inf,))[0]:
                 melhor[v] = (novo, km_u + km, chao_u + (km if chao else 0.0))
+                if anterior is not None:
+                    anterior[v] = u
                 heapq.heappush(heap, (novo, v))
     return {a: melhor[a] for a in alvos if a in fechados}
+
+
+def caminho(anterior: dict[int, int], origem: int, alvo: int) -> list[int]:
+    """Nós do caminho mínimo de origem a alvo, lidos de trás para a frente na árvore de predecessores."""
+    nos = [alvo]
+    while nos[-1] != origem:
+        nos.append(anterior[nos[-1]])
+    return nos[::-1]
 
 
 @dataclass(frozen=True)
@@ -104,6 +121,7 @@ class Rota:
     km_linha_reta_ida_volta: float
     km_acesso: float  # maior distância entre uma das escolas e a estrada mais próxima
     aviso: str | None = None
+    nos_ida: tuple[int, ...] | None = None  # nós do caminho de ida no grafo; só com pisos(..., tracados=True)
 
 
 def _aviso_acesso(acesso_o: float, acesso_d: float) -> str:
@@ -138,14 +156,21 @@ def piso(g: Grafo, origem: tuple[float, float], destino: tuple[float, float]) ->
     )
 
 
-def pisos(g: Grafo, origem: tuple[float, float], destinos: list[tuple[float, float]]) -> list[Rota]:
-    """Igual a piso(), para vários destinos com 2 Dijkstras no total (ida no grafo, volta no grafo reverso)."""
+def pisos(g: Grafo, origem: tuple[float, float], destinos: list[tuple[float, float]],
+          tracados: bool = False) -> list[Rota]:
+    """Igual a piso(), para vários destinos com 2 Dijkstras no total (ida no grafo, volta no grafo reverso).
+
+    Com `tracados=True`, cada rota encontrada leva também os nós do caminho de IDA (`nos_ida`), para
+    desenhar no mapa (segunda passada do pré-cálculo). Os números (km, minutos, chão) não mudam.
+    O traçado da volta não é guardado: só difere do da ida onde há mão única, e o mapa desenha uma linha.
+    """
     if not g.adj:  # grafo vazio: sem isso, no_mais_proximo quebrava (IndexError) numa área sem estrada mapeada
         return [Rota(None, None, None, 2 * haversine_km(*origem, *d), math.inf, SEM_ROTA) for d in destinos]
     no_o, acesso_o = g.no_mais_proximo(*origem)
     pontas = [g.no_mais_proximo(*d) for d in destinos]
     alvos = {n for n, a in pontas if a <= KM_ACESSO_MAX}
-    ida = dijkstra_muitos(g.adj, no_o, alvos) if acesso_o <= KM_ACESSO_MAX else {}
+    anterior: dict[int, int] | None = {} if tracados else None
+    ida = dijkstra_muitos(g.adj, no_o, alvos, anterior) if acesso_o <= KM_ACESSO_MAX else {}
     volta = dijkstra_muitos(g.reverso, no_o, alvos) if acesso_o <= KM_ACESSO_MAX else {}
     saida = []
     for d, (no_d, acesso_d) in zip(destinos, pontas):
@@ -158,5 +183,6 @@ def pisos(g: Grafo, origem: tuple[float, float], destinos: list[tuple[float, flo
         else:
             (m1, k1, c1), (m2, k2, c2) = ida[no_d], volta[no_d]
             ac = 2 * (acesso_o + acesso_d)
-            saida.append(Rota(k1 + k2 + ac, m1 + m2 + ac / KMH_ACESSO * 60, c1 + c2, reta, acesso))
+            nos = tuple(caminho(anterior, no_o, no_d)) if anterior is not None else None
+            saida.append(Rota(k1 + k2 + ac, m1 + m2 + ac / KMH_ACESSO * 60, c1 + c2, reta, acesso, nos_ida=nos))
     return saida

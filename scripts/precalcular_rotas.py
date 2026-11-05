@@ -202,11 +202,12 @@ def gravar(f, linha: dict) -> None:
 # ----------------------------------------------------------------------------------------------
 # Planejamento: que área cada escola vai pedir, e células de grade
 # ----------------------------------------------------------------------------------------------
-def area_da_escola(codigo: int) -> tuple[float, float, float, float] | None:
+def area_da_escola(codigo: int, pre_filtro: int | None = None) -> tuple[float, float, float, float] | None:
     """A bbox que receptoras.candidatas vai montar para esta escola, ou None se não houver rota a fazer.
 
     Usa as mesmas funções e os MESMOS parâmetros padrão de candidatas (lidos da assinatura dela,
-    para não divergir em silêncio se alguém mudar o pré-filtro).
+    para não divergir em silêncio se alguém mudar o pré-filtro). A segunda passada
+    (precalcular_rotas_v2.py) passa o pré-filtro dela, maior.
     """
     from escola_em_pauta import censo, grafo, receptoras
 
@@ -215,7 +216,7 @@ def area_da_escola(codigo: int) -> tuple[float, float, float, float] | None:
     etapas = list(info["matriculas_por_etapa"])
     if e.lat is None or not etapas:
         return None
-    n = inspect.signature(receptoras.candidatas).parameters["pre_filtro"].default
+    n = pre_filtro or inspect.signature(receptoras.candidatas).parameters["pre_filtro"].default
     perto = receptoras.pre_filtrar(e, etapas, n)
     if perto.empty:
         return None
@@ -288,14 +289,16 @@ def processar_escola(codigo: int, uf: str, g=None) -> dict:
 
 
 def rodar_uf(uf: str, codigos: list[int], arq: Path, celulas_por_lote: int, cache: Path = CACHE_CELULAS,
-             processar=processar_escola, refazer_erros: bool = False) -> Counter:
+             processar=processar_escola, refazer_erros: bool = False, area=None) -> Counter:
     """Processa as escolas de uma UF que ainda não estão no arquivo de progresso.
 
     Com refazer_erros, as que falharam antes entram de novo (útil depois de corrigir um defeito);
     a linha nova é acrescentada e, na leitura, a última linha de cada escola é a que vale.
+    `processar` e `area` são trocados pela segunda passada (precalcular_rotas_v2.py).
     """
     from escola_em_pauta import grafo, osm_local
 
+    area = area or area_da_escola  # resolvido na chamada (os testes trocam area_da_escola no módulo)
     cont: Counter = Counter()
     arq.parent.mkdir(parents=True, exist_ok=True)
     feitos = abrir_progresso(arq)
@@ -313,7 +316,7 @@ def rodar_uf(uf: str, codigos: list[int], arq: Path, celulas_por_lote: int, cach
     with open(arq, "a", encoding="utf-8") as f:
         for c in pendentes:
             try:
-                b = area_da_escola(c)
+                b = area(c)
             except Exception:  # noqa: BLE001  (o diagnóstico vai registrar o erro com a mensagem)
                 b = None
             if b is None:
