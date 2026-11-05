@@ -1,0 +1,25 @@
+{
+  "descricao": "Perguntas de teste do assistente. 'esperado' = ids aceitos (mais de um quando a pergunta tem mais de uma resposta legítima); 'esperado_tipo' = comportamento esperado quando não há orientação a dar. Perguntas fictícias, escritas como uma pessoa da comunidade escreveria.",
+  "perguntas": [
+    {"id": "P01", "tipo": "direta", "pergunta": "A prefeitura pode fechar a escola sem consultar a gente?", "esperado": ["D1"]},
+    {"id": "P02", "tipo": "reformulação", "pergunta": "precisa de algum estudo antes de fechar escola rural?", "esperado": ["D1"]},
+    {"id": "P03", "tipo": "direta", "pergunta": "A escola fica na cidade mas os alunos são da roça, conta como escola do campo?", "esperado": ["D2"]},
+    {"id": "P04", "tipo": "reformulação", "pergunta": "meu filho de 5 anos vai ter que pegar ônibus pra estudar na cidade", "esperado": ["D3"]},
+    {"id": "P05", "tipo": "direta", "pergunta": "Como consigo os números e o estudo da prefeitura?", "esperado": ["C1"]},
+    {"id": "P06", "tipo": "direta", "pergunta": "Fecharam mesmo assim, com quem eu falo?", "esperado": ["C4"]},
+    {"id": "P07", "tipo": "direta", "pergunta": "Quem paga o ônibus escolar?", "esperado": ["T2", "T3"]},
+    {"id": "P08", "tipo": "reformulação", "pergunta": "o motorista da van precisa ter curso?", "esperado": ["T4"]},
+    {"id": "P09", "tipo": "direta", "pergunta": "Por que a ficha diz pelo menos 25 km?", "esperado": ["F2"]},
+    {"id": "P10", "tipo": "direta", "pergunta": "Escola paralisada quer dizer o quê?", "esperado": ["F4"]},
+    {"id": "P11", "tipo": "reformulação", "pergunta": "meu filho vai continuar tendo merenda na escola nova?", "esperado": ["D7"]},
+    {"id": "P12", "tipo": "direta", "pergunta": "A escola é quilombola, muda alguma coisa?", "esperado": ["D5"]},
+    {"id": "P13", "tipo": "fora do tema", "pergunta": "Como tiro a segunda via do RG?", "esperado_tipo": "nenhuma"},
+    {"id": "P14", "tipo": "fora do tema", "pergunta": "Qual é a melhor escola particular da cidade?", "esperado_tipo": "nenhuma"},
+    {"id": "P15", "tipo": "limite: entrada vazia", "pergunta": "   ", "esperado_tipo": "vazia"},
+    {"id": "P16", "tipo": "limite: ambígua", "pergunta": "Escola Municipal São José", "esperado_tipo": "escola_ambigua", "esperado_escola": 31151220},
+    {"id": "P17", "tipo": "escola por nome", "pergunta": "Durval Máximo", "esperado_tipo": "escola", "esperado_escola": 32049501},
+    {"id": "P18", "tipo": "limite: só palavras comuns", "pergunta": "e aí, o que que é isso?", "esperado_tipo": "vazia"},
+    {"id": "P19", "tipo": "código direto", "pergunta": "c5", "esperado": ["C5"]},
+    {"id": "P20", "tipo": "limite: sem resposta confiável", "pergunta": "Quantos quilômetros meu filho vai andar até a escola nova?", "esperado": ["F2"]}
+  ]
+}

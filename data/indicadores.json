@@ -1,0 +1,79 @@
+{
+  "A": {
+    "indicadores": {
+      "perguntas": 20,
+      "acerto": 20,
+      "parcial": 0,
+      "erro": 0,
+      "taxa_acerto": 100.0,
+      "tempo_medio_ms": 0.176,
+      "tempo_max_ms": 0.719
+    },
+    "formato": {
+      "cita_fonte": 15,
+      "data_verificacao": 15,
+      "aviso_nao_oficial": 17,
+      "pede_confirmacao": 0,
+      "oferece_continuidade": 0,
+      "linhas": 8.7,
+      "palavras_por_frase": 17.4
+    }
+  },
+  "B": {
+    "indicadores": {
+      "perguntas": 20,
+      "acerto": 20,
+      "parcial": 0,
+      "erro": 0,
+      "taxa_acerto": 100.0,
+      "tempo_medio_ms": 0.193,
+      "tempo_max_ms": 0.727
+    },
+    "formato": {
+      "cita_fonte": 15,
+      "data_verificacao": 15,
+      "aviso_nao_oficial": 17,
+      "pede_confirmacao": 9,
+      "oferece_continuidade": 16,
+      "linhas": 16.9,
+      "palavras_por_frase": 15.1
+    }
+  },
+  "busca_escolas": [
+    {
+      "consulta": "Durval Maximo",
+      "encontradas": 1,
+      "mesmo_resultado": true,
+      "linear_ms": 157.709,
+      "indice_ms": 0.006
+    },
+    {
+      "consulta": "Escola Municipal Sao Jose",
+      "encontradas": 546,
+      "mesmo_resultado": true,
+      "linear_ms": 159.495,
+      "indice_ms": 0.611
+    },
+    {
+      "consulta": "Santo Antonio",
+      "encontradas": 396,
+      "mesmo_resultado": true,
+      "linear_ms": 159.253,
+      "indice_ms": 0.333
+    },
+    {
+      "consulta": "Rui Barbosa",
+      "encontradas": 184,
+      "mesmo_resultado": true,
+      "linear_ms": 158.485,
+      "indice_ms": 0.113
+    },
+    {
+      "consulta": "Quilombo",
+      "encontradas": 10,
+      "mesmo_resultado": true,
+      "linear_ms": 159.614,
+      "indice_ms": 0.008
+    }
+  ]
+}

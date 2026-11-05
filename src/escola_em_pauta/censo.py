@@ -15,8 +15,10 @@ Harmonização entre anos (conferida nos cabeçalhos em 04/11/2026):
   partir de 2023. Por isso a série histórica leva só matrícula por etapa, e o
   retrato do ano mais recente leva o resto.
 
-Cuidado: TP_SITUACAO_FUNCIONAMENTO 2 = "paralisada" quer dizer escola JÁ
-fechada (sem matrícula), e não escola "em risco".
+Cuidado: TP_SITUACAO_FUNCIONAMENTO 2 = "paralisada" quer dizer atividades
+TEMPORARIAMENTE SUSPENSAS (INEP, Caderno de Conceitos 2024): sem matrícula
+naquele ano, mas sem ato de extinção. Não é escola "em risco" nem escola
+extinta; paralisada há anos = fechamento de fato sem o ato formal.
 
 Saídas em dados/processados/ (só escolas públicas, só colunas usadas):
 - censo_serie.parquet   ano × escola, matrícula por etapa (2019-2025)
@@ -107,7 +109,7 @@ DEPENDENCIA = {1: "federal", 2: "estadual", 3: "municipal"}
 INFRA = {"agua_potavel": "água potável", "internet": "internet", "quadra": "quadra",
          "biblioteca": "biblioteca", "alimentacao": "alimentação escolar"}
 
-ROTULO_SITUACAO = {1: "ativa", 2: "paralisada (já fechada)", 3: "extinta", 4: "extinta no ano anterior"}
+ROTULO_SITUACAO = {1: "ativa", 2: "paralisada (atividades suspensas, sem extinção formal)", 3: "extinta", 4: "extinta no ano anterior"}
 
 
 def _zip_do_ano(ano: int, brutos: Path = BRUTOS) -> Path:
