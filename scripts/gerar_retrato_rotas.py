@@ -10,6 +10,12 @@ Qual receptora conta (o MESMO critério da frase de abertura da ficha, ficha._ma
   O índice guarda até 4 receptoras por escola (MAX_RECEPTORAS), então "nenhuma recebe todas" quer dizer
   "nenhuma das 4 mais próximas com rota".
 
+Com --rotas-v2 (pasta da segunda passada, scripts/precalcular_rotas_v2.py), a lista de cada escola vem de lá:
+até 10 receptoras em vez de 4. Isso muda o número, e não é ruído: medido no ES em 05/11, "nenhuma recebe
+todas" cai de 141 para 53 escolas e a mediana sobe de 12,1 para 13,5 km. Com 4, quando nenhuma recebia todas
+as etapas, a conta caía na mais próxima PARCIAL, que é mais perto do que a escola que de fato receberia a
+criança. Sem a segunda passada inteira, o retrato recusa misturar as duas (uma UF com 10, outra com 4).
+
 Leitura dos números: km e minutos são de IDA E VOLTA por dia, de escola a escola, e são PISO. A casa de cada
 criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior. Em AM, PA e AP parte do
 transporte é fluvial e a rota por estrada pode não ser o caminho real (campo "aviso_fluvial").
@@ -126,7 +132,29 @@ class Bloco:
         }
 
 
-def retrato(doc: dict) -> dict:
+def aplicar_v2(doc: dict, linhas: dict[int, dict]) -> dict:
+    """Troca a rota de cada escola pela da segunda passada. Sem lista e sem motivo na v2 (a malha não ligou a
+    escola), vale o motivo da primeira (origem_longe ou sem_rota), que a v2 não recalcula. Recusa mistura:
+    toda escola com rota tentada na primeira passada precisa ter linha na segunda."""
+    faltam = [e["c"] for e in doc["escolas"] if e.get("rota") is not None and e["c"] not in linhas]
+    if faltam:
+        raise SystemExit(f"segunda passada incompleta: {len(faltam)} escolas com rota na 1ª passada e sem linha "
+                         f"na 2ª (ex.: {faltam[:3]}); use --ufs para um retrato só das UFs prontas")
+    escolas = []
+    for e in doc["escolas"]:
+        x = linhas.get(e["c"])
+        if x is not None:
+            if "erro" in x:
+                raise SystemExit(f"escola {e['c']} com erro na segunda passada: {x['erro']}")
+            rota = dict(x["rota"])
+            if not rota.get("receptoras") and not rota.get("motivo") and (e.get("rota") or {}).get("motivo"):
+                rota["motivo"] = e["rota"]["motivo"]
+            e = {**e, "rota": rota}
+        escolas.append(e)
+    return {**doc, "escolas": escolas}
+
+
+def retrato(doc: dict, k: int = 4) -> dict:
     brasil, regiao, uf, povo = Bloco(), defaultdict(Bloco), defaultdict(Bloco), defaultdict(Bloco)
     datas_osm = set()
     for e in doc["escolas"]:
@@ -146,10 +174,12 @@ def retrato(doc: dict) -> dict:
     return {
         "esquema": 1,
         "fonte": doc.get("fonte"),
-        "rotas": "pré-cálculo pela malha do OpenStreetMap (scripts/precalcular_rotas.py)",
+        "rotas": "pré-cálculo pela malha do OpenStreetMap (scripts/precalcular_rotas.py"
+                 + (", segunda passada: precalcular_rotas_v2.py)" if k > 4 else ")"),
+        "receptoras_por_escola": k,
         "data_osm": sorted(datas_osm),
         "criterio": ("receptora = a mais próxima por estrada que recebe todas as etapas da escola (senão, a mais "
-                     "próxima, contada em nenhuma_recebe_todas), entre até 4 receptoras com rota; km e minutos de "
+                     f"próxima, contada em nenhuma_recebe_todas), entre até {k} receptoras com rota; km e minutos de "
                      "ida e volta por dia, de escola a escola, como piso; mediana e p90 por posição; faixas "
                      "inclusivas à esquerda"),
         "brasil": brasil.resumo(),
@@ -183,8 +213,18 @@ def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--indice", type=Path, default=INDICE)
     p.add_argument("--saida", type=Path, default=SAIDA)
+    p.add_argument("--rotas-v2", type=Path, help="pasta da segunda passada (até 10 receptoras por escola)")
+    p.add_argument("--ufs", nargs="+", help="só estas UFs (para comparar antes de a segunda passada terminar)")
     a = p.parse_args(argv)
-    doc = retrato(json.loads(gzip.decompress(a.indice.read_bytes())))
+    doc = json.loads(gzip.decompress(a.indice.read_bytes()))
+    if a.ufs:
+        doc = {**doc, "escolas": [e for e in doc["escolas"] if e.get("uf") in set(a.ufs)]}
+    k = 4
+    if a.rotas_v2:
+        from precalcular_rotas import ler_todas
+        k = json.loads((a.rotas_v2 / "meta.json").read_text())["k"]
+        doc = aplicar_v2(doc, ler_todas(a.rotas_v2))
+    doc = retrato(doc, k)
     a.saida.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     b = doc["brasil"]
     print(f"{a.saida.name}: {b['com_rota']} de {b['escolas']} escolas com rota | sem rota: {b['sem_rota']}")

@@ -167,20 +167,26 @@ CAMPOS_ROTA = {
 # ----------------------------------------------------------------------------------------------
 # Arquivo de progresso (uma linha JSON por escola; retomável)
 # ----------------------------------------------------------------------------------------------
-def abrir_progresso(arq: Path) -> dict[int, dict]:
+def abrir_progresso(arq: Path, aparar: bool = True) -> dict[int, dict]:
     """Escolas já processadas neste arquivo: {código: última linha}.
 
     Se o processo morreu no meio de uma escrita, a última linha fica cortada (sem o "\\n" final).
     Ela é descartada, e o arquivo é aparado até a última linha completa: sem isso, a próxima linha
     gravada grudaria no pedaço quebrado e as duas se perderiam.
+
+    aparar=False é a leitura de CONSULTA (status, fundir, retrato): só ignora a linha cortada, sem mexer no
+    arquivo. Quem só lê pode estar lendo enquanto o lote grava: uma linha da segunda passada passa de 8 KB e
+    pode chegar ao disco em mais de uma escrita; aparar nesse instante apagaria o começo da linha que o lote
+    está terminando de escrever. Só a retomada (rodar_uf, com o lote parado nesta UF) apara.
     """
     if not arq.exists():
         return {}
     bruto = arq.read_bytes()
     if bruto and not bruto.endswith(b"\n"):
         corte = bruto.rfind(b"\n") + 1
-        with open(arq, "r+b") as f:
-            f.truncate(corte)
+        if aparar:
+            with open(arq, "r+b") as f:
+                f.truncate(corte)
         bruto = bruto[:corte]
     feitos: dict[int, dict] = {}
     for linha in bruto.decode("utf-8").splitlines():
@@ -387,9 +393,10 @@ def cmd_rodar(a) -> None:
 
 
 def ler_todas(dir_rotas: Path) -> dict[int, dict]:
+    """Todas as linhas da pasta, só para leitura (não apara: pode rodar com o lote gravando)."""
     linhas: dict[int, dict] = {}
     for arq in sorted(dir_rotas.glob("*.jsonl")):
-        linhas.update(abrir_progresso(arq))
+        linhas.update(abrir_progresso(arq, aparar=False))
     return linhas
 
 
