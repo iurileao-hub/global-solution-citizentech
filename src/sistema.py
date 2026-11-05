@@ -127,8 +127,8 @@ def sobre(ctx: Contexto) -> None:
         "Privacidade: não pede nome, endereço nem documento, e não grava o que você digita. Os números das escolas "
         "são públicos (Censo Escolar do INEP) e contam escolas, nunca identificam crianças."))
     if ctx.escolas:
-        print(respostas._par(f"Escolas consultáveis: {len(ctx.escolas.por_codigo):,} ({ctx.escolas.doc['fonte']})."
-                             .replace(",", ".")))
+        n_esc = f"{len(ctx.escolas.por_codigo):,}".replace(",", ".")   # separador de milhar brasileiro
+        print(respostas._par(f"Escolas consultáveis: {n_esc} ({ctx.escolas.doc['fonte']})."))
 
 
 def main(argv: list[str] | None = None) -> int:
