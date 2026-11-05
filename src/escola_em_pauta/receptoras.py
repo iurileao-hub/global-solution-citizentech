@@ -17,6 +17,8 @@ utilizadas), rotulado como estimativa: a vaga real não é publicada.
 
 from __future__ import annotations
 
+from functools import lru_cache
+
 import numpy as np
 import pandas as pd
 
@@ -43,13 +45,25 @@ def _distancias_km(lat: float, lon: float, lats: np.ndarray, lons: np.ndarray) -
     return 2 * geo.RAIO_TERRA_KM * np.arcsin(np.sqrt(a))
 
 
-def pre_filtrar(origem: Escola, etapas: list[str], n: int) -> pd.DataFrame:
-    """As n escolas ativas mais próximas em linha reta que oferecem alguma das etapas."""
+@lru_cache(maxsize=1)
+def _ativas_com_coordenada() -> pd.DataFrame:
+    """Escolas ativas, fora de unidade prisional/socioeducativa, com coordenada: o universo das receptoras.
+
+    Não depende da escola de origem, então é montado UMA vez por processo (o cruzamento de ~180 mil
+    linhas do Censo com a tabela de coordenadas custava ~0,1 s por escola; no pré-cálculo nacional,
+    com 50 mil escolas, isso eram horas). O inner join preserva a ordem do Censo, então o resultado
+    de pre_filtrar é o mesmo de antes, linha por linha (inclusive no desempate do nsmallest).
+    """
     r = censo.retrato()
     t = geo.tabela()
-    pool = r[(r["situacao"] == 1) & (r.index != origem.codigo_inep) & censo.fora_de_privacao(r)]
-    pool = pool[(pool[etapas] > 0).any(axis=1)]
-    pool = pool.join(t[["lat", "lon"]], how="inner").dropna(subset=["lat", "lon"])
+    ativas = r[(r["situacao"] == 1) & censo.fora_de_privacao(r)]
+    return ativas.join(t[["lat", "lon"]], how="inner").dropna(subset=["lat", "lon"])
+
+
+def pre_filtrar(origem: Escola, etapas: list[str], n: int) -> pd.DataFrame:
+    """As n escolas ativas mais próximas em linha reta que oferecem alguma das etapas."""
+    pool = _ativas_com_coordenada()
+    pool = pool[(pool.index != origem.codigo_inep) & (pool[etapas] > 0).any(axis=1)]
     pool = pool.assign(reta_km=_distancias_km(origem.lat, origem.lon, pool["lat"].to_numpy(), pool["lon"].to_numpy()))
     return pool[pool["reta_km"] <= RAIO_MAX_KM].nsmallest(n, "reta_km")
 

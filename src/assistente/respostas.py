@@ -96,6 +96,34 @@ def sugestoes(base: Base, ids: list[str]) -> str:
     return "Talvez também interesse:\n" + "\n".join(f"  [{x}] {base.registros[x]['pergunta']}" for x in ids)
 
 
+def _tempo(minutos: float) -> str:
+    h, m = divmod(round(minutos), 60)
+    return f"{m} min" if not h else f"{h} h {m:02d} min"
+
+
+def _receptora(r: dict, origem: dict) -> str:
+    """Uma linha da lista de receptoras: nome, tipo, lugar, km e tempo (piso), chão e etapas cobertas.
+
+    Campos além de n/rural/km são opcionais (o resumo da 1ª versão só tinha esses três).
+    """
+    onde = ["rural" if r["rural"] else "urbana"]
+    if r.get("m") or r.get("uf"):
+        onde.append(f"{r.get('m') or origem['m']}/{r.get('uf') or origem['uf']}")
+    partes = [f"{r['km']:.0f} km"]
+    if r.get("min") is not None:
+        partes.append(_tempo(r["min"]))
+    texto = f"{r['n']} ({', '.join(onde)}): {' e '.join(partes)}"
+    if (r.get("chao") or 0) >= 0.5:  # abaixo disso o arredondamento diria "0 km"
+        texto += f", dos quais {r['chao']:.0f} km de estrada de chão"
+    etapas = r.get("etapas")
+    if etapas:
+        if set(etapas) >= set(origem["e"]):
+            texto += "; recebe todas as etapas desta escola"
+        else:
+            texto += "; recebe só " + ", ".join(ETAPA.get(x, x) for x in etapas)
+    return texto + "."
+
+
 def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B") -> str:
     local = "rural" if e["z"] == "rural" else "urbana, mas a maioria dos alunos mora na zona rural"
     etapas = "; ".join(f"{ETAPA[k]}: {v}" for k, v in e["e"].items()) or "sem matrícula informada"
@@ -108,10 +136,22 @@ def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B") 
         linhas.append(_par(f"Usam transporte escolar público: {e['tp']}. Moram na zona rural: {e['zr']}."))
     if len(anos) > 1:
         linhas.append(_par("Matrícula por ano: " + ", ".join(f"{a}: {serie[a]}" for a in anos) + "."))
-    if e.get("rota"):
+    rota = e.get("rota")
+    if rota and rota.get("receptoras"):
         linhas.append("Escolas que poderiam receber os alunos (estrada por dia, ida e volta, PELO MENOS):")
-        for r in e["rota"]["receptoras"]:
-            linhas.append(f"  - {r['n']} ({'rural' if r['rural'] else 'urbana'}): {r['km']:.0f} km")
+        for r in rota["receptoras"]:
+            linhas.append(textwrap.fill(_receptora(r, e), LARGURA, initial_indent="  - ", subsequent_indent="    "))
+        if rota.get("aviso"):
+            linhas.append(_par(rota["aviso"]))
+        if rota.get("sem_rota"):
+            linhas.append(_par(f"Outras {rota['sem_rota']} escola(s) próxima(s) ficaram sem rota na malha viária "
+                               "e não entram na lista."))
+        quando = f", dados de {_data(rota['osm'])}" if rota.get("osm") else ""
+        linhas.append(_par(f"Conta feita de escola a escola pela malha do OpenStreetMap{quando}. A casa de cada "
+                           "criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior."))
+    elif rota:  # calculada, mas nenhuma receptora tem rota: o aviso diz por quê, e nenhum número aparece
+        linhas.append(_par((rota.get("aviso") or "Nenhuma rota por estrada foi calculada para esta escola.")
+                           + " Não vou estimar um número sem base."))
     elif not e["geo"]:
         linhas.append(_par("Esta escola não tem coordenada na base pública do Ipea, então a distância até outras "
                            "escolas não pode ser calculada. Não vou estimar um número sem base."))

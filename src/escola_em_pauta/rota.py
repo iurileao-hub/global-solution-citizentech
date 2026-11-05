@@ -118,6 +118,8 @@ def _aviso_acesso(acesso_o: float, acesso_d: float) -> str:
 def piso(g: Grafo, origem: tuple[float, float], destino: tuple[float, float]) -> Rota:
     """Rota de ida (origem→destino) e de volta (destino→origem); as duas podem diferir por mão única."""
     reta = 2 * haversine_km(*origem, *destino)
+    if not g.adj:  # nenhuma via de carro mapeada na área inteira (comum na Amazônia): não há o que rotear
+        return Rota(None, None, None, reta, math.inf, SEM_ROTA)
     no_o, acesso_o = g.no_mais_proximo(*origem)
     no_d, acesso_d = g.no_mais_proximo(*destino)
     acesso = max(acesso_o, acesso_d)
@@ -138,6 +140,8 @@ def piso(g: Grafo, origem: tuple[float, float], destino: tuple[float, float]) ->
 
 def pisos(g: Grafo, origem: tuple[float, float], destinos: list[tuple[float, float]]) -> list[Rota]:
     """Igual a piso(), para vários destinos com 2 Dijkstras no total (ida no grafo, volta no grafo reverso)."""
+    if not g.adj:  # grafo vazio: sem isso, no_mais_proximo quebrava (IndexError) numa área sem estrada mapeada
+        return [Rota(None, None, None, 2 * haversine_km(*origem, *d), math.inf, SEM_ROTA) for d in destinos]
     no_o, acesso_o = g.no_mais_proximo(*origem)
     pontas = [g.no_mais_proximo(*d) for d in destinos]
     alvos = {n for n, a in pontas if a <= KM_ACESSO_MAX}

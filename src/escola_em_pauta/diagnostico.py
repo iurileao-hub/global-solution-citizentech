@@ -33,8 +33,13 @@ REFERENCIAS_EXTERNAS = {
 }
 
 
-def diagnosticar(codigo_inep: int, k: int = 6) -> Diagnostico:
+def diagnosticar(codigo_inep: int, k: int = 6, grafo_area=None) -> Diagnostico:
     """Monta o diagnóstico completo de uma escola.
+
+    `grafo_area` (opcional): um grafo já construído que cobre a área da escola e das candidatas. Sem ele
+    (o normal: site e ficha avulsa), a malha é procurada no cache pela área. O pré-cálculo
+    nacional (scripts/precalcular_rotas.py) passa o grafo da célula de grade: cada célula é
+    construída uma vez, em vez de o cache alternar entre malhas sobrepostas.
 
     Passos (cada um num módulo próprio):
       1. censo.escola_e_serie(codigo)        -> matrículas, etapas, transporte, série
@@ -61,7 +66,7 @@ def diagnosticar(codigo_inep: int, k: int = 6) -> Diagnostico:
     elif not etapas:
         avisos.append("Escola sem matrícula no ano de referência: não há receptoras a calcular.")
     else:
-        lista, g = receptoras.candidatas(escola, etapas, k=k)
+        lista, g = receptoras.candidatas(escola, etapas, k=k, g=grafo_area)
         origem_longe = next((r.aviso for r in lista if r.aviso and r.aviso.startswith(ORIGEM_LONGE)), None)
         if origem_longe:  # a mesma causa para todas as linhas: dita uma vez aqui, não em cada receptora
             avisos.append(origem_longe.replace(ORIGEM_LONGE, "Esta escola fica a", 1)
