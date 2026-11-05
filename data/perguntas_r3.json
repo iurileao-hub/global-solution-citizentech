@@ -1,0 +1,680 @@
+{
+ "descricao": "60 perguntas escritas por 6 personas SIMULADAS (agentes) da 3ª rodada, sem ver a base; rótulo esperado definido por um juiz que leu a base mas não viu as respostas do assistente.",
+ "perguntas": [
+  {
+   "id": "R01",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "O que exatamente eu preciso apresentar ao Conselho Municipal de Educação para fechar uma escola rural?",
+   "esperado": [
+    "C6",
+    "D1",
+    "C3"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "C6 lista o que o Conselho deve receber (justificativa, diagnóstico do impacto, manifestação da comunidade em ata); D1 dá a mesma exigência legal; C3 mostra um rito local detalhado como exemplo."
+  },
+  {
+   "id": "R02",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Qual o número mínimo de alunos que justifica fechar uma escola do campo?",
+   "esperado": [
+    "C3"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "A base não traz mínimo nacional; C3 só mostra uma regra local (Santa Cruz do Sul exige menos de 30 alunos para iniciar o pedido)."
+  },
+  {
+   "id": "R03",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Posso fechar só algumas turmas (por exemplo o 6º ao 9º) e manter a escola aberta?",
+   "esperado": [
+    "C5",
+    "D1"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "Nenhum registro trata de fechamento parcial em tese; C5 mostra o fim do ensino fundamental de uma escola barrado por falta do rito, e D1 dá o rito."
+  },
+  {
+   "id": "R04",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Como evitar ação do Ministério Público no fechamento de escola rural?",
+   "esperado": [
+    "D1",
+    "C5",
+    "C6"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "Evitar a ação é cumprir o rito de D1/C6; C5 mostra o caso em que o MP agiu justamente pela falta de plano, Conselho e consulta."
+  },
+  {
+   "id": "R05",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Precisa de consulta pública à comunidade? Quantas reuniões e com quem?",
+   "esperado": [
+    "C2",
+    "D1",
+    "C3"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "C2 e D1 dizem que a comunidade escolar (pais, alunos, professores, funcionários) tem de se manifestar, em ata; número de reuniões não está na base, só o exemplo local de assembleia em C3."
+  },
+  {
+   "id": "R06",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Qual lei fala do fechamento de escola do campo? É a 12.960?",
+   "esperado": [
+    "D1",
+    "D6"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D1 aponta a LDB, art. 28, parágrafo único, e sua referência confirma a inclusão pela Lei 12.960/2014; D6 nomeia o mesmo dispositivo."
+  },
+  {
+   "id": "R07",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Quanto a prefeitura economiza fechando uma escola com 15 alunos e levando para a escola-polo?",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "A base não tem nada sobre custo ou economia do fechamento."
+  },
+  {
+   "id": "R08",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "O transporte escolar até a cidade tem tempo máximo de viagem? Quem paga, o município ou o estado?",
+   "esperado": [
+    "D3",
+    "T2",
+    "T3"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D3: não há tempo máximo nacional, cada sistema fixa o seu, e o transporte deve ser campo-campo; T2/T3: município paga a rede municipal, estado a estadual, com apoio federal."
+  },
+  {
+   "id": "R09",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Se o Conselho Municipal aprovar, ainda precisa de autorização do Conselho Estadual de Goiás?",
+   "esperado": [
+    "C6",
+    "C3"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "C6 diz que o Conselho a ouvir é o municipal se a escola é do município e o estadual se é do estado, logo não são os dois."
+  },
+  {
+   "id": "R10",
+   "persona": "secretario",
+   "tipo": "cega",
+   "pergunta": "Quantas escolas rurais fecharam em Goiás e algum município foi processado por isso?",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "F5 dá os números de Goiás; a base não tem caso de processo em Goiás (o único caso, C5, é do ES)."
+  },
+  {
+   "id": "R11",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "prefeitura pode fechar escola da aldeia sem perguntar comunidade?",
+   "esperado": [
+    "D5",
+    "D1"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D5 garante a consulta prévia aos povos indígenas (Convenção 169 da OIT); D1 exige manifestação da comunidade antes de fechar."
+  },
+  {
+   "id": "R12",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "escola indigena fechar, criança ir escola da cidade?",
+   "esperado": [
+    "D5",
+    "D3"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D5 põe a escola indígena no território indígena; D3 diz que a nucleação deve levar do campo para o campo, não para a cidade."
+  },
+  {
+   "id": "R13",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "escola da cidade ensinar em guarani?",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "Nenhum registro trata de língua de ensino ou ensino em guarani."
+  },
+  {
+   "id": "R14",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "quem defende indigena quando querer fechar escola",
+   "esperado": [
+    "D5",
+    "C4"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D5 indica Defensoria, MPF e organizações do próprio povo; C4 detalha MP e Defensoria."
+  },
+  {
+   "id": "R15",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "funai ajudar escola da aldeia?",
+   "esperado": [
+    "D5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "A base não fala da FUNAI; D5 dá o melhor caminho de apoio que tem (Defensoria, MPF, organizações do povo)."
+  },
+  {
+   "id": "R16",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "professora da aldeia perder trabalho se escola fechar?",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "A base não trata da situação funcional de professores."
+  },
+  {
+   "id": "R17",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "tem lei para escola indigena?",
+   "esperado": [
+    "D5"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D5 resume as regras próprias da escola indígena e a consulta prévia."
+  },
+  {
+   "id": "R18",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "comunidade precisa fazer reuniao antes fechar escola?",
+   "esperado": [
+    "C2",
+    "D1",
+    "D5"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "C2 e D1: a comunidade escolar tem de se manifestar, registrada em ata; D5 acrescenta a consulta prévia no caso indígena."
+  },
+  {
+   "id": "R19",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "onibus levar criança longe, muito tempo estrada, pode?",
+   "esperado": [
+    "D3"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D3: transporte com o menor tempo possível, do campo para o campo, criança pequena na própria comunidade, tempo máximo fixado por cada sistema."
+  },
+  {
+   "id": "R20",
+   "persona": "guarani",
+   "tipo": "cega",
+   "pergunta": "quantas escola indigena fechar no mato grosso do sul",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "F5 dá escolas rurais de MS, sem separar as indígenas."
+  },
+  {
+   "id": "R21",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "QUANTAS HORAS CRIANÇA PODE FICAR DENTRO DO ONIBUS",
+   "esperado": [
+    "D3"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D3 diz que a norma nacional não fixa tempo máximo e manda cada estado ou município fixar o seu."
+  },
+  {
+   "id": "R22",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "se a escola fechar a rota dobra quem paga o combustivel a mais",
+   "esperado": [
+    "T3",
+    "T2"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "T3: o PNATE custeia combustível e manutenção além do dinheiro próprio; T2: quem tem a matrícula é o responsável."
+  },
+  {
+   "id": "R23",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "prefeitura pode mandar rodar com onibus velho? o meu tem mais de 20 ano",
+   "esperado": [
+    "T4"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "T4 dá as regras do veículo (inspeção semestral etc.), mas não fala de idade da frota."
+  },
+  {
+   "id": "R24",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "quais documento o motorista de onibus escolar precisa ter",
+   "esperado": [
+    "T4"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "T4 lista os requisitos do motorista: mais de 21 anos, CNH categoria D, curso especializado, no máximo uma gravíssima em 12 meses."
+  },
+  {
+   "id": "R25",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "meu contrato e terceirizado se fechar a escola eu perco o serviço?",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "A base não trata de contrato de terceirizado do transporte."
+  },
+  {
+   "id": "R26",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "tem idade maxima pro onibus escolar rodar",
+   "esperado": [
+    "T4"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "T4 traz as regras do veículo, mas não diz se há idade máxima."
+  },
+  {
+   "id": "R27",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "estrada ruim de mais quem tem que arrumar a estrada da rota",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "A base não diz quem conserva a estrada da rota."
+  },
+  {
+   "id": "R28",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "criança pequena pode ir sozinha no onibus sem monitor",
+   "esperado": [
+    "T6",
+    "D3"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "T6 diz que o monitor no veículo não é obrigatório pela lei nacional e depende da regra local (dito no contexto do aluno com deficiência); D3 diz que criança pequena deve estudar na própria comunidade."
+  },
+  {
+   "id": "R29",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "precisa de curso pra dirigir onibus escolar qual curso",
+   "esperado": [
+    "T4"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "T4 diz que o motorista precisa de curso especializado."
+  },
+  {
+   "id": "R30",
+   "persona": "motorista",
+   "tipo": "cega",
+   "pergunta": "a escola da minha rota vai fechar como eu sei antes",
+   "esperado": [
+    "C1",
+    "D1"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "C1 ensina a pedir a informação pela LAI; D1 mostra que o fechamento exige etapas prévias com a comunidade e o Conselho."
+  },
+  {
+   "id": "R31",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia a escola dos meus neto vai fexar e eu queria saber se eles vão ter que acordar de madrugada pra pegar o ônibus obrigada viu",
+   "esperado": [
+    "D3"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "A base não sabe o horário da rota; D3 responde a premissa: transporte com o menor tempo possível e criança pequena na própria comunidade."
+  },
+  {
+   "id": "R32",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia se a escola fexar meus neto vão ter merenda na outra escola ou não",
+   "esperado": [
+    "D7"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D7: a alimentação escolar é direito em qualquer escola da rede."
+  },
+  {
+   "id": "R33",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia com quem eu falo pra não deixar a escola fexar é com a dona da secretaria ou com o prefeito",
+   "esperado": [
+    "C2",
+    "C6",
+    "C4"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "Quem decide passa pela manifestação da comunidade (C2) e pelo Conselho de Educação, que pode se opor (C6); se não cumprirem, MP e Defensoria (C4)."
+  },
+  {
+   "id": "R34",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia a prefeitura pode fexar a escola sem falar com a gente da comunidade",
+   "esperado": [
+    "D1",
+    "C2"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D1 e C2: a comunidade escolar tem de se manifestar antes do fechamento."
+  },
+  {
+   "id": "R35",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia o promotor da justiça pode ajudar a gente a escola do sítio não fexar",
+   "esperado": [
+    "C4",
+    "C5"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "C4: o MP pode investigar e entrar na Justiça; C5 mostra um caso em que conseguiu barrar o fechamento."
+  },
+  {
+   "id": "R36",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia o que é que a elê dê bê fala sobre fexar escola do campo",
+   "esperado": [
+    "D1",
+    "D6"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D1 resume o que a LDB exige; D6 mostra que a LDB não detalha o diagnóstico."
+  },
+  {
+   "id": "R37",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia quanto tempo meus neto vão ficar dentro do ônibus até chegar na escola da cidade é longe",
+   "esperado": [
+    "D3"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "A base não dá o tempo de viagem; D3 responde a premissa: menor tempo possível e transporte do campo para o campo, não para a cidade."
+  },
+  {
+   "id": "R38",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia quem paga o ônibus da escola é a prefeitura ou é o estado obrigada viu",
+   "esperado": [
+    "T2",
+    "T3"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "T2: município para a rede municipal, estado para a estadual; T3: de onde vem o dinheiro."
+  },
+  {
+   "id": "R39",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia quantas escola do campo fexaram aqui em pernambuco",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "F5 dá o número de escolas rurais extintas e paralisadas em Pernambuco."
+  },
+  {
+   "id": "R40",
+   "persona": "avo-audio",
+   "tipo": "cega",
+   "pergunta": "bom dia se a escola fexar a professora deles vai junto pra outra escola ou fica sem",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "A base não trata do destino dos professores."
+  },
+  {
+   "id": "R41",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "quantas escolas rurais fecharam no piaui? me da o numero",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "F5 dá os números do Piauí."
+  },
+  {
+   "id": "R42",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "e em oeiras, quantas escolas do campo foram fechadas?",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "F5 dá os números por município (Oeiras)."
+  },
+  {
+   "id": "R43",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "desde quando ta fechando escola no interior do piaui",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "F5 dá o total de 2019 a 2025, não o início nem a série histórica."
+  },
+  {
+   "id": "R44",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "ta aumentando ou diminuindo o fechamento de escola rural no piaui nos ultimos anos?",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "F5 dá o total do período, não a tendência ano a ano."
+  },
+  {
+   "id": "R45",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "qual a fonte desses numeros? posso citar no ar?",
+   "esperado": [
+    "F1",
+    "F5"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "F1: Censo Escolar do INEP, dados públicos; F5 confirma que os números de fechamento vêm do Censo."
+  },
+  {
+   "id": "R46",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "quantos alunos ficaram sem escola perto de casa em oeiras",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "F5 dá escolas de Oeiras e avisa que são números de escolas, não de crianças."
+  },
+  {
+   "id": "R47",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "a prefeitura pode fechar escola da zona rural sem ouvir a comunidade?",
+   "esperado": [
+    "D1",
+    "C2"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D1 e C2: a comunidade escolar tem de se manifestar antes do fechamento."
+  },
+  {
+   "id": "R48",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "o que o ouvinte pode fazer se a escola do povoado dele for fechar",
+   "esperado": [
+    "C2",
+    "C1",
+    "C4"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "Participar e registrar manifestação (C2), pedir os documentos (C1), recorrer (C4)."
+  },
+  {
+   "id": "R49",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "quanto tempo de onibus as criancas estao andando depois que fecharam a escola",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "A base não tem tempo de viagem medido depois dos fechamentos; F2/D3 tratam de distância estimada e de regra, não do dado pedido."
+  },
+  {
+   "id": "R50",
+   "persona": "radialista",
+   "tipo": "cega",
+   "pergunta": "qual cidade do piaui fechou mais escola do campo",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "F5 dá números por município, mas não faz o ranking."
+  },
+  {
+   "id": "R51",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "Qual o dispositivo legal que exige manifestação prévia antes do fechamento de escola do campo? É o parágrafo único do art. 28 da LDB, incluído pela Lei 12.960/2014?",
+   "esperado": [
+    "D1",
+    "D6"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D1 traz a regra e a referência (LDB art. 28, parágrafo único, incluído pela Lei 12.960/2014); D6 nomeia o mesmo dispositivo."
+  },
+  {
+   "id": "R52",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "A manifestação do órgão normativo (Conselho Municipal ou Estadual de Educação) é vinculante ou meramente opinativa?",
+   "esperado": [
+    "C6"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "C6: a lei nacional não diz se o parecer contrário impede o fechamento; depende da norma local (no PR só com parecer favorável)."
+  },
+  {
+   "id": "R53",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "A Resolução CNE/CEB 2/2008 continua em vigor? Foi revogada ou alterada por norma posterior?",
+   "esperado": [
+    "D3"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "D3 aplica a Res. CNE/CEB 2/2008 como norma atual (é sua referência), mas não afirma vigência nem trata de revogação ou alteração."
+  },
+  {
+   "id": "R54",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "Cabe mandado de segurança contra o ato do prefeito que fecha a escola sem ouvir o Conselho? Qual o prazo decadencial?",
+   "esperado_tipo": "nenhuma",
+   "parcial_na_base": false,
+   "justificativa": "A base não trata de mandado de segurança nem de prazo decadencial; C4 só fala de ação civil pública pelo MP."
+  },
+  {
+   "id": "R55",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "Quem tem legitimidade para propor ação civil pública contra o fechamento: sindicato, associação de pais, Ministério Público, Defensoria?",
+   "esperado": [
+    "C4"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "C4 cita MP (ação civil pública) e Defensoria; não trata de sindicato nem de associação de pais."
+  },
+  {
+   "id": "R56",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "Existe jurisprudência do TJRS ou do STJ anulando fechamento de escola do campo por falta de consulta à comunidade?",
+   "esperado": [
+    "C5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "Não há TJRS nem STJ; C5 é o único caso: liminar em ação do MP e cautelar do TCE-ES em Muniz Freire."
+  },
+  {
+   "id": "R57",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "O que conta como 'diagnóstico do impacto da ação' exigido pela lei? Há algum conteúdo mínimo definido em norma?",
+   "esperado": [
+    "D6"
+   ],
+   "parcial_na_base": false,
+   "justificativa": "D6: a LDB não define conteúdo mínimo; o PL 3.091/2024 definiria, mas não é lei."
+  },
+  {
+   "id": "R58",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "Qual o prazo para a prefeitura responder a um pedido de acesso à informação pela Lei 12.527/2011, e a quem recorrer se ela não responder?",
+   "esperado": [
+    "C1"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "C1 dá o prazo (imediato, até 20 dias, prorrogáveis por mais 10) e o recurso em 10 dias, mas não diz a quem recorrer nem trata da omissão."
+  },
+  {
+   "id": "R59",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "Quantas escolas do campo foram fechadas no Rio Grande do Sul nos últimos dez anos, segundo o Censo Escolar do INEP?",
+   "esperado": [
+    "F5"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "F5 cobre 2019 a 2025 (7 anos), não os dez anos pedidos."
+  },
+  {
+   "id": "R60",
+   "persona": "advogada",
+   "tipo": "cega",
+   "pergunta": "O Decreto 7.352/2010, que trata da Política de Educação do Campo, ainda está vigente e o que ele diz sobre transporte escolar e nucleação?",
+   "esperado": [
+    "D3",
+    "D2"
+   ],
+   "parcial_na_base": true,
+   "justificativa": "D2 aplica o Decreto 7.352/2010 (é sua referência) só na definição de escola do campo; nucleação e transporte vêm de D3 (Res. CNE/CEB 2/2008); a vigência não é afirmada."
+  }
+ ]
+}

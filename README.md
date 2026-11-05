@@ -74,6 +74,7 @@ O problema foi escolhido por um processo explícito, antes de qualquer decisão 
 | `escolas_campo.json.gz` | Índice nacional de escolas do campo (2,6 MB comprimido), gerado do Censo 2025 por `scripts/gerar_indice_escolas.py` |
 | `perguntas_teste.json` | 20 perguntas de teste com a resposta esperada |
 | `perguntas_cegas.json` | 50 perguntas escritas às cegas por personas simuladas, com o rótulo do juiz |
+| `perguntas_r3.json` | 60 perguntas da terceira rodada (seis personas novas), com o rótulo de um juiz novo |
 | `fechamentos.json` | Escolas públicas rurais ativas, paralisadas e extintas de 2019 a 2025, por UF e município (Censo), gerado por `scripts/gerar_fechamentos.py` |
 
 **Origem das orientações.** Cada norma foi lida no texto oficial (Planalto, MEC/CNE, Senado, Câmara, FNDE, INEP, Prefeitura de Santa Cruz do Sul, Ministério Público de Contas do ES) em 05/11/2026. A conferência registrou correções que mudaram o texto da base: o mínimo de compra da agricultura familiar no PNAE subiu para **45%** em 2026 (a página do FNDE ainda diz 30%); a nucleação dos anos iniciais é permitida em caráter excepcional, dentro do campo; e "paralisada", no Censo, significa atividades **temporariamente suspensas**, sem extinção formal.
@@ -165,7 +166,7 @@ O índice invertido responde de 260 a 26 mil vezes mais rápido que a busca line
 | Taxa de acerto | 68% | 88% |
 | Erros calados (resposta errada sem aviso) | 16 | 3 |
 
-Os 68% são o número honesto. O filtro de cobertura criado nos testes da equipe tinha ficado rigoroso demais para perguntas longas e naturais, e o assistente dizia "não sei" quando a base tinha a resposta. A correção principal foi a resposta parcial, que avisa quais palavras da pergunta a orientação não cobre. Os 88% já são otimistas, porque os ajustes foram feitos olhando essas perguntas; uma terceira rodada de personas novas mede o programa corrigido.
+Os 68% são o número honesto. O filtro de cobertura criado nos testes da equipe tinha ficado rigoroso demais para perguntas longas e naturais, e o assistente dizia "não sei" quando a base tinha a resposta. A correção principal foi a resposta parcial, que avisa quais palavras da pergunta a orientação não cobre. Os 88% já são otimistas, porque os ajustes foram feitos olhando essas perguntas.
 
 | Tarefa (5 personas) | Concluíram |
 |---|---|
@@ -176,6 +177,33 @@ Os 68% são o número honesto. O filtro de cobertura criado nos testes da equipe
 | Fazer uma pergunta fora da base e ver o que o assistente faz | 3 completas, 2 parciais |
 
 Notas médias de 1 a 5: facilidade 3,8; entendimento 3,4; confiança 4,0. A nota de entendimento foi a mais baixa por causa do vocabulário jurídico ("órgão normativo", "nucleação", "LDB" sem explicação), que foi reescrito. A tarefa da São José falhava porque três das cinco personas escreveram o nome junto com a cidade, e o assistente passou a separar os dois.
+
+Em seguida, as orientações novas levaram o conjunto às cegas a 92%, com três rótulos atualizados e anotados no arquivo, porque eram perguntas sobre quantas escolas fecharam, que a base passou a cobrir.
+
+**Terceiro conjunto: 60 perguntas de seis personas novas, medidas antes de qualquer ajuste.** Para medir o programa corrigido com honestidade, entraram perfis que as primeiras personas não cobriam:
+- um secretário municipal que quer fechar escolas (teste de neutralidade);
+- uma mãe guarani-kaiowá com o português como segunda língua;
+- um motorista de transporte escolar;
+- uma avó que dita no celular;
+- um radialista que precisa de números citáveis;
+- uma advogada de sindicato rural.
+
+| Nas 60 perguntas da terceira rodada | Antes dos ajustes |
+|---|---|
+| Taxa de acerto | 52% |
+| "Não sei" quando a base tinha a resposta | 20 |
+| Resposta errada sem aviso | 3 |
+
+O acerto de 92% nas perguntas usadas para ajustar **não se transferiu** para perguntas novas. O erro, porém, foi para o lado desejado: o programa disse "não sei" muito mais vezes do que inventou. As causas principais foram estas, e o detalhe está em [`docs/metodologia.md`](docs/metodologia.md):
+- a grafia do reconhecimento de voz ("fexar");
+- termos técnicos que a base não usa;
+- "Rio Grande do Sul" lido como o município de Rio Grande.
+
+As seis personas concluíram as seis tarefas, incluindo a nova, que pede o número de escolas fechadas no estado da persona. Três tarefas exigiram mais de uma tentativa:
+- a São José de Carlos Chagas, porque duas personas escreveram "Carlos Chagas MG" no campo de município;
+- o número do Rio Grande do Sul.
+
+Notas médias: facilidade 3,2; entendimento 3,8; confiança 3,5.
 
 **Próximo passo: validação com usuários reais** (famílias, professores, conselheiros, lideranças e quem atua nesses conflitos), pelo canal que essas pessoas usam, com as perguntas delas ampliando a base.
 

@@ -64,7 +64,34 @@ O resultado "antes" é o honesto. Os 68% mostraram que o filtro criado nos teste
 
 Os agentes também acharam defeitos de tela que se repetiam entre as personas (nome da escola junto com a cidade, convite para digitar um código quando nenhum aparecia, palavras técnicas sem explicação) e quatro assuntos que a base não cobria. Os assuntos viraram orientações novas, conferidas no texto oficial: barco escolar, o que o Conselho deve exigir, aluno com deficiência no transporte e adolescente pedindo informação.
 
-**5. Terceira rodada.** Para medir o programa corrigido com honestidade, uma nova leva de personas, diferentes das primeiras, escreve perguntas que nem a equipe nem o programa viram. *(Em andamento; o resultado entra aqui.)*
+Depois das quatro orientações novas, o conjunto às cegas chegou a 92%. Três rótulos do juiz foram atualizados, e a mudança ficou anotada no próprio arquivo: eram perguntas sobre quantas escolas fecharam, que a base não cobria quando o juiz rotulou.
+
+**5. Terceira rodada.** Para medir o programa corrigido com honestidade, seis personas novas, escolhidas para cobrir quem as primeiras deixavam de fora, escreveram 60 perguntas que nem a equipe nem o programa tinham visto:
+- um secretário municipal de educação que quer fechar escolas, o lado oposto ao das primeiras personas e um teste de neutralidade;
+- uma mãe guarani-kaiowá, com o português como segunda língua;
+- um motorista de transporte escolar;
+- uma avó que dita as perguntas no celular (o texto chega como o reconhecimento de voz escreve, com "fexar");
+- um radialista comunitário que precisa de números citáveis;
+- uma advogada de sindicato rural, que confere a precisão jurídica.
+
+Um juiz novo rotulou as 60 perguntas sem ver as respostas, e o programa foi medido **antes de qualquer ajuste**.
+
+| Medida nas 60 perguntas da terceira rodada | Antes dos ajustes |
+|---|---|
+| Acerto | 52% |
+| "Não sei" quando a base tinha a resposta | 20 |
+| Respostas erradas dadas com segurança | 3 |
+| Respostas erradas com aviso de que a pergunta não estava toda coberta | 4 |
+
+A queda de 92% para 52% é a lição principal da validação: **o acerto nas perguntas usadas para ajustar não se transfere para perguntas novas**. A direção do erro, porém, foi a desejada. De 29 perguntas não acertadas, 20 terminaram em "não sei" e só 3 em resposta errada sem aviso; o programa falha calando, não inventando. As causas, por ordem de peso:
+- a grafia do reconhecimento de voz ("fexar") derrubou 5 das 10 perguntas da avó;
+- perguntas técnicas, com termos que a base não usa ("vinculante", "legitimidade", "jurisprudência", "vigente"), caíram no "não sei" mesmo quando a orientação existia;
+- "Rio Grande do Sul" foi lido como o município de Rio Grande, sem aviso, o defeito mais grave da rodada, porque o número sai errado com cara de certo;
+- o aviso de cobertura parcial listava palavras de cortesia ("obrigada", "viu") e o próprio tema ("fechar") como se fossem o assunto que faltava.
+
+A advogada apontou afirmações que diziam mais do que a norma (por exemplo, qual Conselho é competente quando o município não tem sistema próprio de ensino), e o secretário apontou que a base fala só com a comunidade, sem caminho para quem tem de cumprir o rito. Esses pontos voltam à conferência de fontes antes de entrar na base.
+
+Uma falha do próprio teste também entrou no registro: os agentes rodavam ao mesmo tempo e alguns gravaram um script auxiliar com o mesmo nome numa pasta compartilhada, então teclas de uma persona chegaram ao terminal de outra. Quem percebeu refez as tarefas num terminal isolado. Sessões separadas não bastaram; cada agente precisa de um terminal próprio e de arquivos com nome único.
 
 **Próximo passo: validação com usuários reais.** O teste simulado acha defeitos grosseiros, mas não substitui pessoas. Um agente lê a tela inteira, não cansa, sabe usar terminal e escreve melhor que muita gente; o tempo que ele leva numa tarefa não diz nada sobre o tempo de uma pessoa. A validação seguinte deveria:
 - ouvir quem vive o problema: famílias e professores de escolas do campo, conselheiros municipais, lideranças quilombolas e indígenas, e quem já atua nesses conflitos (Defensoria, Ministério Público, fóruns de educação do campo);
@@ -89,5 +116,5 @@ As buscas da Fase 1, a anamnese documental da Fase 3, a revisão adversarial, a 
 - Não houve ida a campo. A validação é documental, com no máximo uma conversa com quem decide.
 - As cinco buscas da Fase 1 usaram o mesmo modelo e o mesmo roteiro. Um tema que aparece em todas indica relevância sob esse roteiro, sem equivaler a cinco observações independentes.
 - Algumas bases oficiais bloqueiam acesso automatizado, e parte dos números veio de fontes secundárias. Esses números são conferidos na fonte primária antes de entrar no relatório.
-- Os usuários do teste de usabilidade foram simulados por agentes de IA, com as limitações descritas acima. Em duas sessões, um agente registrou entradas que não digitou, provavelmente de outro agente testando ao mesmo tempo; as tarefas afetadas foram refeitas em sessão isolada.
+- Os usuários do teste de usabilidade foram simulados por agentes de IA, com as limitações descritas acima. Em duas sessões da primeira leva e em três da terceira, um agente registrou entradas que não digitou, vindas de outro agente testando ao mesmo tempo; as tarefas afetadas foram refeitas em sessão isolada.
 - As personas, o juiz e o programa foram feitos com a mesma família de modelos de IA. Isso pode deixar as perguntas mais parecidas com o vocabulário da base do que as de pessoas reais.

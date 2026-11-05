@@ -1,0 +1,44 @@
+{
+  "A": {
+    "indicadores": {
+      "perguntas": 60,
+      "acerto": 31,
+      "parcial": 2,
+      "erro_avisado": 4,
+      "erro": 23,
+      "taxa_acerto": 51.7,
+      "tempo_medio_ms": 0.705,
+      "tempo_max_ms": 7.085
+    },
+    "formato": {
+      "cita_fonte": 32,
+      "data_verificacao": 32,
+      "aviso_nao_oficial": 57,
+      "pede_confirmacao": 0,
+      "oferece_continuidade": 0,
+      "linhas": 9.7,
+      "palavras_por_frase": 15.8
+    }
+  },
+  "B": {
+    "indicadores": {
+      "perguntas": 60,
+      "acerto": 31,
+      "parcial": 2,
+      "erro_avisado": 4,
+      "erro": 23,
+      "taxa_acerto": 51.7,
+      "tempo_medio_ms": 0.728,
+      "tempo_max_ms": 6.963
+    },
+    "formato": {
+      "cita_fonte": 32,
+      "data_verificacao": 32,
+      "aviso_nao_oficial": 57,
+      "pede_confirmacao": 22,
+      "oferece_continuidade": 32,
+      "linhas": 16.9,
+      "palavras_por_frase": 14.3
+    }
+  }
+}
