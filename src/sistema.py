@@ -1,4 +1,4 @@
-"""Assistente Escola em Pauta — interface de texto.
+"""Assistente Escola em Pauta: interface de texto.
 
 Executar (na raiz do repositório):   python src/sistema.py
 Opções:  --modelo A|B   escolhe o modelo de resposta (padrão: B)
@@ -60,7 +60,7 @@ def por_assunto(ctx: Contexto, modelo: str) -> None:
     temas = list(base.temas)
     print()
     for i, t in enumerate(temas, 1):
-        print(f"  {i}  {base.temas[t]['nome']} — {base.temas[t].get('descricao', '')}")
+        print(f"  {i}  {base.temas[t]['nome']}: {base.temas[t].get('descricao', '')}")
     op = ler("Número do assunto (Enter volta): ")
     if not op:
         return
@@ -160,7 +160,7 @@ def main(argv: list[str] | None = None) -> int:
         return avaliacao.main(ctx, RAIZ)
 
     print("=" * respostas.LARGURA)
-    print("ESCOLA EM PAUTA — assistente sobre o fechamento de escolas do campo")
+    print("ESCOLA EM PAUTA: assistente sobre o fechamento de escolas do campo")
     print("=" * respostas.LARGURA)
     print(respostas._par(respostas.NAO_OFICIAL))
     acoes = {"1": por_assunto, "3": por_escola}

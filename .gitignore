@@ -13,6 +13,9 @@ tests/
 # Entregáveis oficiais entram por exceção (!docs/...) quando o enunciado de CC definir quais são.
 docs/*
 !docs/metodologia.md
+!docs/uso_ia.md
+!docs/teste_usabilidade.md
+!docs/img/
 /CLAUDE.md
 .remember/
 

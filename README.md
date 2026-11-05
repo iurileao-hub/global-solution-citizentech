@@ -1,132 +1,284 @@
-# Escola em Pauta
+# FIAP - Faculdade de Informática e Administração Paulista
 
-**Antes de decidir: o impacto de fechar uma escola do campo, medido antes da decisão.**
+<p align="center">
+<a href="https://www.fiap.com.br/">
+  <img src="https://raw.githubusercontent.com/equipe1ccon/FIAP-PORTFOLIO-1CCON/master/assets/logo-fiap.png"
+       alt="FIAP - Faculdade de Informática e Administração Paulista" width="40%">
+</a>
+</p>
 
-Global Solution FIAP 2026, tema CitizenTech.
+<br>
 
-**Site:** [iurileao-hub.github.io/global-solution-citizentech](https://iurileao-hub.github.io/global-solution-citizentech/), com 256 fichas de escolas do campo do Distrito Federal, do Vale do Ribeira (SP) e de Muniz Freire (ES).
+# Escola em Pauta: assistente sobre o fechamento de escolas do campo
 
-## O problema
+Global Solution 2026, 2º semestre. Desafio CitizenTech, case Citizen Assist AI.
 
-A LDB (art. 28, parágrafo único, incluído pela Lei 12.960/2014) exige que o fechamento de escolas do campo, indígenas e quilombolas seja precedido de um **diagnóstico do impacto** e da **manifestação da comunidade escolar**. A lei não define como esse diagnóstico deve ser feito. Na prática, os números (quantas crianças, quanta estrada, para qual escola) costumam aparecer só depois da decisão, no recurso ao Ministério Público ou na auditoria do Tribunal de Contas.
+## Grupo 9
 
-O problema foi escolhido por um processo explícito, antes de qualquer decisão de tecnologia: ver [`docs/metodologia.md`](docs/metodologia.md).
-
-## A solução
-
-Uma **ficha de duas páginas por escola**, gerada só com dados públicos, para a comunidade e o Conselho de Educação lerem o mesmo número antes da assembleia:
-
-- **Frente:** quantas crianças estudam ali, por etapa e ano escolar; quantas usam transporte; a série da matrícula de 2019 a 2025; as escolas que poderiam receber os alunos (rurais ou urbanas, do mesmo município ou não, com as etapas que cada uma oferece); e a estrada por dia de escola a escola, sempre como **piso** ("pelo menos").
-- **Verso:** o que nenhum dado mede (a função social da escola), com linhas para a comunidade escrever na assembleia, e a lista do que a lei pede, marcando o que a ficha já cobre e o que depende de pessoas.
-
-A ficha informa. Quem decide é a comunidade escolar e o Conselho.
-
-## Como funciona
-
-```
-Censo Escolar (INEP, 2019-2025) ─┐
-Escolas geolocalizadas (Ipea)  ──┼─► diagnosticar(codigo_inep) ─► ficha HTML (A4, imprimível)
-OpenStreetMap (Geofabrik)      ──┘                              └► site estático com busca
-```
-
-| Módulo | O que faz |
-|---|---|
-| `censo.py` | Lê os zips do INEP sem descompactar e harmoniza a mudança de layout de 2025 (escola, matrícula e docentes em tabelas separadas) |
-| `geo.py` | Lê o GeoPackage do Ipea com `sqlite3` e decodifica o ponto (WKB) à mão |
-| `grafo.py` | Transforma as vias do OSM em grafo, com custo em minutos de ônibus por tipo de via e superfície |
-| `osm_local.py` | Fonte padrão da malha: extrai as vias de várias áreas de um recorte regional do OSM (Geofabrik, PBF) numa passada só |
-| `rota.py` | Dijkstra com fila de prioridade (`heapq`) |
-| `receptoras.py` | Pré-filtro em linha reta e rota real só para as candidatas |
-| `tendencia.py` | Mínimos quadrados e backtest contra uma linha de base |
-| `checklist.py` | LDB, Decreto 7.352/2010, Res. CNE/CEB 2/2008, PL 3.091/2024 e o modelo de Santa Cruz do Sul/RS |
-| `ficha.py`, `site.py` | Texto da ficha (testável), templates Jinja2 e gerador do site |
-
-### Estruturas de dados, escolhidas pelo problema
-
-- **Grafo em lista de adjacência.** A malha viária é um grafo esparso: em Muniz Freire são cerca de 127 mil nós e 256 mil arestas, perto de 2 por nó. Uma matriz de adjacência teria 16 bilhões de células, quase todas vazias.
-- **Fila de prioridade (heap binário).** O Dijkstra precisa, a cada passo, do nó aberto com menor tempo acumulado. No heap isso custa O(log n), contra O(n) numa lista. Usamos "remoção preguiçosa", porque o `heapq` não diminui prioridade de um item já na fila.
-- **Um Dijkstra para muitos destinos, e o grafo reverso.** O algoritmo calcula o menor caminho para todos os nós que fecha. Basta seguir até fechar todas as candidatas. A volta (de cada candidata até a escola) sai de um único Dijkstra no grafo com as arestas invertidas. São 2 execuções por escola no lugar de 24; um teste garante que o resultado é igual ao do cálculo par a par.
-- **Dicionário pelo código INEP**, a chave que une as três bases.
-
-## Resultados
-
-### 1. O cálculo fica abaixo do real, e por isso é piso
-
-Em 2025, a prefeitura de Muniz Freire (ES) anunciou o fim do ensino fundamental na EMEF Durval Máximo. Na Decisão 02423/2025-2, a área técnica do Tribunal de Contas do ES estimou que os alunos "percorreriam até 52 km por dia em estradas precárias" até a receptora indicada, a EEEFM Arquimimo Mattos. A medida foi barrada por liminar judicial e pela cautelar do Tribunal, que exigiu plano de ação com participação da comunidade escolar. Comparação, de escola a escola, ida e volta:
-
-| Escola receptora | Linha reta (km) | OSRM, carro (km) | Nossa rota, ônibus (km) |
-|---|---|---|---|
-| **EEEFM Arquimimo Mattos (indicada pela prefeitura)** | **18** | **25** | **25** |
-| CEEFMTI Bráulio Franco | 18 | 28 | 32 |
-| EMEF Lia Therezinha Mercon Rocha | 19 | 30 | 32 |
-| EMEF Maria Áurea Barroso | 16 | 29 | 29 |
-| EMEF Leovegília Emiliano da Silva | 21 | 37 | 45 |
-| EMEF Paulo Fábio Sartore | 20 | 29 | 29 |
-
-Para a receptora indicada, o cálculo de escola a escola dá **cerca da metade** da estimativa do Tribunal, que considera quem mora mais longe (o ônibus de verdade passa de casa em casa). Os 52 km são uma estimativa de máximo, e o método do Tribunal não está descrito na decisão. Com uma única referência externa, o resultado vale como ordem de grandeza. Reproduzir: `escola-em-pauta validar`.
-
-Na região, **mais de 80% dos quilômetros de estrada mapeados são de chão**.
-
-### 2. Projetar a matrícula pela tendência erra mais do que não projetar
-
-Backtest: ajuste com 2019 a 2022 e previsão de 2023 a 2025, comparado com a linha de base "a matrícula repete o último ano conhecido".
-
-| Escolas rurais ativas | Escolas | Erro médio da reta (alunos) | Erro médio da linha de base | Reta vence em |
-|---|---|---|---|---|
-| DF | 81 | 32,0 | 26,3 | 42% das escolas |
-| SP | 1.095 | 24,4 | 17,7 | 31% |
-| ES | 810 | 14,3 | 10,3 | 29% |
-
-Em escola pequena, uma família que se muda pesa 10% da matrícula, e a reta projeta esse ruído. Por isso a ficha **descreve** a série (estável, em queda ou em alta) e não projeta. O resultado também serve à comunidade: uma justificativa de fechamento baseada em "a matrícula vai continuar caindo" usa um método que, medido em quase 2 mil escolas, erra mais do que supor estabilidade.
-
-### 3. O caso real contradiz a intuição
-
-A escola mais próxima da Durval Máximo é **rural e fica em outro município** (EMEF Alto Monforte, Conceição do Castelo, 18 km por dia, com pré-escola e anos iniciais). Uma lista feita só com as escolas urbanas do próprio município não a encontraria. A receptora indicada pela prefeitura era urbana, e o Tribunal de Contas apontou isso como violação do Termo de Ajustamento de Gestão, que proíbe nuclear escola do campo com escola da cidade.
-
-## Como rodar
-
-Requer Python 3.12 ou mais recente.
-
-```bash
-uv venv && source .venv/bin/activate
-uv pip install -e ".[dev]"
-
-# Dados brutos (públicos) em dados/brutos/:
-#   microdados_censo_escolar_<ano>.zip, de 2019 a 2025 (INEP; o de 2025 se chama ..._2025_.zip no servidor)
-#   schools_2023.gpkg (Ipea/geobr)
-escola-em-pauta dados                  # gera dados/processados/*.parquet
-escola-em-pauta ficha 32049501         # ficha de uma escola qualquer do Brasil
-escola-em-pauta site                   # site dos territórios de demonstração
-escola-em-pauta validar                # tabela de erro de Muniz Freire
-```
-
-Malha viária: para o site, ponha em `dados/brutos/osm/` os recortes regionais da Geofabrik (`centro-oeste-latest.osm.pbf`, `sudeste-latest.osm.pbf`); as vias de cada área são extraídas localmente numa passada só. A Geofabrik é a fonte padrão: o arquivo tem md5 publicado, o que torna o cálculo reprodutível, e não depende de servidor de terceiros no dia da apresentação. O Overpass só entra se pedido (`fonte="overpass"`). Em Muniz Freire, as duas fontes deram rotas idênticas até a última casa decimal. Publicar o site: `scripts/publicar_pages.sh`.
-
-## Limitações
-
-- **O número é um piso.** O cálculo não conhece onde cada criança mora (dado pessoal, fora de propósito) nem a rota do ônibus (não há base pública).
-- **Velocidades de ônibus são parâmetros declarados**, sem medição própria. A única medição de tempo disponível (Pedras Altas/RS, 1h a 1h30 por sentido) depende de escolas sem coordenada na base do Ipea.
-- **Escolas sem coordenada** (cerca de 40% das rurais no Norte e no Nordeste) aparecem com aviso e sem distância.
-- **Vagas nas receptoras não são publicadas.** Alunos por sala é uma estimativa que soma os turnos.
-- **Escola do campo em área urbana**: o Decreto 7.352/2010 define população do campo pelo trabalho no meio rural. Morar na zona rural é usado como indício.
-
-## Equipe
+## 👨‍🎓 Integrantes
 
 | Nome | RM |
 |---|---|
 | Gabriel Carmona Bittencourt | RM569239 |
+| Gabrielly Drosda da Silva | RM571793 |
 | Iúri Leão de Almeida | RM570215 |
 | Márcio Francisco dos Santos Júnior | RM570758 |
 | Maria Sophia Domingues dos Santos | RM571209 |
-| Gabrielly Drosda da Silva | RM571793 |
 
-## Fontes e licenças
+## 👩‍🏫 Professores
+
+### Tutor
+- André Tritiack
+
+### Coordenador
+- <a href="https://www.linkedin.com/in/andregodoichiovato/">André Godoi Chiovato</a>
+
+## 📜 Descrição
+
+O **Assistente Escola em Pauta** responde, em linguagem simples, as perguntas de pais, comunidade escolar e conselheiros quando uma prefeitura ou um estado anuncia o fechamento de uma escola do campo: o que a lei exige, como pedir os números, a quem recorrer, quem responde pelo transporte e pela merenda. Cada resposta vem de uma base de orientações conferidas no texto oficial, com a fonte e a data da conferência. Quando a pergunta não está na base, o assistente diz isso e sugere outro caminho.
+
+O assistente também consulta qualquer uma das **53.759 escolas do campo** do Censo Escolar 2025: quantas crianças estudam ali, por etapa, quantas usam transporte, como a matrícula variou de 2019 a 2025 e, quando já calculado, quanta estrada separa a escola das que poderiam receber os alunos, sempre como **piso** ("pelo menos").
+
+```bash
+python src/sistema.py
+```
+
+Só a biblioteca padrão do Python (3.10 ou mais recente). Funciona sem internet e não pede nenhum dado pessoal.
+
+<p align="center"><img src="docs/img/01-abertura.png" alt="Abertura do assistente com o aviso de não oficial e o menu" width="70%"></p>
+
+### 1. O problema, quem ele atinge e os temas abordados
+
+A LDB (art. 28, parágrafo único, incluído pela Lei 12.960/2014) exige que o fechamento de escolas do campo, indígenas e quilombolas seja precedido de manifestação do Conselho de Educação, que deve considerar a justificativa da Secretaria, um **diagnóstico do impacto** e a **manifestação da comunidade escolar**. A lei não define como esse diagnóstico deve ser feito, e um projeto de lei para padronizá-lo (PL 3.091/2024) está parado na Câmara desde maio de 2026. Na prática, a comunidade costuma ser chamada a se manifestar sem saber quais são os seus direitos, sem os números e sem saber a quem pedir. Os números só aparecem depois, no recurso ao Ministério Público ou na auditoria do Tribunal de Contas.
+
+**Público beneficiado:** famílias e comunidade escolar de escolas do campo, indígenas e quilombolas; conselheiros municipais e escolares; quem as apoia (associações, sindicatos rurais, Defensoria).
+
+**Temas (4) e orientações (20):**
+
+| Tema | Subtemas | Exemplos de pergunta |
+|---|---|---|
+| Direitos e leis | fechamento, escola do campo, criança, povos indígenas e quilombolas, alimentação | "A prefeitura pode fechar sem consultar a gente?" |
+| O que a comunidade pode fazer | pedir informação, participar, recorrer, casos reais | "Como consigo os números da prefeitura?" |
+| Transporte escolar | direito, responsáveis, veículo e motorista | "Quem paga o ônibus escolar?" |
+| Entender a ficha e os números | fontes, como ler | "O que quer dizer escola paralisada?" |
+
+O problema foi escolhido por um processo explícito, antes de qualquer decisão de tecnologia: ver [`docs/metodologia.md`](docs/metodologia.md).
+
+### 2. Base de conhecimento, estruturas de dados e estratégia de busca
+
+**Arquivos (em `data/`):**
+
+| Arquivo | Conteúdo |
+|---|---|
+| `base_orientacoes.json` | 20 orientações, 4 temas. Cada registro tem `id`, `tema`, `subtema`, `pergunta`, `palavras_chave` (com sinônimos populares: "roça", "van", "merenda"), `orientacao`, `referencia` (título e URL oficial), `data_verificacao`, `confirmar` (o que a pessoa deve confirmar) e `relacionados` |
+| `escolas_campo.json.gz` | Índice nacional de escolas do campo (2,6 MB comprimido), gerado do Censo 2025 por `scripts/gerar_indice_escolas.py` |
+| `perguntas_teste.json` | 20 perguntas de teste com a resposta esperada |
+
+**Origem das orientações.** Cada norma foi lida no texto oficial (Planalto, MEC/CNE, Senado, Câmara, FNDE, INEP, Prefeitura de Santa Cruz do Sul, Ministério Público de Contas do ES) em 05/11/2026. A conferência registrou correções que mudaram o texto da base: o mínimo de compra da agricultura familiar no PNAE subiu para **45%** em 2026 (a página do FNDE ainda diz 30%); a nucleação dos anos iniciais é permitida em caráter excepcional, dentro do campo; e "paralisada", no Censo, significa atividades **temporariamente suspensas**, sem extinção formal.
+
+**Acrescentar ou corrigir uma orientação** é editar o JSON. O programa não muda: a validação confere campos obrigatórios, ids repetidos, temas e relacionados que não existem, URL e formato da data, e diz qual registro e qual campo estão errados. Arquivo ausente, vazio ou com JSON inválido gera uma mensagem compreensível e o programa não abre com dado torto.
+
+**Estruturas de dados:**
+
+- **Dicionário por identificador** (`registros[id]`, `por_codigo[codigo_inep]`): busca direta por código.
+- **Hierarquia tema → subtema → orientação**, usada no menu "Escolher um assunto".
+- **Grafo de assuntos:** cada orientação aponta para outras em `relacionados` (por exemplo D1 → C1, C2, F1; T1 → T2, T3, T4), e cada tema aponta para temas vizinhos. É o que alimenta "Para continuar", a navegação entre assuntos. Uma escola quilombola ou indígena liga, pela base (`ligacoes_escola`), à orientação sobre povos e comunidades tradicionais.
+- **Índice invertido** (termo → registros onde ele aparece), como o índice remissivo de um livro.
+
+**Estratégia de busca (orientações).** O texto digitado é normalizado (minúsculas, sem acento, sem palavras vazias, sem números) e cortado no **radical** de 5 letras ("fechamento", "fecharam" e "fechar" viram "fecha"). Cada orientação pontua pela soma dos pesos dos termos que casam: palavra-chave 3, pergunta modelo 2, subtema 1, mais 1 ponto por palavra que casa **inteira**. Termos presentes em mais da metade dos registros ("escola") são ignorados. Uma orientação só é candidata se casar ao menos 40% dos termos da pergunta.
+
+**Várias correspondências.** Ordena-se por pontuação, depois por número de termos casados, depois pela ordem da base. Se duas ou mais empatam no topo e são do **mesmo subtema** (elas se completam, como "quem é responsável" e "de onde vem o dinheiro" do transporte), o assistente responde a primeira e sugere a outra. Se são de **subtemas diferentes**, mostra as opções e pede para escolher. Abaixo do limiar, responde que não há base suficiente.
+
+**Busca de escolas.** O nome é comparado por palavra inteira (nome próprio não usa radical), sem as palavras genéricas ("escola", "municipal", "EMEF"). O índice invertido devolve a **interseção** dos conjuntos de cada palavra. Quando todas as palavras do texto estão no nome de alguma escola, o assistente entende que a pessoa está nomeando uma escola. Nome repetido é a ambiguidade real do problema: há 546 escolas do campo com "São José" no nome, e o desempate é por município e UF.
+
+<p align="center"><img src="docs/img/03-assunto.png" alt="Navegação por assunto" width="70%"></p>
+
+### 3. Regras de resposta, modelos de instrução e tratamento das limitações
+
+As respostas nunca saem da base: o texto da orientação é o do registro, palavra por palavra. A ordem das regras, em `src/assistente/nucleo.py`, é: entrada vazia → código digitado (D1, C5...) → nome de escola → busca nas orientações → "sem base suficiente".
+
+**Dois modelos de instrução de resposta**, escritos como especificação (papel, formato, regras) em `src/assistente/respostas.py` e cumpridos por código:
+
+| | Modelo A, "Direto" | Modelo B, "Orientador com limites" |
+|---|---|---|
+| Papel | responder com a orientação da base | assistente não oficial que orienta a comunidade, em linguagem simples, sem se passar por órgão público |
+| Formato | orientação + fonte + rodapé | assunto entendido (para a pessoa conferir) + orientação + fonte e data + o que confirmar + até 3 caminhos para continuar + rodapé |
+| Regras | só o texto da base; sempre citar a fonte | as de A, mais: dizer o que precisa ser confirmado, oferecer continuidade, nunca prometer atendimento oficial |
+
+Comparação nas 20 perguntas de teste (`python src/sistema.py --avaliar`):
+
+| Critério verificável | Modelo A | Modelo B |
+|---|---|---|
+| Cita a fonte e a data (respostas com orientação ou escola) | 15 de 15 | 15 de 15 |
+| Diz o que confirmar, quando a orientação pede | 0 de 9 | 9 de 9 |
+| Oferece caminho para continuar | 0 de 20 | 16 de 20 |
+| Linhas por resposta (média) | 8,7 | 16,9 |
+| Palavras por frase (média) | 17,4 | 15,1 |
+
+**Escolhemos o modelo B como padrão.** O modelo A é mais curto, mas deixa de dizer o que a pessoa precisa confirmar justamente nas orientações em que isso importa (prazo de projeto de lei, regra municipal, merenda em área quilombola) e não oferece o passo seguinte. O custo do B é o tamanho, o dobro de linhas. O teste de facilidade de uso (seção 4) é o que vai dizer se esse tamanho atrapalha. Para usar o A: `python src/sistema.py --modelo A`.
+
+**Limitações tratadas:** entrada vazia; texto só com palavras vazias; número solto ou opção de menu inexistente; pergunta fora do tema; consulta ambígua (orientações empatadas ou nome de escola repetido); escola sem coordenada pública ou sem rota calculada, em que o assistente diz que não vai estimar um número sem base. No Amazonas, no Pará e no Amapá, onde muitas escolas não se ligam por estrada às demais, o aviso diz que o transporte pode ser fluvial.
+
+<p align="center"><img src="docs/img/02-pergunta.png" alt="Pergunta respondida com fonte, confirmação e continuidade" width="70%"></p>
+
+### 4. Testes, indicadores e interpretação
+
+**Plano.** 20 perguntas de teste fictícias, escritas como uma pessoa da comunidade escreveria: 8 diretas, 4 reformulações, 2 fora do tema, 4 situações-limite (entrada vazia, nome de escola repetido, só palavras comuns, pergunta sem resposta confiável), 1 consulta de escola e 1 código digitado. Cada uma tem a resposta esperada (um ou mais ids aceitos, ou o comportamento esperado). O registro completo, com esperado, obtido, classificação e tempo, está em `data/resultados_testes_modelo_A.csv` e `..._B.csv`.
+
+**Indicadores** (mediana de 30 repetições por pergunta):
+
+| Indicador | Modelo A | Modelo B |
+|---|---|---|
+| Taxa de acerto (1ª rodada) | 75% | 75% |
+| Taxa de acerto (após ajustes) | 100% | 100% |
+| Tempo médio de consulta | 0,18 ms | 0,19 ms |
+| Tempo máximo | 0,75 ms | 0,75 ms |
+
+**Busca de escolas: linear × índice invertido** (mesmas consultas, mesmos resultados conferidos):
+
+| Consulta | Escolas achadas | Busca linear | Índice invertido |
+|---|---|---|---|
+| Durval Máximo | 1 | 158 ms | 0,006 ms |
+| Escola Municipal São José | 546 | 159 ms | 0,61 ms |
+| Santo Antônio | 396 | 159 ms | 0,33 ms |
+| Quilombo | 10 | 160 ms | 0,008 ms |
+
+**Interpretação.** A primeira rodada errou 5 das 20 perguntas, e cada erro mostrou um problema típico de busca:
+
+1. **Radicais que colidem.** "quilombola" e "quilômetros" viram ambos "quilo", e "particular" e "participar" viram "parti". A correção foi o bônus para palavra inteira.
+2. **Uma palavra solta decidindo.** "Qual a melhor escola particular da cidade?" casava só "cidade" e respondia sobre escola na cidade. A correção foi a cobertura mínima de 40%.
+3. **Nome de escola lido como pergunta.** "Escola Municipal São José" casava "municipal" com Conselho Municipal. A correção foi a prioridade para nome de escola.
+4. **Empate legítimo tratado como ambiguidade**, resolvido pela regra do mesmo subtema.
+
+O uso interativo achou mais quatro defeitos que a avaliação automática não pegava. O pior foi "são" descartado como verbo dentro de "São José", que fazia a busca devolver escolas sem "São" no nome.
+
+O índice invertido responde de 260 a 26 mil vezes mais rápido que a busca linear, porque só toca as escolas que têm as palavras digitadas. A busca linear compara o nome de todas as 53.759 escolas a cada consulta.
+
+**Limitações da avaliação.** Os 100% foram obtidos ajustando as regras nas mesmas 20 perguntas que os medem, o que superestima o acerto. Por isso a avaliação inclui um **segundo conjunto de perguntas, escritas por pessoas que não viram a base** (resultado abaixo), e o teste de facilidade de uso. As perguntas de teste foram escritas pela própria equipe, e os tempos foram medidos numa única máquina (servidor ARM, 2 núcleos).
+
+**Segundo conjunto (perguntas novas) e teste de facilidade de uso:** *em andamento; o roteiro está em [`docs/teste_usabilidade.md`](docs/teste_usabilidade.md).*
+
+<p align="center"><img src="docs/img/06-limites.png" alt="Pergunta fora do tema, entrada vazia e opção inexistente" width="70%"></p>
+
+### 5. Como executar
+
+Requer Python 3.10 ou mais recente. Nenhuma instalação de pacote.
+
+```bash
+git clone https://github.com/iurileao-hub/global-solution-citizentech.git
+cd global-solution-citizentech
+python src/sistema.py                 # assistente (modelo de resposta B)
+python src/sistema.py --modelo A      # mesmo assistente, modelo A
+python src/sistema.py --avaliar       # roda as perguntas de teste e grava os indicadores em data/
+```
+
+No Windows, use `py src/sistema.py` se o comando `python` não existir. O programa ajusta o terminal para exibir acentos.
+
+### 6. Exemplos
+
+| Entrada | Comportamento |
+|---|---|
+| "A prefeitura pode fechar a escola sem consultar a gente?" | D1 (LDB art. 28), com fonte, data, o que confirmar e 3 caminhos para continuar |
+| "Quem paga o ônibus escolar?" | T2 (responsável) e sugere T3 (de onde vem o dinheiro) |
+| "Durval Máximo" | a escola, com matrícula, transporte, série e 4 receptoras com estrada "pelo menos" |
+| "Escola Municipal São José" | 546 escolas: pede município e UF |
+| "Como tiro a segunda via do RG?" | diz que não há orientação confiável e lista os temas que conhece |
+| (vazio), "9", "e aí, o que que é isso?" | mensagens que dizem o que digitar |
+
+<p align="center"><img src="docs/img/04-escola.png" alt="Consulta da EMEF Durval Máximo com as receptoras" width="70%"></p>
+
+<p align="center"><img src="docs/img/05-ambigua.png" alt="Nome repetido e desempate por município e UF" width="70%"></p>
+
+### 7. Clareza, acessibilidade, privacidade e informação não oficial
+
+- **Não oficial.** O aviso aparece na abertura e no rodapé de cada resposta: o assistente é feito por estudantes, não fala por nenhum órgão público, e a pessoa deve confirmar com a Secretaria, o Conselho, o Ministério Público ou a Defensoria. O assistente não promete atendimento nem integração com órgão público.
+- **Privacidade.** O assistente não pede nome, endereço nem documento, e não grava o que é digitado. Os números das escolas são públicos e contam escolas, nunca identificam crianças. Por isso a distância é sempre de escola a escola: calcular a partir da casa de cada criança exigiria um dado pessoal que o problema não justifica.
+- **Clareza.** Orientações em frases curtas (15 palavras por frase, em média, no modelo B), com o termo técnico explicado quando aparece ("nucleação", "órgão normativo"). O assistente mostra o assunto que entendeu, para a pessoa conferir.
+- **Acessibilidade.** A interface é só texto, o que funciona com leitores de tela e em computadores modestos, sem internet. As entradas aceitam erros de acento e maiúsculas.
+
+### 8. De onde vêm os números das escolas
+
+O assistente é a camada de consulta da **Escola em Pauta**, que gera, para cada escola, uma ficha de duas páginas com o mesmo número para a comunidade e o Conselho ([site com as fichas](https://iurileao-hub.github.io/global-solution-citizentech/)).
+
+```
+Censo Escolar (INEP, 2019-2025) ─┐
+Escolas geolocalizadas (Ipea)  ──┼─► diagnosticar(codigo_inep) ─► ficha (site) e índice do assistente
+OpenStreetMap (Geofabrik)      ──┘
+```
+
+**Rotas.** A malha viária do OpenStreetMap vira um grafo em lista de adjacência (cerca de 2 arestas por nó: uma matriz seria quase toda vazia). O menor caminho sai do algoritmo de Dijkstra com fila de prioridade (`heapq`), com velocidade de ônibus por tipo de via e superfície. As rotas de todas as escolas são **pré-calculadas** por `scripts/precalcular_rotas.py` (retomável, lê cada recorte regional uma vez só) e gravadas no índice, para o assistente responder em milissegundos sem depender de servidor.
+
+**Validação.** Em Muniz Freire (ES), na EMEF Durval Máximo, a área técnica do Tribunal de Contas estimou que os alunos "percorreriam até 52 km por dia" até a receptora indicada (Decisão 02423/2025-2). O nosso cálculo, de escola a escola, dá 25 km por dia, cerca da metade, porque não conhece a casa de cada criança. O resultado confirma o número como piso. Com uma única referência externa, ele vale como ordem de grandeza.
+
+**Tendência de matrícula.** Testado em quase 2 mil escolas rurais (DF, SP, ES), prever a matrícula pela reta dos anos anteriores errou mais do que supor que ela fica igual ao último ano (erro médio de 24,4 contra 17,7 alunos em SP). Por isso a ficha e o assistente descrevem a série e não projetam.
+
+Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local.py`, `rota.py`, `receptoras.py`, `tendencia.py`, `checklist.py`, `ficha.py`, `site.py`. Regenerar os dados exige os arquivos públicos do INEP, do Ipea e da Geofabrik (cerca de 3 GB, fora do repositório) e as dependências de `pyproject.toml`. O assistente não precisa de nada disso.
+
+### 9. Conclusões, limitações e melhorias
+
+**Conclusões.** Um assistente pequeno, só com regras explícitas e uma base conferida, já responde as perguntas que a comunidade faz quando o fechamento é anunciado, com fonte e sem inventar. A avaliação mostrou que os erros vieram da linguagem: radicais que colidem, palavras soltas, nomes próprios. O índice invertido torna viável consultar dezenas de milhares de escolas em menos de um milissegundo, num computador comum.
+
+**Limitações.**
+- A base cobre 20 orientações. Pergunta fora delas recebe "não sei", e o vocabulário de palavras-chave foi escrito pela equipe.
+- O radical de 5 letras é grosseiro e junta palavras diferentes; o bônus de palavra inteira atenua, mas não resolve.
+- As distâncias são piso, de escola a escola. Velocidades de ônibus são parâmetros declarados, sem medição própria.
+- Cerca de 23% das escolas do campo não têm coordenada na base pública do Ipea e ficam sem distância.
+- Escola perto da divisa entre regiões só procura receptoras na malha da própria região.
+- As normas mudam. Se o PL 3.091/2024 virar lei, ele substitui o parágrafo único do art. 28 da LDB, e a base precisa ser revista.
+
+**Melhorias possíveis.**
+1. Ampliar o vocabulário e os temas a partir das perguntas de usuários reais, que é a fonte que falta hoje.
+2. Trocar o radical por um algoritmo de redução de palavras feito para o português (como o RSLP).
+3. Um modelo de linguagem como camada opcional de redação, com a resposta conferida contra a base antes de ser mostrada.
+4. Um servidor que calcule na hora a rota de escola ainda não calculada, com fila, alimentando o mesmo índice.
+5. Geocodificar pelo endereço as escolas sem coordenada.
+
+## 📁 Estrutura de pastas
+
+* **`src/`** código-fonte. `sistema.py` é o ponto de entrada; `assistente/` é o assistente (só biblioteca padrão); `escola_em_pauta/` gera fichas, site e rotas.
+* **`data/`** base de orientações, índice de escolas, perguntas de teste e resultados da avaliação.
+* **`docs/`** metodologia, uso de IA, roteiro do teste de usabilidade e imagens do README.
+* **`scripts/`** geração do índice, pré-cálculo das rotas, prints do README e publicação do site.
+* **`README.md`** este arquivo.
+
+## 📎 Links e Observações
+
+### 🔗 Links do Projeto
+
+* **Vídeo de apresentação (YouTube, não listado):** *a publicar*
+* **[Site com as fichas das escolas](https://iurileao-hub.github.io/global-solution-citizentech/)**: 256 fichas do DF, do Vale do Ribeira (SP) e de Muniz Freire (ES).
+
+### 🧠 Decisões Técnicas
+
+> **Python só com biblioteca padrão no assistente**, para rodar em qualquer computador, sem instalação e sem internet. As dependências pesadas (pandas, leitura do OpenStreetMap) ficam do lado de quem gera os dados.
+>
+> **Regras explícitas, sem modelo de linguagem**, porque o enunciado pede respostas com fonte verificável e sem invenção, e porque regras podem ser testadas uma a uma.
+>
+> **Rotas pré-calculadas.** Calculada na hora, uma rota nova levava 107 s e 4,6 GB de memória; pré-calculada, a consulta leva menos de 1 ms.
+>
+> **Distância como piso.** Sem o endereço das crianças (dado pessoal), o cálculo de escola a escola só pode garantir o mínimo, e a resposta diz isso.
+
+### 📢 Observações Gerais
+
+*Indique obrigatoriamente no campo abaixo a decisão da equipe quanto à participação na competição:*
+
+* **Participação na Competição:** [x] Sim, aceitamos participar / [ ] Não vamos participar.
+* **ODS:** 4 (Educação de qualidade: acesso à escola perto de casa e permanência da criança do campo) e 10 (Redução das desigualdades: dá à comunidade rural o mesmo número que a Secretaria tem).
+* **Uso de IA:** descrito, com a validação crítica, em [`docs/uso_ia.md`](docs/uso_ia.md).
+
+## 🔧 Como executar o código
+
+Ver a seção 5. Resumo: `python src/sistema.py`, com Python 3.10 ou mais recente, sem instalar nada.
+
+## Fontes e licenças dos dados
 
 - Censo Escolar da Educação Básica, INEP (microdados por escola, 2019 a 2025).
 - Escolas geolocalizadas, Ipea (pacote `geobr`, base de 2023).
-- © colaboradores do OpenStreetMap, dados sob licença ODbL.
-- Normas conferidas no texto oficial: LDB art. 28; Decreto 7.352/2010, art. 1º; Res. CNE/CEB 2/2008, art. 3º.
+- © colaboradores do OpenStreetMap, dados sob licença ODbL (recortes da Geofabrik).
+- Normas: textos oficiais conferidos em 05/11/2026; lista completa com URL em cada registro de `data/base_orientacoes.json`.
 
-## Uso de IA
+---
 
-O processo de escolha do problema e o uso de IA estão descritos em [`docs/metodologia.md`](docs/metodologia.md). O código foi escrito com assistência de modelos Claude (Anthropic), com revisão e decisões humanas.
+## 📋 Licença
+
+<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/fiap-tutoria/FIAP-PORTFOLIO-AI">TEMPLATE - FIAP PORTFÓLIO AI</a> por <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://fiap.com.br">FIAP</a> está licenciado sobre <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Attribution 4.0 International</a>.</p>

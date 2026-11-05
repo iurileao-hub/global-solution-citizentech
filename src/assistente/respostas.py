@@ -52,7 +52,7 @@ def _par(texto: str, recuo: str = "") -> str:
 
 def _fonte(r: dict) -> str:
     ref = r["referencia"]
-    return f"Fonte: {ref['titulo']} — {ref['url']} (conferida em {_data(r['data_verificacao'])})"
+    return f"Fonte: {ref['titulo']}. Conferida em {_data(r['data_verificacao'])} em {ref['url']}"
 
 
 def _data(iso: str) -> str:
@@ -124,12 +124,13 @@ def _receptora(r: dict, origem: dict) -> str:
     return texto + "."
 
 
-def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B") -> str:
+def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B",
+           extras: list[str] | None = None) -> str:
     local = "rural" if e["z"] == "rural" else "urbana, mas a maioria dos alunos mora na zona rural"
     etapas = "; ".join(f"{ETAPA[k]}: {v}" for k, v in e["e"].items()) or "sem matrícula informada"
     serie = e["s"]
     anos = sorted(serie)
-    linhas = [f"{e['n']} — {e['m']}/{e['uf']} (código INEP {e['c']})",
+    linhas = [f"{e['n']}, {e['m']}/{e['uf']} (código INEP {e['c']})",
               _par(f"Escola {e['r'] or 'pública'} {local}" + (f", {ONDE.get(e['d'], e['d'])}" if e["d"] else "") + ".")]
     linhas.append(_par(f"Alunos em {anos[-1] if anos else 'último ano'}: {e['t']} ({etapas})."))
     if e.get("tp") is not None:
@@ -164,4 +165,6 @@ def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B") 
         ids = list(lig.get("sempre", [])) + [x for x in lig.get(e["d"] or "", []) if x not in lig.get("sempre", [])]
         if ids:
             linhas += ["", "Para continuar:"] + [f"  [{x}] {base.registros[x]['pergunta']}" for x in ids]
+    if extras:
+        linhas += ["", sugestoes(base, extras)]
     return "\n".join(linhas + ["", RODAPE])

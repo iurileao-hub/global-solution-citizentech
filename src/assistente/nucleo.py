@@ -61,9 +61,10 @@ def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
     r = ctx.indice.buscar(texto)
     achado = ctx.escolas.buscar(texto) if ctx.escolas else {"tipo": "nenhuma"}
     if achado["tipo"] in ("unica", "codigo", "ambigua") and r.cobertura < 1.0:
-        resp = escola(ctx, achado["escolas"][0], modelo) if achado["tipo"] != "ambigua" else lista_escolas(achado)
-        if r.tipo == "unica" and modelo == "B" and r.ids[0] not in resp.texto:
-            resp.texto += "\n\n" + respostas.sugestoes(base, r.ids)
+        extras = r.ids if r.tipo == "unica" and modelo == "B" else []
+        if achado["tipo"] == "ambigua":
+            return lista_escolas(achado)
+        resp = escola(ctx, achado["escolas"][0], modelo, extras)
         return resp
     if r.tipo == "vazia":
         return Resposta("vazia", "Não entendi a pergunta: ela só tem palavras muito comuns. Tente com outras palavras.")
@@ -77,9 +78,11 @@ def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
     return Resposta("nenhuma", respostas.sem_resposta(base))
 
 
-def escola(ctx: Contexto, e: dict, modelo: str = "B") -> Resposta:
+def escola(ctx: Contexto, e: dict, modelo: str = "B", extras: list[str] | None = None) -> Resposta:
     doc = ctx.escolas.doc
-    return Resposta("escola", respostas.escola(ctx.base, e, doc["fonte"], doc["data_verificacao"], modelo),
+    lig = set(ctx.base.ligacoes_escola.get("sempre", [])) | set(ctx.base.ligacoes_escola.get(e["d"] or "", []))
+    extras = [x for x in (extras or []) if x not in lig]          # não repetir o que "Para continuar" já mostra
+    return Resposta("escola", respostas.escola(ctx.base, e, doc["fonte"], doc["data_verificacao"], modelo, extras),
                     escolas=[e["c"]])
 
 
@@ -88,6 +91,6 @@ def lista_escolas(achado: dict, ja_filtrado: bool = False) -> Resposta:
     pedido = "" if ja_filtrado else ". Para escolher, informe o município e a UF"
     linhas = [f"Encontrei {achado['total']} escolas com esse nome{pedido}"
               + (" (mostrando as primeiras):" if len(es) > MAX_ESCOLAS_LISTA else ":")]
-    linhas += [f"  {e['c']}  {e['n']} — {e['m']}/{e['uf']}" for e in es[:MAX_ESCOLAS_LISTA]]
+    linhas += [f"  {e['c']}  {e['n']}, {e['m']}/{e['uf']}" for e in es[:MAX_ESCOLAS_LISTA]]
     linhas.append("Ou digite o código INEP (o número da esquerda).")
     return Resposta("escola_ambigua", "\n".join(linhas), escolas=[e["c"] for e in es])
