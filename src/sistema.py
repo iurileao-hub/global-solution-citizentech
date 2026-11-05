@@ -43,16 +43,21 @@ def ler(rotulo: str) -> str:
         raise SystemExit(0)
 
 
-def continuar(ctx: Contexto, modelo: str) -> None:
-    """Depois de uma resposta: aceita um código [X] para seguir no grafo de assuntos."""
+def continuar(ctx: Contexto, modelo: str, ultimo: str = "") -> None:
+    """Depois de uma resposta: aceita um código [X] para seguir no grafo de assuntos, ou outra pergunta.
+
+    O convite só fala em "código" quando a tela mostrou algum (achado do teste de usabilidade)."""
     while True:
-        cod = ler("\nDigite um código para continuar, ou Enter para voltar ao menu: ")
+        convite = ("\nDigite um código entre colchetes, outra pergunta, ou Enter para voltar ao menu: "
+                   if "  [" in ultimo else "\nEscreva outra pergunta, ou aperte Enter para voltar ao menu: ")
+        cod = ler(convite)
         if not cod:
             return
         r = responder(ctx, cod, modelo)
         print("\n" + r.texto)
+        ultimo = r.texto
         if r.tipo == "escola_ambigua":
-            escolher_escola(ctx, modelo, [ctx.escolas.por_codigo[c] for c in r.escolas])
+            ultimo = escolher_escola(ctx, modelo, [ctx.escolas.por_codigo[c] for c in r.escolas])
 
 
 def por_assunto(ctx: Contexto, modelo: str) -> None:
@@ -79,22 +84,30 @@ def por_assunto(ctx: Contexto, modelo: str) -> None:
     rel = [base.temas[t]["nome"] for t in info.get("relacionados", [])]
     if rel:
         print(f"  (Assuntos relacionados: {', '.join(rel)})")
-    continuar(ctx, modelo)
+    continuar(ctx, modelo, "  [")
 
 
-def escolher_escola(ctx: Contexto, modelo: str, candidatas: list[dict]) -> None:
-    mun = ler("Município (Enter para pular): ")
+def escolher_escola(ctx: Contexto, modelo: str, candidatas: list[dict]) -> str:
+    """Desempata nomes repetidos. Devolve o texto mostrado (para o convite seguinte saber se houve códigos)."""
+    mun = ler("Município ou código INEP (Enter para pular): ")
+    if mun.isdigit():                       # a tela mandou "digite o código INEP": aceitar aqui também
+        e = next((x for x in candidatas if x["c"] == int(mun)), None) or ctx.escolas.por_codigo.get(int(mun))
+        texto = escola(ctx, e, modelo).texto if e else f"Não há escola com o código {mun} nesta lista."
+        print("\n" + texto)
+        return texto
     uf = ler("UF, ex.: ES (Enter para pular): ")
     if not mun and not uf:
-        return
+        return ""
     filtradas = escolas_mod.filtrar(candidatas, municipio=mun, uf=uf)
     achado = {"escolas": filtradas, "total": len(filtradas)}
     if achado["total"] == 1:
-        print("\n" + escola(ctx, achado["escolas"][0], modelo).texto)
+        texto = escola(ctx, achado["escolas"][0], modelo).texto
     elif achado["total"] > 1:
-        print("\n" + lista_escolas(achado, ja_filtrado=True).texto)
+        texto = lista_escolas(achado, ja_filtrado=True).texto
     else:
-        print("Nenhuma das escolas com esse nome fica nesse município/UF.")
+        texto = "Nenhuma das escolas com essas palavras no nome fica nesse município/UF."
+    print("\n" + texto)
+    return texto
 
 
 def por_escola(ctx: Contexto, modelo: str) -> None:
@@ -106,13 +119,18 @@ def por_escola(ctx: Contexto, modelo: str) -> None:
     if achado["tipo"] == "vazia":
         print("Digite ao menos uma palavra do nome (além de 'escola', 'municipal'...) ou o código INEP.")
     elif achado["tipo"] == "nenhuma":
-        print("Não encontrei essa escola entre as escolas públicas do campo ativas no Censo Escolar mais recente. "
-              "Confira a grafia ou use o código INEP.")
+        print(respostas._par("Não encontrei uma escola do campo com essas palavras no nome. A base tem só as "
+                             "escolas públicas do campo em atividade no Censo Escolar 2025; escolas urbanas não "
+                             "aparecem. Tente escrever só o nome da escola, ou use o código INEP."))
     elif achado["tipo"] in ("unica", "codigo"):
-        print("\n" + escola(ctx, achado["escolas"][0], modelo).texto)
+        ultimo = escola(ctx, achado["escolas"][0], modelo).texto
+        print("\n" + ultimo)
+        continuar(ctx, modelo, ultimo)
+        return
     else:
         print("\n" + lista_escolas(achado).texto)
-        escolher_escola(ctx, modelo, achado["escolas"])
+        continuar(ctx, modelo, escolher_escola(ctx, modelo, achado["escolas"]))
+        return
     continuar(ctx, modelo)
 
 
@@ -139,6 +157,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Assistente Escola em Pauta (não oficial)")
     ap.add_argument("--modelo", choices=["A", "B"], default="B")
     ap.add_argument("--avaliar", action="store_true", help="roda as perguntas de teste e calcula os indicadores")
+    ap.add_argument("--perguntas", default="perguntas_teste.json",
+                    help="arquivo de perguntas em data/ (ex.: perguntas_cegas.json)")
     ap.add_argument("--base", default=str(ARQ_BASE))
     ap.add_argument("--escolas", default=str(ARQ_ESCOLAS))
     args = ap.parse_args(argv)
@@ -157,7 +177,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.avaliar:
         from assistente import avaliacao
-        return avaliacao.main(ctx, RAIZ)
+        return avaliacao.main(ctx, RAIZ, args.perguntas)
 
     print("=" * respostas.LARGURA)
     print("ESCOLA EM PAUTA: assistente sobre o fechamento de escolas do campo")
@@ -176,9 +196,10 @@ def main(argv: list[str] | None = None) -> int:
             elif op == "2":
                 r = responder(ctx, ler("Sua pergunta: "), args.modelo)
                 print("\n" + r.texto)
+                ultimo = r.texto
                 if r.tipo == "escola_ambigua":
-                    escolher_escola(ctx, args.modelo, [ctx.escolas.por_codigo[c] for c in r.escolas])
-                continuar(ctx, args.modelo)
+                    ultimo = escolher_escola(ctx, args.modelo, [ctx.escolas.por_codigo[c] for c in r.escolas])
+                continuar(ctx, args.modelo, ultimo)
             elif op == "4":
                 sobre(ctx)
             elif not op:

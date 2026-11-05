@@ -154,9 +154,28 @@ O uso interativo achou mais quatro defeitos que a avaliação automática não p
 
 O índice invertido responde de 260 a 26 mil vezes mais rápido que a busca linear, porque só toca as escolas que têm as palavras digitadas. A busca linear compara o nome de todas as 53.759 escolas a cada consulta.
 
-**Limitações da avaliação.** Os 100% foram obtidos ajustando as regras nas mesmas 20 perguntas que os medem, o que superestima o acerto. Por isso a avaliação inclui um **segundo conjunto de perguntas, escritas por pessoas que não viram a base** (resultado abaixo), e o teste de facilidade de uso. As perguntas de teste foram escritas pela própria equipe, e os tempos foram medidos numa única máquina (servidor ARM, 2 núcleos).
+**Limitações da avaliação.** Os 100% foram obtidos ajustando as regras nas mesmas 20 perguntas que os medem, o que superestima o acerto. Por isso a avaliação inclui um **segundo conjunto, escrito às cegas** (abaixo). Os tempos foram medidos numa única máquina (servidor ARM, 2 núcleos).
 
-**Segundo conjunto (perguntas novas) e teste de facilidade de uso:** *em andamento; o roteiro está em [`docs/teste_usabilidade.md`](docs/teste_usabilidade.md).*
+**Segundo conjunto: 50 perguntas escritas às cegas, e teste de facilidade de uso simulado.** Cinco agentes de IA, cada um no papel de uma pessoa que enfrenta o fechamento de uma escola (agricultora assentada com pouca escolaridade, liderança quilombola, conselheira municipal, professora rural, estudante ribeirinho), escreveram 10 perguntas cada **antes de ver o programa** e depois cumpriram 5 tarefas num terminal real, seguindo o roteiro de [`docs/teste_usabilidade.md`](docs/teste_usabilidade.md). Um juiz separado, que leu a base mas não viu as respostas, definiu a resposta esperada. **Os usuários foram simulados**; o desenho completo e os limites estão em [`docs/metodologia.md`](docs/metodologia.md).
+
+| Nas 50 perguntas às cegas | Antes dos ajustes | Depois dos ajustes |
+|---|---|---|
+| Taxa de acerto | 68% | 88% |
+| Erros calados (resposta errada sem aviso) | 16 | 3 |
+
+Os 68% são o número honesto. O filtro de cobertura criado nos testes da equipe tinha ficado rigoroso demais para perguntas longas e naturais, e o assistente dizia "não sei" quando a base tinha a resposta. A correção principal foi a resposta parcial, que avisa quais palavras da pergunta a orientação não cobre. Os 88% já são otimistas, porque os ajustes foram feitos olhando essas perguntas; uma terceira rodada de personas novas mede o programa corrigido.
+
+| Tarefa (5 personas) | Concluíram |
+|---|---|
+| Descobrir o que a lei exige antes de fechar | 5 |
+| Encontrar a EMEF Durval Máximo e dizer quantos alunos tem | 5 (todas leram 56) |
+| Encontrar a Escola Municipal São José de Carlos Chagas (MG) | 5, três delas só na 2ª tentativa |
+| Descobrir como pedir os números à prefeitura | 5 |
+| Fazer uma pergunta fora da base e ver o que o assistente faz | 3 completas, 2 parciais |
+
+Notas médias de 1 a 5: facilidade 3,8; entendimento 3,4; confiança 4,0. A nota de entendimento foi a mais baixa por causa do vocabulário jurídico ("órgão normativo", "nucleação", "LDB" sem explicação), que foi reescrito. A tarefa da São José falhava porque três das cinco personas escreveram o nome junto com a cidade, e o assistente passou a separar os dois.
+
+**Próximo passo: validação com usuários reais** (famílias, professores, conselheiros, lideranças e quem atua nesses conflitos), pelo canal que essas pessoas usam, com as perguntas delas ampliando a base.
 
 <p align="center"><img src="docs/img/06-limites.png" alt="Pergunta fora do tema, entrada vazia e opção inexistente" width="70%"></p>
 

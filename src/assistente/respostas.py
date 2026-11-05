@@ -60,8 +60,17 @@ def _data(iso: str) -> str:
     return f"{d}/{m}/{a}"
 
 
-def orientacao(base: Base, rid: str, modelo: str = "B", extras: list[str] | None = None) -> str:
+def aviso_parcial(fora: list[str]) -> str:
+    return _par("Atenção: esta é a orientação mais próxima que encontrei, mas ela não trata de "
+                + ", ".join(f'"{p}"' for p in fora) + ". Se isso é o centro da sua dúvida, a base não tem "
+                "essa resposta; confirme com o órgão responsável.")
+
+
+def orientacao(base: Base, rid: str, modelo: str = "B", extras: list[str] | None = None,
+               fora: list[str] | None = None) -> str:
     r = base.registros[rid]
+    if fora:
+        return aviso_parcial(fora) + "\n\n" + orientacao(base, rid, modelo, extras)
     if modelo == "A":
         return "\n".join([_par(r["orientacao"]), _par(_fonte(r)), RODAPE])
     tema = base.temas[r["tema"]]
@@ -162,7 +171,10 @@ def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B",
     linhas.append(_par(f"Fonte: {fonte} (dados baixados em {_data(data_verif)})."))
     if modelo == "B":
         lig = base.ligacoes_escola
-        ids = list(lig.get("sempre", [])) + [x for x in lig.get(e["d"] or "", []) if x not in lig.get("sempre", [])]
+        chaves = ["sempre"] + (["com_rota"] if e.get("rota") and e["rota"].get("receptoras") else []) + [e["d"] or ""]
+        ids: list[str] = []
+        for k in chaves:
+            ids += [x for x in lig.get(k, []) if x not in ids]
         if ids:
             linhas += ["", "Para continuar:"] + [f"  [{x}] {base.registros[x]['pergunta']}" for x in ids]
     if extras:

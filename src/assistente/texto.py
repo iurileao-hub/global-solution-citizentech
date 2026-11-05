@@ -27,6 +27,8 @@ meu minha meus minhas seu sua seus suas nosso nossa nossos nossas ele ela eles e
 isso isto esse essa este esta aquele aquela ser estar ter ha tem foi vai vou sao era sera esta estao
 me te lhe nos vos ao aos à às la le lo ai entao tambem so ate apos antes depois agora aqui ali
 pode podem gente mesmo coisa alguma algum algo quero queria saber sei dizer diz quer
+posso podemos poder precisa precisam preciso deve devem devia feita feito acontece acontecer aconteceu
+forem for fosse outra outro outras outros vao tinha adianta ne oi ola bom dia boa tarde noite
 """.split())
 
 

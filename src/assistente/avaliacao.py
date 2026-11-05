@@ -40,6 +40,13 @@ def _tempo_ms(func, *args) -> float:
 
 
 def classificar(p: dict, r) -> str:
+    """acerto | parcial (opções empatadas incluem a certa) | erro_avisado (errou, mas avisou que a pergunta
+    não estava toda coberta) | erro (errou calado: o pior caso, a pessoa sai acreditando no errado)."""
+    c = _classificar(p, r)
+    return "erro_avisado" if c == "erro" and getattr(r, "parcial", False) else c
+
+
+def _classificar(p: dict, r) -> str:
     if "esperado" in p:
         if r.tipo in ("unica", "codigo") and r.ids and r.ids[0] in p["esperado"]:
             return "acerto"
@@ -83,7 +90,8 @@ def rodar(ctx: Contexto, perguntas: list[dict], modelo: str) -> list[dict]:
         esperado = "/".join(p["esperado"]) if "esperado" in p else p["esperado_tipo"] + (
             f":{p['esperado_escola']}" if "esperado_escola" in p else "")
         linhas.append({"id": p["id"], "tipo": p["tipo"], "pergunta": p["pergunta"], "esperado": esperado,
-                       "obtido": obtido(r), "classificacao": classificar(p, r),
+                       "obtido": obtido(r) + (" (com aviso de parcial)" if r.parcial else ""),
+                       "classificacao": classificar(p, r),
                        "tempo_ms": round(_tempo_ms(responder, ctx, p["pergunta"], modelo), 3),
                        **{f"fmt_{k}": v for k, v in checar_formato(ctx, r).items()}})
     return linhas
@@ -91,7 +99,7 @@ def rodar(ctx: Contexto, perguntas: list[dict], modelo: str) -> list[dict]:
 
 def indicadores(linhas: list[dict]) -> dict:
     n = len(linhas)
-    c = {k: sum(1 for x in linhas if x["classificacao"] == k) for k in ("acerto", "parcial", "erro")}
+    c = {k: sum(1 for x in linhas if x["classificacao"] == k) for k in ("acerto", "parcial", "erro_avisado", "erro")}
     tempos = [x["tempo_ms"] for x in linhas]
     return {"perguntas": n, **c, "taxa_acerto": round(100 * c["acerto"] / n, 1),
             "tempo_medio_ms": round(statistics.mean(tempos), 3), "tempo_max_ms": round(max(tempos), 3)}
@@ -117,13 +125,15 @@ def _csv(caminho: Path, linhas: list[dict]) -> None:
         w.writerows(linhas)
 
 
-def main(ctx: Contexto, raiz: Path) -> int:
+def main(ctx: Contexto, raiz: Path, arquivo: str = "perguntas_teste.json") -> int:
+    """`arquivo` em data/: perguntas_teste.json (conjunto da equipe) ou perguntas_cegas.json (escritas sem ver a base)."""
     dados = raiz / "data"
-    perguntas = json.loads((dados / "perguntas_teste.json").read_text(encoding="utf-8"))["perguntas"]
+    perguntas = json.loads((dados / arquivo).read_text(encoding="utf-8"))["perguntas"]
+    sufixo = "" if arquivo == "perguntas_teste.json" else "_" + Path(arquivo).stem.replace("perguntas_", "")
     resultado = {}
     for modelo in ("A", "B"):
         linhas = rodar(ctx, perguntas, modelo)
-        _csv(dados / f"resultados_testes_modelo_{modelo}.csv", linhas)
+        _csv(dados / f"resultados_testes{sufixo}_modelo_{modelo}.csv", linhas)
         resultado[modelo] = {"indicadores": indicadores(linhas), "formato": {
             k[4:]: (sum(1 for x in linhas if x[k]) if k not in ("fmt_linhas", "fmt_palavras_por_frase")
                     else round(statistics.mean(x[k] for x in linhas), 1))
@@ -133,7 +143,7 @@ def main(ctx: Contexto, raiz: Path) -> int:
         for x in erradas:
             print(f"  {x['classificacao'].upper():8} {x['id']}: esperado {x['esperado']}, obtido {x['obtido']}  ({x['pergunta']})")
         print(f"  formato: {resultado[modelo]['formato']}")
-    if ctx.escolas:
+    if ctx.escolas and not sufixo:
         consultas = ["Durval Maximo", "Escola Municipal Sao Jose", "Santo Antonio", "Rui Barbosa", "Quilombo"]
         busca = comparar_buscas_escola(ctx, consultas)
         _csv(dados / "busca_escolas_linear_x_indice.csv", busca)
@@ -142,6 +152,6 @@ def main(ctx: Contexto, raiz: Path) -> int:
         for b in busca:
             print(f"  {b['consulta']:28} {b['encontradas']:4} escolas | linear {b['linear_ms']:8.2f} ms | "
                   f"índice {b['indice_ms']:6.3f} ms | mesmo resultado: {b['mesmo_resultado']}")
-    (dados / "indicadores.json").write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding="utf-8")
+    (dados / f"indicadores{sufixo}.json").write_text(json.dumps(resultado, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\nResultados gravados em {dados}/")
     return 0

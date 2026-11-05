@@ -16,6 +16,7 @@ docs/*
 !docs/uso_ia.md
 !docs/teste_usabilidade.md
 !docs/img/
+!docs/usabilidade/
 /CLAUDE.md
 .remember/
 

@@ -14,9 +14,16 @@ peso em que esse termo aparece no registro:
 Termos que aparecem em mais da metade dos registros ("escol", por exemplo) não distinguem nada e
 são ignorados.
 
-COBERTURA de um registro = fração dos termos da pergunta que ele casou. Abaixo de COBERTURA_MINIMA,
-uma palavra solta estaria decidindo a resposta ("melhor escola particular da CIDADE" casava só
-"cidade" com a orientação sobre escola na cidade): o registro é descartado.
+COBERTURA de um registro = fração dos termos da pergunta que ele casou. Três faixas:
+    >= COBERTURA_PLENA                  -> resposta normal;
+    entre COBERTURA_MINIMA e a plena    -> resposta PARCIAL: responde e lista as palavras da pergunta
+                                           que a orientação não cobre ("deficiência", "monitor"),
+                                           para a pessoa saber que essa parte ficou sem resposta;
+    < COBERTURA_MINIMA                  -> descartado: uma palavra solta estaria decidindo
+                                           ("melhor escola particular da CIDADE" casava só "cidade").
+Histórico (README, seção 4): com um corte único de 40%, ajustado em perguntas curtas escritas pela
+equipe, o assistente acertou 68% de 50 perguntas escritas às cegas: 10 "não sei" em pergunta longa
+que a base respondia, e 6 respostas erradas dadas com segurança.
 
 DECISÃO (o que fazer com a lista ordenada):
     - maior pontuação < LIMIAR_MINIMO         -> "nenhuma": sem base suficiente; o assistente diz
@@ -41,7 +48,8 @@ from .texto import palavras, radical, termos
 PESOS = {"palavras_chave": 3, "pergunta": 2, "subtema": 1}
 LIMIAR_MINIMO = 3          # equivale a casar ao menos uma palavra-chave
 BONUS_EXATA = 1
-COBERTURA_MINIMA = 0.4     # ajustada nas perguntas de teste (limitação declarada no README)
+COBERTURA_MINIMA = 0.34    # abaixo disso: "não sei"
+COBERTURA_PLENA = 0.6      # acima disso: resposta sem ressalva
 FRACAO_COMUM = 0.5         # termo em mais da metade dos registros = ruído
 MAX_SUGESTOES = 2
 
@@ -53,6 +61,7 @@ class Resultado:
     sugestoes: list[str] = field(default_factory=list)
     pontuacoes: dict[str, int] = field(default_factory=dict)
     cobertura: float = 0.0                          # do registro respondido (ou do 1º empatado)
+    fora: list[str] = field(default_factory=list)   # palavras da pergunta que a resposta NÃO cobre
 
 
 class IndiceOrientacoes:
@@ -61,6 +70,7 @@ class IndiceOrientacoes:
         self.ordem = {rid: i for i, rid in enumerate(base.registros)}
         self.indice: dict[str, dict[str, int]] = {}   # termo -> {id_registro: peso}
         self.exatas: dict[str, set[str]] = {}         # palavra inteira -> {id_registro}
+        self.termos_de: dict[str, set[str]] = {}      # id_registro -> termos que ele tem
         for rid, r in base.registros.items():
             subtema = base.temas[r["tema"]]["subtemas"][r["subtema"]]
             fontes = {"palavras_chave": " ".join(r["palavras_chave"]), "pergunta": r["pergunta"], "subtema": subtema}
@@ -70,6 +80,7 @@ class IndiceOrientacoes:
                     pesos = self.indice.setdefault(t, {})
                     pesos[rid] = max(pesos.get(rid, 0), PESOS[campo])
                     self.exatas.setdefault(pal, set()).add(rid)
+                    self.termos_de.setdefault(rid, set()).add(t)
         limite = FRACAO_COMUM * len(base.registros)
         self.comuns = {t for t, regs in self.indice.items() if len(regs) > limite}
 
@@ -95,7 +106,9 @@ class IndiceOrientacoes:
         if not termos(pergunta):
             return Resultado("vazia")
         n_termos = len(self.termos_uteis(pergunta)) or 1
-        placar = {rid: v for rid, v in self.pontuar(pergunta).items() if v[1] / n_termos >= COBERTURA_MINIMA}
+        todos = self.pontuar(pergunta)
+        # a cobertura mínima vale para QUEM RESPONDE; as sugestões só precisam do limiar de pontuação
+        placar = {rid: v for rid, v in todos.items() if v[1] / n_termos >= COBERTURA_MINIMA}
         if not placar:
             return Resultado("nenhuma")
         ordenados = sorted(placar, key=lambda rid: (-placar[rid][0], -placar[rid][1], self.ordem[rid]))
@@ -108,5 +121,18 @@ class IndiceOrientacoes:
         subtemas = {(self.base.registros[r]["tema"], self.base.registros[r]["subtema"]) for r in empatados}
         if len(empatados) > 1 and len(subtemas) > 1:
             return Resultado("ambigua", ids=empatados, pontuacoes=pont, cobertura=cob)
-        resto = [rid for rid in ordenados[1:] if pont[rid] >= LIMIAR_MINIMO][:MAX_SUGESTOES]
-        return Resultado("unica", ids=[ordenados[0]], sugestoes=resto, pontuacoes=pont, cobertura=cob)
+        outros = sorted((r for r in todos if r != ordenados[0] and todos[r][0] >= LIMIAR_MINIMO),
+                        key=lambda r: (-todos[r][0], -todos[r][1], self.ordem[r]))
+        fora = self.fora_de(pergunta, ordenados[0]) if cob < COBERTURA_PLENA else []
+        return Resultado("unica", ids=[ordenados[0]], sugestoes=outros[:MAX_SUGESTOES], pontuacoes=pont,
+                         cobertura=cob, fora=fora)
+
+    def fora_de(self, pergunta: str, rid: str) -> list[str]:
+        """Palavras da pergunta (como a pessoa escreveu, sem repetir) que o registro não cobre."""
+        tem = self.termos_de.get(rid, set())
+        vistas: list[str] = []
+        for pal in palavras(pergunta):
+            t = radical(pal)
+            if t not in tem and t not in self.comuns and pal not in vistas:
+                vistas.append(pal)
+        return vistas

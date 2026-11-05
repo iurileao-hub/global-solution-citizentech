@@ -4,10 +4,11 @@
       "perguntas": 20,
       "acerto": 20,
       "parcial": 0,
+      "erro_avisado": 0,
       "erro": 0,
       "taxa_acerto": 100.0,
-      "tempo_medio_ms": 0.176,
-      "tempo_max_ms": 0.719
+      "tempo_medio_ms": 0.246,
+      "tempo_max_ms": 0.801
     },
     "formato": {
       "cita_fonte": 15,
@@ -15,8 +16,8 @@
       "aviso_nao_oficial": 17,
       "pede_confirmacao": 0,
       "oferece_continuidade": 0,
-      "linhas": 8.7,
-      "palavras_por_frase": 17.4
+      "linhas": 9.5,
+      "palavras_por_frase": 15.4
     }
   },
   "B": {
@@ -24,19 +25,20 @@
       "perguntas": 20,
       "acerto": 20,
       "parcial": 0,
+      "erro_avisado": 0,
       "erro": 0,
       "taxa_acerto": 100.0,
-      "tempo_medio_ms": 0.193,
-      "tempo_max_ms": 0.727
+      "tempo_medio_ms": 0.266,
+      "tempo_max_ms": 0.792
     },
     "formato": {
       "cita_fonte": 15,
       "data_verificacao": 15,
       "aviso_nao_oficial": 17,
-      "pede_confirmacao": 9,
-      "oferece_continuidade": 16,
-      "linhas": 16.9,
-      "palavras_por_frase": 15.1
+      "pede_confirmacao": 10,
+      "oferece_continuidade": 15,
+      "linhas": 18.6,
+      "palavras_por_frase": 14.7
     }
   },
   "busca_escolas": [
@@ -44,35 +46,35 @@
       "consulta": "Durval Maximo",
       "encontradas": 1,
       "mesmo_resultado": true,
-      "linear_ms": 157.709,
+      "linear_ms": 173.924,
       "indice_ms": 0.006
     },
     {
       "consulta": "Escola Municipal Sao Jose",
       "encontradas": 546,
       "mesmo_resultado": true,
-      "linear_ms": 159.495,
-      "indice_ms": 0.611
+      "linear_ms": 177.09,
+      "indice_ms": 0.638
     },
     {
       "consulta": "Santo Antonio",
       "encontradas": 396,
       "mesmo_resultado": true,
-      "linear_ms": 159.253,
-      "indice_ms": 0.333
+      "linear_ms": 173.928,
+      "indice_ms": 0.371
     },
     {
       "consulta": "Rui Barbosa",
       "encontradas": 184,
       "mesmo_resultado": true,
-      "linear_ms": 158.485,
-      "indice_ms": 0.113
+      "linear_ms": 179.266,
+      "indice_ms": 0.114
     },
     {
       "consulta": "Quilombo",
       "encontradas": 10,
       "mesmo_resultado": true,
-      "linear_ms": 159.614,
+      "linear_ms": 177.441,
       "indice_ms": 0.008
     }
   ]

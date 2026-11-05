@@ -29,6 +29,7 @@ escola escolas municipal estadual federal emef emeif emei eef eeef eeefm eeem ee
 colegio centro educacional ensino fundamental medio infantil basica rural unidade nucleo creche
 pre integral tempo pm prof professor professora dr dona
 """.split())
+UFS = frozenset("ac al ap am ba ce df es go ma mt ms mg pa pb pr pe pi rj rn rs ro rr sc sp se to".split())
 MAX_LISTA = 8
 
 
@@ -88,8 +89,34 @@ class IndiceEscolas:
         alvo = palavras_nome(consulta)
         if not alvo:
             return {"tipo": "vazia", "escolas": [], "total": 0}
-        conjuntos = sorted((self.indice.get(p, set()) for p in alvo), key=len)   # o menor primeiro
-        codigos = set.intersection(*conjuntos) if conjuntos else set()
-        achadas = filtrar([self.por_codigo[c] for c in codigos], municipio, uf)
+        achadas = filtrar([self.por_codigo[c] for c in self._intersecao(alvo)], municipio, uf)
+        dividida = None
+        if not achadas and not municipio and len(alvo) >= 2:
+            dividida = self._nome_e_lugar(alvo)
+            if dividida:
+                achadas = dividida
         tipo = "nenhuma" if not achadas else "unica" if len(achadas) == 1 else "ambigua"
-        return {"tipo": tipo, "escolas": achadas, "total": len(achadas)}
+        return {"tipo": tipo, "escolas": achadas, "total": len(achadas), "nome_e_lugar": bool(dividida)}
+
+    def _intersecao(self, palavras: list[str]) -> set[int]:
+        conjuntos = sorted((self.indice.get(p, set()) for p in palavras), key=len)   # o menor primeiro
+        return set.intersection(*conjuntos) if conjuntos else set()
+
+    def _nome_e_lugar(self, alvo: list[str]) -> list[dict]:
+        """"sao jose carlos chagas mg": as primeiras palavras são o nome, as últimas o município e/ou a UF.
+
+        Testa os cortes do mais longo para o mais curto nome; fica com o primeiro corte que acha escola.
+        (Achado no teste de usabilidade: 3 de 5 personas escreveram o nome junto com a cidade.)
+        """
+        for k in range(len(alvo) - 1, 0, -1):
+            nome, lugar = alvo[:k], alvo[k:]
+            uf = ""
+            if len(lugar[-1]) == 2 and lugar[-1] in UFS:
+                uf, lugar = lugar[-1], lugar[:-1]
+            codigos = self._intersecao(nome)
+            if not codigos:
+                continue
+            achadas = filtrar([self.por_codigo[c] for c in codigos], " ".join(lugar), uf)
+            if achadas:
+                return achadas
+        return []

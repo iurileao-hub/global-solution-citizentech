@@ -1,21 +1,21 @@
 id,tipo,pergunta,esperado,obtido,classificacao,tempo_ms,fmt_cita_fonte,fmt_data_verificacao,fmt_aviso_nao_oficial,fmt_pede_confirmacao,fmt_oferece_continuidade,fmt_linhas,fmt_palavras_por_frase
-P01,direta,A prefeitura pode fechar a escola sem consultar a gente?,D1,unica:D1,acerto,0.162,True,True,True,False,False,9,15.8
-P02,reformulação,precisa de algum estudo antes de fechar escola rural?,D1,unica:D1,acerto,0.158,True,True,True,False,False,9,15.8
-P03,direta,"A escola fica na cidade mas os alunos são da roça, conta como escola do campo?",D2,unica:D2,acerto,0.165,True,True,True,False,False,8,13.0
-P04,reformulação,meu filho de 5 anos vai ter que pegar ônibus pra estudar na cidade,D3,unica:D3,acerto,0.186,True,True,True,,False,8,17.2
-P05,direta,Como consigo os números e o estudo da prefeitura?,C1,unica:C1,acerto,0.187,True,True,True,False,False,10,14.0
-P06,direta,"Fecharam mesmo assim, com quem eu falo?",C4,unica:C4,acerto,0.133,True,True,True,,False,8,16.5
-P07,direta,Quem paga o ônibus escolar?,T2/T3,unica:T2,acerto,0.128,True,True,True,,False,7,12.8
-P08,reformulação,o motorista da van precisa ter curso?,T4,unica:T4,acerto,0.165,True,True,True,,False,10,22.5
-P09,direta,Por que a ficha diz pelo menos 25 km?,F2,unica:F2,acerto,0.161,True,True,True,False,False,9,22.5
-P10,direta,Escola paralisada quer dizer o quê?,F4,unica:F4,acerto,0.186,True,True,True,,False,11,24.2
-P11,reformulação,meu filho vai continuar tendo merenda na escola nova?,D7,unica:D7,acerto,0.176,True,True,True,False,False,11,18.0
-P12,direta,"A escola é quilombola, muda alguma coisa?",D5,unica:D5,acerto,0.218,True,True,True,False,False,13,11.8
-P13,fora do tema,Como tiro a segunda via do RG?,nenhuma,nenhuma,acerto,0.119,False,False,True,,False,7,13.4
-P14,fora do tema,Qual é a melhor escola particular da cidade?,nenhuma,nenhuma,acerto,0.126,False,False,True,,False,7,13.4
-P15,limite: entrada vazia,   ,vazia,vazia,acerto,0.001,False,False,False,,False,1,8.0
-P16,limite: ambígua,Escola Municipal São José,escola_ambigua:31151220,escola_ambigua:546 escola(s),acerto,0.719,False,False,False,,False,10,44.5
-P17,escola por nome,Durval Máximo,escola:32049501,escola:32049501,acerto,0.162,True,True,True,,False,13,11.8
-P18,limite: só palavras comuns,"e aí, o que que é isso?",vazia,vazia,acerto,0.017,False,False,False,,False,1,7.0
-P19,código direto,c5,C5,codigo:C5,acerto,0.18,True,True,True,False,False,13,23.0
-P20,limite: sem resposta confiável,Quantos quilômetros meu filho vai andar até a escola nova?,F2,unica:F2,acerto,0.176,True,True,True,False,False,9,22.5
+P01,direta,A prefeitura pode fechar a escola sem consultar a gente?,D1,unica:D1,acerto,0.399,True,True,True,False,False,10,15.5
+P02,reformulação,precisa de algum estudo antes de fechar escola rural?,D1,unica:D1,acerto,0.182,True,True,True,False,False,10,15.5
+P03,direta,"A escola fica na cidade mas os alunos são da roça, conta como escola do campo?",D2,unica:D2,acerto,0.41,True,True,True,False,False,7,10.8
+P04,reformulação,meu filho de 5 anos vai ter que pegar ônibus pra estudar na cidade,D3,unica:D3,acerto,0.277,True,True,True,False,False,10,15.9
+P05,direta,Como consigo os números e o estudo da prefeitura?,C1,unica:C1,acerto,0.198,True,True,True,False,False,10,12.6
+P06,direta,"Fecharam mesmo assim, com quem eu falo?",C4,unica:C4,acerto,0.162,True,True,True,,False,9,16.0
+P07,direta,Quem paga o ônibus escolar?,T2/T3,unica:T2,acerto,0.138,True,True,True,,False,8,10.7
+P08,reformulação,o motorista da van precisa ter curso?,T4,unica:T4,acerto,0.249,True,True,True,,False,9,18.0
+P09,direta,Por que a ficha diz pelo menos 25 km?,F2,unica:F2 (com aviso de parcial),acerto,0.259,True,True,True,False,False,12,17.7
+P10,direta,Escola paralisada quer dizer o quê?,F4,unica:F4,acerto,0.194,True,True,True,,False,11,16.2
+P11,reformulação,meu filho vai continuar tendo merenda na escola nova?,D7,unica:D7,acerto,0.21,True,True,True,False,False,10,15.0
+P12,direta,"A escola é quilombola, muda alguma coisa?",D5,unica:D5 (com aviso de parcial),acerto,0.487,True,True,True,False,False,17,11.8
+P13,fora do tema,Como tiro a segunda via do RG?,nenhuma,nenhuma,acerto,0.13,False,False,True,,False,7,13.4
+P14,fora do tema,Qual é a melhor escola particular da cidade?,nenhuma,nenhuma,acerto,0.136,False,False,True,,False,7,13.4
+P15,limite: entrada vazia,   ,vazia,vazia,acerto,0.024,False,False,False,,False,2,8.0
+P16,limite: ambígua,Escola Municipal São José,escola_ambigua:31151220,escola_ambigua:546 escola(s),acerto,0.801,False,False,False,,False,11,41.0
+P17,escola por nome,Durval Máximo,escola:32049501,escola:32049501,acerto,0.167,True,True,True,,False,13,11.7
+P18,limite: só palavras comuns,"e aí, o que que é isso?",vazia,vazia,acerto,0.076,False,False,False,,False,2,7.0
+P19,código direto,c5,C5,codigo:C5,acerto,0.176,True,True,True,False,False,13,19.2
+P20,limite: sem resposta confiável,Quantos quilômetros meu filho vai andar até a escola nova?,F2,unica:F2 (com aviso de parcial),acerto,0.251,True,True,True,False,False,12,18.0
