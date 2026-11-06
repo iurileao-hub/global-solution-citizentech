@@ -1,0 +1,2479 @@
+{
+ "esquema": 1,
+ "fonte": "Censo Escolar 2025, INEP (microdados por escola); coordenadas: Ipea/geobr, base 2023",
+ "rotas": "pré-cálculo pela malha do OpenStreetMap (scripts/precalcular_rotas.py, segunda passada: precalcular_rotas_v2.py)",
+ "receptoras_por_escola": 10,
+ "data_osm": [
+  "2026-11-03"
+ ],
+ "criterio": "receptora = a mais próxima por estrada que recebe todas as etapas da escola (senão, a mais próxima, contada em nenhuma_recebe_todas), entre até 10 receptoras com rota; km e minutos de ida e volta por dia, de escola a escola, como piso; mediana e p90 por posição; faixas inclusivas à esquerda",
+ "brasil": {
+  "escolas": 53759,
+  "alunos": 6110226,
+  "com_rota": 36112,
+  "alunos_com_rota": 4597181,
+  "sem_rota": {
+   "origem_longe": 4092,
+   "sem_candidata": 33,
+   "sem_coordenada": 12601,
+   "sem_matricula": 420,
+   "sem_rota": 501
+  },
+  "km_ida_volta": {
+   "mediana": 12.7,
+   "p90": 36.9
+  },
+  "min_ida_volta": {
+   "mediana": 23,
+   "p90": 68
+  },
+  "fracao_chao_mediana": 0.12,
+  "faixas_km": {
+   "ate_10": {
+    "escolas": 14329,
+    "alunos": 1778857
+   },
+   "10_a_30": {
+    "escolas": 16273,
+    "alunos": 2004316
+   },
+   "30_a_50": {
+    "escolas": 3700,
+    "alunos": 539898
+   },
+   "50_a_100": {
+    "escolas": 1569,
+    "alunos": 232895
+   },
+   "100_ou_mais": {
+    "escolas": 241,
+    "alunos": 41215
+   }
+  },
+  "faixas_min": {
+   "ate_30": {
+    "escolas": 22200,
+    "alunos": 2876456
+   },
+   "30_a_60": {
+    "escolas": 9142,
+    "alunos": 1101996
+   },
+   "60_a_120": {
+    "escolas": 3840,
+    "alunos": 505198
+   },
+   "120_ou_mais": {
+    "escolas": 930,
+    "alunos": 113531
+   }
+  },
+  "receptora_urbana": 9262,
+  "alunos_receptora_urbana": 1639394,
+  "outro_municipio": 7950,
+  "nenhuma_recebe_todas": 2482,
+  "metade_ou_mais_em_chao": 12874
+ },
+ "regiao": {
+  "sudeste": {
+   "escolas": 6750,
+   "alunos": 738500,
+   "com_rota": 5757,
+   "alunos_com_rota": 666975,
+   "sem_rota": {
+    "origem_longe": 112,
+    "sem_coordenada": 833,
+    "sem_matricula": 47,
+    "sem_rota": 1
+   },
+   "km_ida_volta": {
+    "mediana": 15.7,
+    "p90": 38.8
+   },
+   "min_ida_volta": {
+    "mediana": 27,
+    "p90": 72
+   },
+   "fracao_chao_mediana": 0.18,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 1547,
+     "alunos": 212074
+    },
+    "10_a_30": {
+     "escolas": 3161,
+     "alunos": 337841
+    },
+    "30_a_50": {
+     "escolas": 791,
+     "alunos": 92992
+    },
+    "50_a_100": {
+     "escolas": 242,
+     "alunos": 22707
+    },
+    "100_ou_mais": {
+     "escolas": 16,
+     "alunos": 1361
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 3110,
+     "alunos": 406899
+    },
+    "30_a_60": {
+     "escolas": 1768,
+     "alunos": 178996
+    },
+    "60_a_120": {
+     "escolas": 745,
+     "alunos": 69554
+    },
+    "120_ou_mais": {
+     "escolas": 134,
+     "alunos": 11526
+    }
+   },
+   "receptora_urbana": 2568,
+   "alunos_receptora_urbana": 361935,
+   "outro_municipio": 1537,
+   "nenhuma_recebe_todas": 534,
+   "metade_ou_mais_em_chao": 2125
+  },
+  "sul": {
+   "escolas": 4595,
+   "alunos": 490735,
+   "com_rota": 3634,
+   "alunos_com_rota": 414781,
+   "sem_rota": {
+    "origem_longe": 51,
+    "sem_coordenada": 895,
+    "sem_matricula": 15
+   },
+   "km_ida_volta": {
+    "mediana": 17.9,
+    "p90": 37.9
+   },
+   "min_ida_volta": {
+    "mediana": 31,
+    "p90": 71
+   },
+   "fracao_chao_mediana": 0.23,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 713,
+     "alunos": 95721
+    },
+    "10_a_30": {
+     "escolas": 2226,
+     "alunos": 239473
+    },
+    "30_a_50": {
+     "escolas": 547,
+     "alunos": 63899
+    },
+    "50_a_100": {
+     "escolas": 139,
+     "alunos": 14715
+    },
+    "100_ou_mais": {
+     "escolas": 9,
+     "alunos": 973
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 1701,
+     "alunos": 218245
+    },
+    "30_a_60": {
+     "escolas": 1378,
+     "alunos": 142504
+    },
+    "60_a_120": {
+     "escolas": 480,
+     "alunos": 48121
+    },
+    "120_ou_mais": {
+     "escolas": 75,
+     "alunos": 5911
+    }
+   },
+   "receptora_urbana": 1891,
+   "alunos_receptora_urbana": 235717,
+   "outro_municipio": 1199,
+   "nenhuma_recebe_todas": 235,
+   "metade_ou_mais_em_chao": 1401
+  },
+  "centro-oeste": {
+   "escolas": 1503,
+   "alunos": 230260,
+   "com_rota": 992,
+   "alunos_com_rota": 165563,
+   "sem_rota": {
+    "origem_longe": 21,
+    "sem_candidata": 7,
+    "sem_coordenada": 476,
+    "sem_matricula": 4,
+    "sem_rota": 3
+   },
+   "km_ida_volta": {
+    "mediana": 35.2,
+    "p90": 92.0
+   },
+   "min_ida_volta": {
+    "mediana": 56,
+    "p90": 161
+   },
+   "fracao_chao_mediana": 0.16,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 166,
+     "alunos": 37746
+    },
+    "10_a_30": {
+     "escolas": 270,
+     "alunos": 52223
+    },
+    "30_a_50": {
+     "escolas": 210,
+     "alunos": 29764
+    },
+    "50_a_100": {
+     "escolas": 274,
+     "alunos": 35175
+    },
+    "100_ou_mais": {
+     "escolas": 72,
+     "alunos": 10655
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 309,
+     "alunos": 75650
+    },
+    "30_a_60": {
+     "escolas": 204,
+     "alunos": 27937
+    },
+    "60_a_120": {
+     "escolas": 280,
+     "alunos": 38839
+    },
+    "120_ou_mais": {
+     "escolas": 199,
+     "alunos": 23137
+    }
+   },
+   "receptora_urbana": 446,
+   "alunos_receptora_urbana": 81621,
+   "outro_municipio": 264,
+   "nenhuma_recebe_todas": 125,
+   "metade_ou_mais_em_chao": 311
+  },
+  "nordeste": {
+   "escolas": 27483,
+   "alunos": 3430144,
+   "com_rota": 20379,
+   "alunos_com_rota": 2719706,
+   "sem_rota": {
+    "origem_longe": 519,
+    "sem_candidata": 1,
+    "sem_coordenada": 6247,
+    "sem_matricula": 334,
+    "sem_rota": 3
+   },
+   "km_ida_volta": {
+    "mediana": 10.4,
+    "p90": 29.5
+   },
+   "min_ida_volta": {
+    "mediana": 19,
+    "p90": 55
+   },
+   "fracao_chao_mediana": 0.1,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 9793,
+     "alunos": 1212211
+    },
+    "10_a_30": {
+     "escolas": 8621,
+     "alunos": 1157541
+    },
+    "30_a_50": {
+     "escolas": 1456,
+     "alunos": 249481
+    },
+    "50_a_100": {
+     "escolas": 472,
+     "alunos": 92419
+    },
+    "100_ou_mais": {
+     "escolas": 37,
+     "alunos": 8054
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 14150,
+     "alunos": 1853718
+    },
+    "30_a_60": {
+     "escolas": 4533,
+     "alunos": 609718
+    },
+    "60_a_120": {
+     "escolas": 1487,
+     "alunos": 225390
+    },
+    "120_ou_mais": {
+     "escolas": 209,
+     "alunos": 30880
+    }
+   },
+   "receptora_urbana": 3643,
+   "alunos_receptora_urbana": 805443,
+   "outro_municipio": 4352,
+   "nenhuma_recebe_todas": 1202,
+   "metade_ou_mais_em_chao": 7153
+  },
+  "norte": {
+   "escolas": 13427,
+   "alunos": 1220556,
+   "com_rota": 5350,
+   "alunos_com_rota": 630156,
+   "sem_rota": {
+    "origem_longe": 3389,
+    "sem_candidata": 25,
+    "sem_coordenada": 4149,
+    "sem_matricula": 20,
+    "sem_rota": 494
+   },
+   "km_ida_volta": {
+    "mediana": 13.8,
+    "p90": 50.6
+   },
+   "min_ida_volta": {
+    "mediana": 26,
+    "p90": 94
+   },
+   "fracao_chao_mediana": 0.03,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 2110,
+     "alunos": 221105
+    },
+    "10_a_30": {
+     "escolas": 1995,
+     "alunos": 217238
+    },
+    "30_a_50": {
+     "escolas": 696,
+     "alunos": 103762
+    },
+    "50_a_100": {
+     "escolas": 442,
+     "alunos": 67879
+    },
+    "100_ou_mais": {
+     "escolas": 107,
+     "alunos": 20172
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 2930,
+     "alunos": 321944
+    },
+    "30_a_60": {
+     "escolas": 1259,
+     "alunos": 142841
+    },
+    "60_a_120": {
+     "escolas": 848,
+     "alunos": 123294
+    },
+    "120_ou_mais": {
+     "escolas": 313,
+     "alunos": 42077
+    }
+   },
+   "receptora_urbana": 714,
+   "alunos_receptora_urbana": 154678,
+   "outro_municipio": 598,
+   "nenhuma_recebe_todas": 386,
+   "metade_ou_mais_em_chao": 1884
+  }
+ },
+ "uf": {
+  "AC": {
+   "regiao": "norte",
+   "escolas": 1068,
+   "alunos": 71090,
+   "com_rota": 95,
+   "alunos_com_rota": 14953,
+   "sem_rota": {
+    "origem_longe": 26,
+    "sem_candidata": 1,
+    "sem_coordenada": 941,
+    "sem_matricula": 2,
+    "sem_rota": 3
+   },
+   "km_ida_volta": {
+    "mediana": 19.1,
+    "p90": 65.4
+   },
+   "min_ida_volta": {
+    "mediana": 36,
+    "p90": 95
+   },
+   "fracao_chao_mediana": 0.01,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 32,
+     "alunos": 4116
+    },
+    "10_a_30": {
+     "escolas": 26,
+     "alunos": 4700
+    },
+    "30_a_50": {
+     "escolas": 21,
+     "alunos": 2656
+    },
+    "50_a_100": {
+     "escolas": 12,
+     "alunos": 2810
+    },
+    "100_ou_mais": {
+     "escolas": 4,
+     "alunos": 671
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 46,
+     "alunos": 7342
+    },
+    "30_a_60": {
+     "escolas": 14,
+     "alunos": 1719
+    },
+    "60_a_120": {
+     "escolas": 29,
+     "alunos": 5116
+    },
+    "120_ou_mais": {
+     "escolas": 6,
+     "alunos": 776
+    }
+   },
+   "receptora_urbana": 34,
+   "alunos_receptora_urbana": 6503,
+   "outro_municipio": 8,
+   "nenhuma_recebe_todas": 10,
+   "metade_ou_mais_em_chao": 23
+  },
+  "AL": {
+   "regiao": "nordeste",
+   "escolas": 1235,
+   "alunos": 238227,
+   "com_rota": 928,
+   "alunos_com_rota": 201659,
+   "sem_rota": {
+    "origem_longe": 4,
+    "sem_coordenada": 284,
+    "sem_matricula": 19
+   },
+   "km_ida_volta": {
+    "mediana": 7.9,
+    "p90": 20.6
+   },
+   "min_ida_volta": {
+    "mediana": 14,
+    "p90": 34
+   },
+   "fracao_chao_mediana": 0.0,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 551,
+     "alunos": 104104
+    },
+    "10_a_30": {
+     "escolas": 354,
+     "alunos": 87245
+    },
+    "30_a_50": {
+     "escolas": 22,
+     "alunos": 9352
+    },
+    "50_a_100": {
+     "escolas": 1,
+     "alunos": 958
+    },
+    "100_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 793,
+     "alunos": 169196
+    },
+    "30_a_60": {
+     "escolas": 127,
+     "alunos": 29525
+    },
+    "60_a_120": {
+     "escolas": 8,
+     "alunos": 2938
+    },
+    "120_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "receptora_urbana": 195,
+   "alunos_receptora_urbana": 62366,
+   "outro_municipio": 233,
+   "nenhuma_recebe_todas": 81,
+   "metade_ou_mais_em_chao": 225
+  },
+  "AM": {
+   "regiao": "norte",
+   "escolas": 3677,
+   "alunos": 265151,
+   "com_rota": 524,
+   "alunos_com_rota": 77460,
+   "sem_rota": {
+    "origem_longe": 1477,
+    "sem_candidata": 9,
+    "sem_coordenada": 1469,
+    "sem_matricula": 3,
+    "sem_rota": 195
+   },
+   "km_ida_volta": {
+    "mediana": 2.9,
+    "p90": 36.5
+   },
+   "min_ida_volta": {
+    "mediana": 7,
+    "p90": 67
+   },
+   "fracao_chao_mediana": 0.0,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 347,
+     "alunos": 49423
+    },
+    "10_a_30": {
+     "escolas": 108,
+     "alunos": 16001
+    },
+    "30_a_50": {
+     "escolas": 42,
+     "alunos": 6703
+    },
+    "50_a_100": {
+     "escolas": 22,
+     "alunos": 4773
+    },
+    "100_ou_mais": {
+     "escolas": 5,
+     "alunos": 560
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 389,
+     "alunos": 57275
+    },
+    "30_a_60": {
+     "escolas": 73,
+     "alunos": 9916
+    },
+    "60_a_120": {
+     "escolas": 49,
+     "alunos": 8932
+    },
+    "120_ou_mais": {
+     "escolas": 13,
+     "alunos": 1337
+    }
+   },
+   "receptora_urbana": 72,
+   "alunos_receptora_urbana": 18334,
+   "outro_municipio": 12,
+   "nenhuma_recebe_todas": 61,
+   "metade_ou_mais_em_chao": 95,
+   "aviso_fluvial": true
+  },
+  "AP": {
+   "regiao": "norte",
+   "escolas": 444,
+   "alunos": 37430,
+   "com_rota": 201,
+   "alunos_com_rota": 21905,
+   "sem_rota": {
+    "origem_longe": 117,
+    "sem_candidata": 1,
+    "sem_coordenada": 108,
+    "sem_matricula": 1,
+    "sem_rota": 16
+   },
+   "km_ida_volta": {
+    "mediana": 21.5,
+    "p90": 71.0
+   },
+   "min_ida_volta": {
+    "mediana": 40,
+    "p90": 136
+   },
+   "fracao_chao_mediana": 0.52,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 42,
+     "alunos": 6478
+    },
+    "10_a_30": {
+     "escolas": 94,
+     "alunos": 9596
+    },
+    "30_a_50": {
+     "escolas": 28,
+     "alunos": 2536
+    },
+    "50_a_100": {
+     "escolas": 24,
+     "alunos": 2005
+    },
+    "100_ou_mais": {
+     "escolas": 13,
+     "alunos": 1290
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 70,
+     "alunos": 11202
+    },
+    "30_a_60": {
+     "escolas": 62,
+     "alunos": 4829
+    },
+    "60_a_120": {
+     "escolas": 45,
+     "alunos": 3705
+    },
+    "120_ou_mais": {
+     "escolas": 24,
+     "alunos": 2169
+    }
+   },
+   "receptora_urbana": 56,
+   "alunos_receptora_urbana": 11176,
+   "outro_municipio": 21,
+   "nenhuma_recebe_todas": 15,
+   "metade_ou_mais_em_chao": 106,
+   "aviso_fluvial": true
+  },
+  "BA": {
+   "regiao": "nordeste",
+   "escolas": 7925,
+   "alunos": 989372,
+   "com_rota": 4261,
+   "alunos_com_rota": 602075,
+   "sem_rota": {
+    "origem_longe": 155,
+    "sem_coordenada": 3400,
+    "sem_matricula": 106,
+    "sem_rota": 3
+   },
+   "km_ida_volta": {
+    "mediana": 13.5,
+    "p90": 36.4
+   },
+   "min_ida_volta": {
+    "mediana": 25,
+    "p90": 67
+   },
+   "fracao_chao_mediana": 0.34,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 1612,
+     "alunos": 201419
+    },
+    "10_a_30": {
+     "escolas": 1979,
+     "alunos": 266913
+    },
+    "30_a_50": {
+     "escolas": 485,
+     "alunos": 89876
+    },
+    "50_a_100": {
+     "escolas": 168,
+     "alunos": 39378
+    },
+    "100_ou_mais": {
+     "escolas": 17,
+     "alunos": 4489
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 2493,
+     "alunos": 326721
+    },
+    "30_a_60": {
+     "escolas": 1197,
+     "alunos": 177733
+    },
+    "60_a_120": {
+     "escolas": 501,
+     "alunos": 84797
+    },
+    "120_ou_mais": {
+     "escolas": 70,
+     "alunos": 12824
+    }
+   },
+   "receptora_urbana": 688,
+   "alunos_receptora_urbana": 173798,
+   "outro_municipio": 944,
+   "nenhuma_recebe_todas": 281,
+   "metade_ou_mais_em_chao": 1885
+  },
+  "CE": {
+   "regiao": "nordeste",
+   "escolas": 2970,
+   "alunos": 531886,
+   "com_rota": 2483,
+   "alunos_com_rota": 461160,
+   "sem_rota": {
+    "origem_longe": 14,
+    "sem_coordenada": 447,
+    "sem_matricula": 26
+   },
+   "km_ida_volta": {
+    "mediana": 11.7,
+    "p90": 28.8
+   },
+   "min_ida_volta": {
+    "mediana": 20,
+    "p90": 52
+   },
+   "fracao_chao_mediana": 0.0,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 1030,
+     "alunos": 203288
+    },
+    "10_a_30": {
+     "escolas": 1228,
+     "alunos": 208730
+    },
+    "30_a_50": {
+     "escolas": 191,
+     "alunos": 38857
+    },
+    "50_a_100": {
+     "escolas": 33,
+     "alunos": 10115
+    },
+    "100_ou_mais": {
+     "escolas": 1,
+     "alunos": 170
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 1715,
+     "alunos": 326262
+    },
+    "30_a_60": {
+     "escolas": 604,
+     "alunos": 103700
+    },
+    "60_a_120": {
+     "escolas": 159,
+     "alunos": 29841
+    },
+    "120_ou_mais": {
+     "escolas": 5,
+     "alunos": 1357
+    }
+   },
+   "receptora_urbana": 737,
+   "alunos_receptora_urbana": 173500,
+   "outro_municipio": 540,
+   "nenhuma_recebe_todas": 127,
+   "metade_ou_mais_em_chao": 527
+  },
+  "DF": {
+   "regiao": "centro-oeste",
+   "escolas": 83,
+   "alunos": 22842,
+   "com_rota": 79,
+   "alunos_com_rota": 22041,
+   "sem_rota": {
+    "sem_coordenada": 4
+   },
+   "km_ida_volta": {
+    "mediana": 16.9,
+    "p90": 30.5
+   },
+   "min_ida_volta": {
+    "mediana": 25,
+    "p90": 50
+   },
+   "fracao_chao_mediana": 0.07,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 16,
+     "alunos": 4234
+    },
+    "10_a_30": {
+     "escolas": 54,
+     "alunos": 16071
+    },
+    "30_a_50": {
+     "escolas": 8,
+     "alunos": 1575
+    },
+    "50_a_100": {
+     "escolas": 1,
+     "alunos": 161
+    },
+    "100_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 53,
+     "alunos": 16620
+    },
+    "30_a_60": {
+     "escolas": 19,
+     "alunos": 4322
+    },
+    "60_a_120": {
+     "escolas": 7,
+     "alunos": 1099
+    },
+    "120_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "receptora_urbana": 35,
+   "alunos_receptora_urbana": 9830,
+   "outro_municipio": 9,
+   "nenhuma_recebe_todas": 12,
+   "metade_ou_mais_em_chao": 18
+  },
+  "ES": {
+   "regiao": "sudeste",
+   "escolas": 960,
+   "alunos": 94805,
+   "com_rota": 922,
+   "alunos_com_rota": 92779,
+   "sem_rota": {
+    "origem_longe": 1,
+    "sem_coordenada": 32,
+    "sem_matricula": 5
+   },
+   "km_ida_volta": {
+    "mediana": 13.5,
+    "p90": 28.7
+   },
+   "min_ida_volta": {
+    "mediana": 24,
+    "p90": 50
+   },
+   "fracao_chao_mediana": 0.62,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 285,
+     "alunos": 21097
+    },
+    "10_a_30": {
+     "escolas": 556,
+     "alunos": 59014
+    },
+    "30_a_50": {
+     "escolas": 71,
+     "alunos": 11638
+    },
+    "50_a_100": {
+     "escolas": 10,
+     "alunos": 1030
+    },
+    "100_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 570,
+     "alunos": 55382
+    },
+    "30_a_60": {
+     "escolas": 293,
+     "alunos": 30836
+    },
+    "60_a_120": {
+     "escolas": 52,
+     "alunos": 6109
+    },
+    "120_ou_mais": {
+     "escolas": 7,
+     "alunos": 452
+    }
+   },
+   "receptora_urbana": 272,
+   "alunos_receptora_urbana": 35189,
+   "outro_municipio": 218,
+   "nenhuma_recebe_todas": 82,
+   "metade_ou_mais_em_chao": 501
+  },
+  "GO": {
+   "regiao": "centro-oeste",
+   "escolas": 489,
+   "alunos": 53465,
+   "com_rota": 442,
+   "alunos_com_rota": 50483,
+   "sem_rota": {
+    "origem_longe": 3,
+    "sem_coordenada": 41,
+    "sem_matricula": 3
+   },
+   "km_ida_volta": {
+    "mediana": 33.0,
+    "p90": 80.7
+   },
+   "min_ida_volta": {
+    "mediana": 53,
+    "p90": 146
+   },
+   "fracao_chao_mediana": 0.11,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 66,
+     "alunos": 9843
+    },
+    "10_a_30": {
+     "escolas": 135,
+     "alunos": 16327
+    },
+    "30_a_50": {
+     "escolas": 108,
+     "alunos": 11867
+    },
+    "50_a_100": {
+     "escolas": 117,
+     "alunos": 10536
+    },
+    "100_ou_mais": {
+     "escolas": 16,
+     "alunos": 1910
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 133,
+     "alunos": 22320
+    },
+    "30_a_60": {
+     "escolas": 108,
+     "alunos": 10924
+    },
+    "60_a_120": {
+     "escolas": 127,
+     "alunos": 10771
+    },
+    "120_ou_mais": {
+     "escolas": 74,
+     "alunos": 6468
+    }
+   },
+   "receptora_urbana": 200,
+   "alunos_receptora_urbana": 26633,
+   "outro_municipio": 132,
+   "nenhuma_recebe_todas": 54,
+   "metade_ou_mais_em_chao": 142
+  },
+  "MA": {
+   "regiao": "nordeste",
+   "escolas": 7017,
+   "alunos": 630691,
+   "com_rota": 5945,
+   "alunos_com_rota": 568003,
+   "sem_rota": {
+    "origem_longe": 285,
+    "sem_candidata": 1,
+    "sem_coordenada": 735,
+    "sem_matricula": 51
+   },
+   "km_ida_volta": {
+    "mediana": 9.3,
+    "p90": 25.5
+   },
+   "min_ida_volta": {
+    "mediana": 19,
+    "p90": 55
+   },
+   "fracao_chao_mediana": 0.44,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 3164,
+     "alunos": 294883
+    },
+    "10_a_30": {
+     "escolas": 2349,
+     "alunos": 216684
+    },
+    "30_a_50": {
+     "escolas": 302,
+     "alunos": 38906
+    },
+    "50_a_100": {
+     "escolas": 120,
+     "alunos": 16020
+    },
+    "100_ou_mais": {
+     "escolas": 10,
+     "alunos": 1510
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 4166,
+     "alunos": 396465
+    },
+    "30_a_60": {
+     "escolas": 1305,
+     "alunos": 119374
+    },
+    "60_a_120": {
+     "escolas": 399,
+     "alunos": 43237
+    },
+    "120_ou_mais": {
+     "escolas": 75,
+     "alunos": 8927
+    }
+   },
+   "receptora_urbana": 592,
+   "alunos_receptora_urbana": 100272,
+   "outro_municipio": 796,
+   "nenhuma_recebe_todas": 253,
+   "metade_ou_mais_em_chao": 2891
+  },
+  "MG": {
+   "regiao": "sudeste",
+   "escolas": 3408,
+   "alunos": 290396,
+   "com_rota": 2840,
+   "alunos_com_rota": 258370,
+   "sem_rota": {
+    "origem_longe": 79,
+    "sem_coordenada": 484,
+    "sem_matricula": 5
+   },
+   "km_ida_volta": {
+    "mediana": 19.3,
+    "p90": 45.4
+   },
+   "min_ida_volta": {
+    "mediana": 35,
+    "p90": 89
+   },
+   "fracao_chao_mediana": 0.41,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 535,
+     "alunos": 50132
+    },
+    "10_a_30": {
+     "escolas": 1577,
+     "alunos": 136977
+    },
+    "30_a_50": {
+     "escolas": 520,
+     "alunos": 53111
+    },
+    "50_a_100": {
+     "escolas": 194,
+     "alunos": 16905
+    },
+    "100_ou_mais": {
+     "escolas": 14,
+     "alunos": 1245
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 1136,
+     "alunos": 107368
+    },
+    "30_a_60": {
+     "escolas": 1010,
+     "alunos": 89842
+    },
+    "60_a_120": {
+     "escolas": 574,
+     "alunos": 50879
+    },
+    "120_ou_mais": {
+     "escolas": 120,
+     "alunos": 10281
+    }
+   },
+   "receptora_urbana": 1291,
+   "alunos_receptora_urbana": 141608,
+   "outro_municipio": 877,
+   "nenhuma_recebe_todas": 248,
+   "metade_ou_mais_em_chao": 1294
+  },
+  "MS": {
+   "regiao": "centro-oeste",
+   "escolas": 251,
+   "alunos": 57988,
+   "com_rota": 230,
+   "alunos_com_rota": 54323,
+   "sem_rota": {
+    "origem_longe": 4,
+    "sem_candidata": 2,
+    "sem_coordenada": 15
+   },
+   "km_ida_volta": {
+    "mediana": 34.6,
+    "p90": 90.0
+   },
+   "min_ida_volta": {
+    "mediana": 51,
+    "p90": 142
+   },
+   "fracao_chao_mediana": 0.27,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 45,
+     "alunos": 15458
+    },
+    "10_a_30": {
+     "escolas": 57,
+     "alunos": 15578
+    },
+    "30_a_50": {
+     "escolas": 50,
+     "alunos": 10219
+    },
+    "50_a_100": {
+     "escolas": 63,
+     "alunos": 10190
+    },
+    "100_ou_mais": {
+     "escolas": 15,
+     "alunos": 2878
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 71,
+     "alunos": 25678
+    },
+    "30_a_60": {
+     "escolas": 53,
+     "alunos": 8995
+    },
+    "60_a_120": {
+     "escolas": 70,
+     "alunos": 14683
+    },
+    "120_ou_mais": {
+     "escolas": 36,
+     "alunos": 4967
+    }
+   },
+   "receptora_urbana": 97,
+   "alunos_receptora_urbana": 21591,
+   "outro_municipio": 66,
+   "nenhuma_recebe_todas": 24,
+   "metade_ou_mais_em_chao": 81
+  },
+  "MT": {
+   "regiao": "centro-oeste",
+   "escolas": 680,
+   "alunos": 95965,
+   "com_rota": 241,
+   "alunos_com_rota": 38716,
+   "sem_rota": {
+    "origem_longe": 14,
+    "sem_candidata": 5,
+    "sem_coordenada": 416,
+    "sem_matricula": 1,
+    "sem_rota": 3
+   },
+   "km_ida_volta": {
+    "mediana": 57.9,
+    "p90": 112.6
+   },
+   "min_ida_volta": {
+    "mediana": 88,
+    "p90": 202
+   },
+   "fracao_chao_mediana": 0.17,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 39,
+     "alunos": 8211
+    },
+    "10_a_30": {
+     "escolas": 24,
+     "alunos": 4247
+    },
+    "30_a_50": {
+     "escolas": 44,
+     "alunos": 6103
+    },
+    "50_a_100": {
+     "escolas": 93,
+     "alunos": 14288
+    },
+    "100_ou_mais": {
+     "escolas": 41,
+     "alunos": 5867
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 52,
+     "alunos": 11032
+    },
+    "30_a_60": {
+     "escolas": 24,
+     "alunos": 3696
+    },
+    "60_a_120": {
+     "escolas": 76,
+     "alunos": 12286
+    },
+    "120_ou_mais": {
+     "escolas": 89,
+     "alunos": 11702
+    }
+   },
+   "receptora_urbana": 114,
+   "alunos_receptora_urbana": 23567,
+   "outro_municipio": 57,
+   "nenhuma_recebe_todas": 35,
+   "metade_ou_mais_em_chao": 70
+  },
+  "PA": {
+   "regiao": "norte",
+   "escolas": 6759,
+   "alunos": 693444,
+   "com_rota": 3538,
+   "alunos_com_rota": 391537,
+   "sem_rota": {
+    "origem_longe": 1648,
+    "sem_candidata": 12,
+    "sem_coordenada": 1269,
+    "sem_matricula": 12,
+    "sem_rota": 280
+   },
+   "km_ida_volta": {
+    "mediana": 12.0,
+    "p90": 39.5
+   },
+   "min_ida_volta": {
+    "mediana": 23,
+    "p90": 77
+   },
+   "fracao_chao_mediana": 0.02,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 1503,
+     "alunos": 143100
+    },
+    "10_a_30": {
+     "escolas": 1435,
+     "alunos": 152394
+    },
+    "30_a_50": {
+     "escolas": 379,
+     "alunos": 58297
+    },
+    "50_a_100": {
+     "escolas": 183,
+     "alunos": 28197
+    },
+    "100_ou_mais": {
+     "escolas": 38,
+     "alunos": 9549
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 2130,
+     "alunos": 215507
+    },
+    "30_a_60": {
+     "escolas": 824,
+     "alunos": 90959
+    },
+    "60_a_120": {
+     "escolas": 456,
+     "alunos": 66453
+    },
+    "120_ou_mais": {
+     "escolas": 128,
+     "alunos": 18618
+    }
+   },
+   "receptora_urbana": 291,
+   "alunos_receptora_urbana": 69973,
+   "outro_municipio": 350,
+   "nenhuma_recebe_todas": 196,
+   "metade_ou_mais_em_chao": 1252,
+   "aviso_fluvial": true
+  },
+  "PB": {
+   "regiao": "nordeste",
+   "escolas": 1708,
+   "alunos": 159437,
+   "com_rota": 1418,
+   "alunos_com_rota": 138777,
+   "sem_rota": {
+    "origem_longe": 2,
+    "sem_coordenada": 242,
+    "sem_matricula": 46
+   },
+   "km_ida_volta": {
+    "mediana": 8.1,
+    "p90": 20.3
+   },
+   "min_ida_volta": {
+    "mediana": 15,
+    "p90": 34
+   },
+   "fracao_chao_mediana": 0.02,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 884,
+     "alunos": 83066
+    },
+    "10_a_30": {
+     "escolas": 495,
+     "alunos": 50601
+    },
+    "30_a_50": {
+     "escolas": 36,
+     "alunos": 4627
+    },
+    "50_a_100": {
+     "escolas": 3,
+     "alunos": 483
+    },
+    "100_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 1188,
+     "alunos": 115499
+    },
+    "30_a_60": {
+     "escolas": 215,
+     "alunos": 21755
+    },
+    "60_a_120": {
+     "escolas": 15,
+     "alunos": 1523
+    },
+    "120_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "receptora_urbana": 293,
+   "alunos_receptora_urbana": 41559,
+   "outro_municipio": 427,
+   "nenhuma_recebe_todas": 107,
+   "metade_ou_mais_em_chao": 294
+  },
+  "PE": {
+   "regiao": "nordeste",
+   "escolas": 2886,
+   "alunos": 393092,
+   "com_rota": 2304,
+   "alunos_com_rota": 331431,
+   "sem_rota": {
+    "origem_longe": 30,
+    "sem_coordenada": 541,
+    "sem_matricula": 11
+   },
+   "km_ida_volta": {
+    "mediana": 8.5,
+    "p90": 23.6
+   },
+   "min_ida_volta": {
+    "mediana": 16,
+    "p90": 41
+   },
+   "fracao_chao_mediana": 0.0,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 1337,
+     "alunos": 164320
+    },
+    "10_a_30": {
+     "escolas": 832,
+     "alunos": 138783
+    },
+    "30_a_50": {
+     "escolas": 102,
+     "alunos": 22152
+    },
+    "50_a_100": {
+     "escolas": 32,
+     "alunos": 5737
+    },
+    "100_ou_mais": {
+     "escolas": 1,
+     "alunos": 439
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 1868,
+     "alunos": 253746
+    },
+    "30_a_60": {
+     "escolas": 336,
+     "alunos": 57947
+    },
+    "60_a_120": {
+     "escolas": 89,
+     "alunos": 18241
+    },
+    "120_ou_mais": {
+     "escolas": 11,
+     "alunos": 1497
+    }
+   },
+   "receptora_urbana": 454,
+   "alunos_receptora_urbana": 116921,
+   "outro_municipio": 515,
+   "nenhuma_recebe_todas": 150,
+   "metade_ou_mais_em_chao": 372
+  },
+  "PI": {
+   "regiao": "nordeste",
+   "escolas": 1777,
+   "alunos": 230982,
+   "com_rota": 1372,
+   "alunos_com_rota": 187332,
+   "sem_rota": {
+    "origem_longe": 16,
+    "sem_coordenada": 337,
+    "sem_matricula": 52
+   },
+   "km_ida_volta": {
+    "mediana": 19.0,
+    "p90": 47.1
+   },
+   "min_ida_volta": {
+    "mediana": 32,
+    "p90": 83
+   },
+   "fracao_chao_mediana": 0.04,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 352,
+     "alunos": 46344
+    },
+    "10_a_30": {
+     "escolas": 660,
+     "alunos": 88198
+    },
+    "30_a_50": {
+     "escolas": 244,
+     "alunos": 32925
+    },
+    "50_a_100": {
+     "escolas": 109,
+     "alunos": 18645
+    },
+    "100_ou_mais": {
+     "escolas": 7,
+     "alunos": 1220
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 632,
+     "alunos": 86301
+    },
+    "30_a_60": {
+     "escolas": 440,
+     "alunos": 58750
+    },
+    "60_a_120": {
+     "escolas": 254,
+     "alunos": 36288
+    },
+    "120_ou_mais": {
+     "escolas": 46,
+     "alunos": 5993
+    }
+   },
+   "receptora_urbana": 316,
+   "alunos_receptora_urbana": 62988,
+   "outro_municipio": 441,
+   "nenhuma_recebe_todas": 93,
+   "metade_ou_mais_em_chao": 419
+  },
+  "PR": {
+   "regiao": "sul",
+   "escolas": 1445,
+   "alunos": 153013,
+   "com_rota": 1380,
+   "alunos_com_rota": 149851,
+   "sem_rota": {
+    "origem_longe": 40,
+    "sem_coordenada": 25
+   },
+   "km_ida_volta": {
+    "mediana": 19.5,
+    "p90": 35.9
+   },
+   "min_ida_volta": {
+    "mediana": 33,
+    "p90": 68
+   },
+   "fracao_chao_mediana": 0.13,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 186,
+     "alunos": 28823
+    },
+    "10_a_30": {
+     "escolas": 940,
+     "alunos": 92147
+    },
+    "30_a_50": {
+     "escolas": 225,
+     "alunos": 25261
+    },
+    "50_a_100": {
+     "escolas": 28,
+     "alunos": 3546
+    },
+    "100_ou_mais": {
+     "escolas": 1,
+     "alunos": 74
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 583,
+     "alunos": 73350
+    },
+    "30_a_60": {
+     "escolas": 592,
+     "alunos": 56312
+    },
+    "60_a_120": {
+     "escolas": 195,
+     "alunos": 18995
+    },
+    "120_ou_mais": {
+     "escolas": 10,
+     "alunos": 1194
+    }
+   },
+   "receptora_urbana": 663,
+   "alunos_receptora_urbana": 74154,
+   "outro_municipio": 407,
+   "nenhuma_recebe_todas": 58,
+   "metade_ou_mais_em_chao": 472
+  },
+  "RJ": {
+   "regiao": "sudeste",
+   "escolas": 1064,
+   "alunos": 155014,
+   "com_rota": 796,
+   "alunos_com_rota": 127717,
+   "sem_rota": {
+    "origem_longe": 16,
+    "sem_coordenada": 249,
+    "sem_matricula": 3
+   },
+   "km_ida_volta": {
+    "mediana": 10.5,
+    "p90": 25.7
+   },
+   "min_ida_volta": {
+    "mediana": 16,
+    "p90": 39
+   },
+   "fracao_chao_mediana": 0.0,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 384,
+     "alunos": 74063
+    },
+    "10_a_30": {
+     "escolas": 360,
+     "alunos": 45408
+    },
+    "30_a_50": {
+     "escolas": 46,
+     "alunos": 7026
+    },
+    "50_a_100": {
+     "escolas": 6,
+     "alunos": 1220
+    },
+    "100_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 640,
+     "alunos": 108720
+    },
+    "30_a_60": {
+     "escolas": 130,
+     "alunos": 15194
+    },
+    "60_a_120": {
+     "escolas": 26,
+     "alunos": 3803
+    },
+    "120_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "receptora_urbana": 348,
+   "alunos_receptora_urbana": 65529,
+   "outro_municipio": 130,
+   "nenhuma_recebe_todas": 74,
+   "metade_ou_mais_em_chao": 121
+  },
+  "RN": {
+   "regiao": "nordeste",
+   "escolas": 1206,
+   "alunos": 138043,
+   "com_rota": 927,
+   "alunos_com_rota": 113534,
+   "sem_rota": {
+    "origem_longe": 12,
+    "sem_coordenada": 247,
+    "sem_matricula": 20
+   },
+   "km_ida_volta": {
+    "mediana": 10.5,
+    "p90": 27.6
+   },
+   "min_ida_volta": {
+    "mediana": 18,
+    "p90": 47
+   },
+   "fracao_chao_mediana": 0.02,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 427,
+     "alunos": 52769
+    },
+    "10_a_30": {
+     "escolas": 434,
+     "alunos": 51326
+    },
+    "30_a_50": {
+     "escolas": 60,
+     "alunos": 8356
+    },
+    "50_a_100": {
+     "escolas": 6,
+     "alunos": 1083
+    },
+    "100_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 687,
+     "alunos": 86563
+    },
+    "30_a_60": {
+     "escolas": 193,
+     "alunos": 21563
+    },
+    "60_a_120": {
+     "escolas": 46,
+     "alunos": 5352
+    },
+    "120_ou_mais": {
+     "escolas": 1,
+     "alunos": 56
+    }
+   },
+   "receptora_urbana": 222,
+   "alunos_receptora_urbana": 39586,
+   "outro_municipio": 283,
+   "nenhuma_recebe_todas": 61,
+   "metade_ou_mais_em_chao": 244
+  },
+  "RO": {
+   "regiao": "norte",
+   "escolas": 408,
+   "alunos": 65448,
+   "com_rota": 277,
+   "alunos_com_rota": 55557,
+   "sem_rota": {
+    "origem_longe": 29,
+    "sem_candidata": 1,
+    "sem_coordenada": 100,
+    "sem_matricula": 1
+   },
+   "km_ida_volta": {
+    "mediana": 36.8,
+    "p90": 79.6
+   },
+   "min_ida_volta": {
+    "mediana": 63,
+    "p90": 141
+   },
+   "fracao_chao_mediana": 0.12,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 31,
+     "alunos": 5520
+    },
+    "10_a_30": {
+     "escolas": 72,
+     "alunos": 11471
+    },
+    "30_a_50": {
+     "escolas": 91,
+     "alunos": 16395
+    },
+    "50_a_100": {
+     "escolas": 68,
+     "alunos": 16696
+    },
+    "100_ou_mais": {
+     "escolas": 15,
+     "alunos": 5475
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 49,
+     "alunos": 9306
+    },
+    "30_a_60": {
+     "escolas": 79,
+     "alunos": 15018
+    },
+    "60_a_120": {
+     "escolas": 101,
+     "alunos": 19629
+    },
+    "120_ou_mais": {
+     "escolas": 48,
+     "alunos": 11604
+    }
+   },
+   "receptora_urbana": 109,
+   "alunos_receptora_urbana": 30950,
+   "outro_municipio": 88,
+   "nenhuma_recebe_todas": 41,
+   "metade_ou_mais_em_chao": 89
+  },
+  "RR": {
+   "regiao": "norte",
+   "escolas": 596,
+   "alunos": 48333,
+   "com_rota": 358,
+   "alunos_com_rota": 36052,
+   "sem_rota": {
+    "origem_longe": 32,
+    "sem_candidata": 1,
+    "sem_coordenada": 204,
+    "sem_matricula": 1
+   },
+   "km_ida_volta": {
+    "mediana": 21.8,
+    "p90": 63.2
+   },
+   "min_ida_volta": {
+    "mediana": 43,
+    "p90": 107
+   },
+   "fracao_chao_mediana": 0.65,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 78,
+     "alunos": 5311
+    },
+    "10_a_30": {
+     "escolas": 142,
+     "alunos": 13143
+    },
+    "30_a_50": {
+     "escolas": 78,
+     "alunos": 10321
+    },
+    "50_a_100": {
+     "escolas": 52,
+     "alunos": 6744
+    },
+    "100_ou_mais": {
+     "escolas": 8,
+     "alunos": 533
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 115,
+     "alunos": 9134
+    },
+    "30_a_60": {
+     "escolas": 124,
+     "alunos": 12175
+    },
+    "60_a_120": {
+     "escolas": 92,
+     "alunos": 12704
+    },
+    "120_ou_mais": {
+     "escolas": 27,
+     "alunos": 2039
+    }
+   },
+   "receptora_urbana": 32,
+   "alunos_receptora_urbana": 4084,
+   "outro_municipio": 29,
+   "nenhuma_recebe_todas": 16,
+   "metade_ou_mais_em_chao": 193
+  },
+  "RS": {
+   "regiao": "sul",
+   "escolas": 1959,
+   "alunos": 194067,
+   "com_rota": 1209,
+   "alunos_com_rota": 132320,
+   "sem_rota": {
+    "origem_longe": 6,
+    "sem_coordenada": 740,
+    "sem_matricula": 4
+   },
+   "km_ida_volta": {
+    "mediana": 17.9,
+    "p90": 46.0
+   },
+   "min_ida_volta": {
+    "mediana": 31,
+    "p90": 84
+   },
+   "fracao_chao_mediana": 0.34,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 247,
+     "alunos": 31883
+    },
+    "10_a_30": {
+     "escolas": 681,
+     "alunos": 71050
+    },
+    "30_a_50": {
+     "escolas": 180,
+     "alunos": 20280
+    },
+    "50_a_100": {
+     "escolas": 93,
+     "alunos": 8208
+    },
+    "100_ou_mais": {
+     "escolas": 8,
+     "alunos": 899
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 566,
+     "alunos": 71010
+    },
+    "30_a_60": {
+     "escolas": 418,
+     "alunos": 41997
+    },
+    "60_a_120": {
+     "escolas": 163,
+     "alunos": 14739
+    },
+    "120_ou_mais": {
+     "escolas": 62,
+     "alunos": 4574
+    }
+   },
+   "receptora_urbana": 637,
+   "alunos_receptora_urbana": 78353,
+   "outro_municipio": 458,
+   "nenhuma_recebe_todas": 76,
+   "metade_ou_mais_em_chao": 508
+  },
+  "SC": {
+   "regiao": "sul",
+   "escolas": 1191,
+   "alunos": 143655,
+   "com_rota": 1045,
+   "alunos_com_rota": 132610,
+   "sem_rota": {
+    "origem_longe": 5,
+    "sem_coordenada": 130,
+    "sem_matricula": 11
+   },
+   "km_ida_volta": {
+    "mediana": 15.6,
+    "p90": 34.1
+   },
+   "min_ida_volta": {
+    "mediana": 28,
+    "p90": 63
+   },
+   "fracao_chao_mediana": 0.26,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 280,
+     "alunos": 35015
+    },
+    "10_a_30": {
+     "escolas": 605,
+     "alunos": 76276
+    },
+    "30_a_50": {
+     "escolas": 142,
+     "alunos": 18358
+    },
+    "50_a_100": {
+     "escolas": 18,
+     "alunos": 2961
+    },
+    "100_ou_mais": {
+     "escolas": 0,
+     "alunos": 0
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 552,
+     "alunos": 73885
+    },
+    "30_a_60": {
+     "escolas": 368,
+     "alunos": 44195
+    },
+    "60_a_120": {
+     "escolas": 122,
+     "alunos": 14387
+    },
+    "120_ou_mais": {
+     "escolas": 3,
+     "alunos": 143
+    }
+   },
+   "receptora_urbana": 591,
+   "alunos_receptora_urbana": 83210,
+   "outro_municipio": 334,
+   "nenhuma_recebe_todas": 101,
+   "metade_ou_mais_em_chao": 421
+  },
+  "SE": {
+   "regiao": "nordeste",
+   "escolas": 759,
+   "alunos": 118414,
+   "com_rota": 741,
+   "alunos_com_rota": 115735,
+   "sem_rota": {
+    "origem_longe": 1,
+    "sem_coordenada": 14,
+    "sem_matricula": 3
+   },
+   "km_ida_volta": {
+    "mediana": 8.2,
+    "p90": 19.1
+   },
+   "min_ida_volta": {
+    "mediana": 15,
+    "p90": 37
+   },
+   "fracao_chao_mediana": 0.3,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 436,
+     "alunos": 62018
+    },
+    "10_a_30": {
+     "escolas": 290,
+     "alunos": 49061
+    },
+    "30_a_50": {
+     "escolas": 14,
+     "alunos": 4430
+    },
+    "50_a_100": {
+     "escolas": 0,
+     "alunos": 0
+    },
+    "100_ou_mais": {
+     "escolas": 1,
+     "alunos": 226
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 608,
+     "alunos": 92965
+    },
+    "30_a_60": {
+     "escolas": 116,
+     "alunos": 19371
+    },
+    "60_a_120": {
+     "escolas": 16,
+     "alunos": 3173
+    },
+    "120_ou_mais": {
+     "escolas": 1,
+     "alunos": 226
+    }
+   },
+   "receptora_urbana": 146,
+   "alunos_receptora_urbana": 34453,
+   "outro_municipio": 173,
+   "nenhuma_recebe_todas": 49,
+   "metade_ou_mais_em_chao": 296
+  },
+  "SP": {
+   "regiao": "sudeste",
+   "escolas": 1318,
+   "alunos": 198285,
+   "com_rota": 1199,
+   "alunos_com_rota": 188109,
+   "sem_rota": {
+    "origem_longe": 16,
+    "sem_coordenada": 68,
+    "sem_matricula": 34,
+    "sem_rota": 1
+   },
+   "km_ida_volta": {
+    "mediana": 14.8,
+    "p90": 35.0
+   },
+   "min_ida_volta": {
+    "mediana": 23,
+    "p90": 56
+   },
+   "fracao_chao_mediana": 0.0,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 343,
+     "alunos": 66782
+    },
+    "10_a_30": {
+     "escolas": 668,
+     "alunos": 96442
+    },
+    "30_a_50": {
+     "escolas": 154,
+     "alunos": 21217
+    },
+    "50_a_100": {
+     "escolas": 32,
+     "alunos": 3552
+    },
+    "100_ou_mais": {
+     "escolas": 2,
+     "alunos": 116
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 764,
+     "alunos": 135429
+    },
+    "30_a_60": {
+     "escolas": 335,
+     "alunos": 43124
+    },
+    "60_a_120": {
+     "escolas": 93,
+     "alunos": 8763
+    },
+    "120_ou_mais": {
+     "escolas": 7,
+     "alunos": 793
+    }
+   },
+   "receptora_urbana": 657,
+   "alunos_receptora_urbana": 119609,
+   "outro_municipio": 312,
+   "nenhuma_recebe_todas": 130,
+   "metade_ou_mais_em_chao": 209
+  },
+  "TO": {
+   "regiao": "norte",
+   "escolas": 475,
+   "alunos": 39660,
+   "com_rota": 357,
+   "alunos_com_rota": 32692,
+   "sem_rota": {
+    "origem_longe": 60,
+    "sem_coordenada": 58
+   },
+   "km_ida_volta": {
+    "mediana": 25.2,
+    "p90": 89.4
+   },
+   "min_ida_volta": {
+    "mediana": 44,
+    "p90": 177
+   },
+   "fracao_chao_mediana": 0.13,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 77,
+     "alunos": 7157
+    },
+    "10_a_30": {
+     "escolas": 118,
+     "alunos": 9933
+    },
+    "30_a_50": {
+     "escolas": 57,
+     "alunos": 6854
+    },
+    "50_a_100": {
+     "escolas": 81,
+     "alunos": 6654
+    },
+    "100_ou_mais": {
+     "escolas": 24,
+     "alunos": 2094
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 131,
+     "alunos": 12178
+    },
+    "30_a_60": {
+     "escolas": 83,
+     "alunos": 8225
+    },
+    "60_a_120": {
+     "escolas": 76,
+     "alunos": 6755
+    },
+    "120_ou_mais": {
+     "escolas": 67,
+     "alunos": 5534
+    }
+   },
+   "receptora_urbana": 120,
+   "alunos_receptora_urbana": 13658,
+   "outro_municipio": 90,
+   "nenhuma_recebe_todas": 47,
+   "metade_ou_mais_em_chao": 126
+  }
+ },
+ "povos": {
+  "indígena": {
+   "escolas": 3664,
+   "alunos": 270200,
+   "com_rota": 1142,
+   "alunos_com_rota": 119117,
+   "sem_rota": {
+    "origem_longe": 600,
+    "sem_candidata": 13,
+    "sem_coordenada": 1843,
+    "sem_matricula": 1,
+    "sem_rota": 65
+   },
+   "km_ida_volta": {
+    "mediana": 8.9,
+    "p90": 37.2
+   },
+   "min_ida_volta": {
+    "mediana": 19,
+    "p90": 81
+   },
+   "fracao_chao_mediana": 0.4,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 611,
+     "alunos": 61368
+    },
+    "10_a_30": {
+     "escolas": 363,
+     "alunos": 36588
+    },
+    "30_a_50": {
+     "escolas": 92,
+     "alunos": 12400
+    },
+    "50_a_100": {
+     "escolas": 57,
+     "alunos": 6678
+    },
+    "100_ou_mais": {
+     "escolas": 19,
+     "alunos": 2083
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 742,
+     "alunos": 76206
+    },
+    "30_a_60": {
+     "escolas": 218,
+     "alunos": 17970
+    },
+    "60_a_120": {
+     "escolas": 131,
+     "alunos": 19742
+    },
+    "120_ou_mais": {
+     "escolas": 51,
+     "alunos": 5199
+    }
+   },
+   "receptora_urbana": 143,
+   "alunos_receptora_urbana": 22359,
+   "outro_municipio": 104,
+   "nenhuma_recebe_todas": 139,
+   "metade_ou_mais_em_chao": 516
+  },
+  "quilombola": {
+   "escolas": 2530,
+   "alunos": 222248,
+   "com_rota": 1694,
+   "alunos_com_rota": 154095,
+   "sem_rota": {
+    "origem_longe": 200,
+    "sem_candidata": 1,
+    "sem_coordenada": 614,
+    "sem_matricula": 20,
+    "sem_rota": 1
+   },
+   "km_ida_volta": {
+    "mediana": 10.4,
+    "p90": 30.2
+   },
+   "min_ida_volta": {
+    "mediana": 20,
+    "p90": 59
+   },
+   "fracao_chao_mediana": 0.23,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 826,
+     "alunos": 62576
+    },
+    "10_a_30": {
+     "escolas": 696,
+     "alunos": 72683
+    },
+    "30_a_50": {
+     "escolas": 109,
+     "alunos": 11218
+    },
+    "50_a_100": {
+     "escolas": 56,
+     "alunos": 6439
+    },
+    "100_ou_mais": {
+     "escolas": 7,
+     "alunos": 1179
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 1163,
+     "alunos": 97312
+    },
+    "30_a_60": {
+     "escolas": 367,
+     "alunos": 37597
+    },
+    "60_a_120": {
+     "escolas": 136,
+     "alunos": 16291
+    },
+    "120_ou_mais": {
+     "escolas": 28,
+     "alunos": 2895
+    }
+   },
+   "receptora_urbana": 209,
+   "alunos_receptora_urbana": 27223,
+   "outro_municipio": 277,
+   "nenhuma_recebe_todas": 96,
+   "metade_ou_mais_em_chao": 672
+  },
+  "assentamento": {
+   "escolas": 4483,
+   "alunos": 407044,
+   "com_rota": 2956,
+   "alunos_com_rota": 276675,
+   "sem_rota": {
+    "origem_longe": 496,
+    "sem_candidata": 1,
+    "sem_coordenada": 928,
+    "sem_matricula": 22,
+    "sem_rota": 80
+   },
+   "km_ida_volta": {
+    "mediana": 15.4,
+    "p90": 50.4
+   },
+   "min_ida_volta": {
+    "mediana": 31,
+    "p90": 97
+   },
+   "fracao_chao_mediana": 0.35,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 948,
+     "alunos": 74521
+    },
+    "10_a_30": {
+     "escolas": 1321,
+     "alunos": 116365
+    },
+    "30_a_50": {
+     "escolas": 389,
+     "alunos": 48850
+    },
+    "50_a_100": {
+     "escolas": 245,
+     "alunos": 27673
+    },
+    "100_ou_mais": {
+     "escolas": 53,
+     "alunos": 9266
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 1425,
+     "alunos": 119843
+    },
+    "30_a_60": {
+     "escolas": 864,
+     "alunos": 80837
+    },
+    "60_a_120": {
+     "escolas": 482,
+     "alunos": 54515
+    },
+    "120_ou_mais": {
+     "escolas": 185,
+     "alunos": 21480
+    }
+   },
+   "receptora_urbana": 399,
+   "alunos_receptora_urbana": 43820,
+   "outro_municipio": 491,
+   "nenhuma_recebe_todas": 189,
+   "metade_ou_mais_em_chao": 1296
+  },
+  "comunidade tradicional": {
+   "escolas": 1380,
+   "alunos": 105693,
+   "com_rota": 309,
+   "alunos_com_rota": 32722,
+   "sem_rota": {
+    "origem_longe": 430,
+    "sem_candidata": 1,
+    "sem_coordenada": 600,
+    "sem_matricula": 1,
+    "sem_rota": 39
+   },
+   "km_ida_volta": {
+    "mediana": 11.6,
+    "p90": 38.8
+   },
+   "min_ida_volta": {
+    "mediana": 23,
+    "p90": 71
+   },
+   "fracao_chao_mediana": 0.18,
+   "faixas_km": {
+    "ate_10": {
+     "escolas": 129,
+     "alunos": 10713
+    },
+    "10_a_30": {
+     "escolas": 131,
+     "alunos": 15318
+    },
+    "30_a_50": {
+     "escolas": 32,
+     "alunos": 4310
+    },
+    "50_a_100": {
+     "escolas": 13,
+     "alunos": 1809
+    },
+    "100_ou_mais": {
+     "escolas": 4,
+     "alunos": 572
+    }
+   },
+   "faixas_min": {
+    "ate_30": {
+     "escolas": 194,
+     "alunos": 18841
+    },
+    "30_a_60": {
+     "escolas": 71,
+     "alunos": 8359
+    },
+    "60_a_120": {
+     "escolas": 32,
+     "alunos": 3865
+    },
+    "120_ou_mais": {
+     "escolas": 12,
+     "alunos": 1657
+    }
+   },
+   "receptora_urbana": 56,
+   "alunos_receptora_urbana": 7285,
+   "outro_municipio": 43,
+   "nenhuma_recebe_todas": 28,
+   "metade_ou_mais_em_chao": 132
+  }
+ }
+}
