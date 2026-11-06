@@ -129,10 +129,10 @@ Comparação nas 20 perguntas de teste (`python src/sistema.py --avaliar`):
 | Critério verificável | Modelo A | Modelo B |
 |---|---|---|
 | Cita a fonte e a data (respostas com orientação ou escola) | 15 de 15 | 15 de 15 |
-| Diz o que confirmar, quando a orientação pede | 0 de 9 | 9 de 9 |
-| Oferece caminho para continuar | 0 de 20 | 16 de 20 |
-| Linhas por resposta (média) | 8,7 | 16,9 |
-| Palavras por frase (média) | 17,4 | 15,1 |
+| Diz o que confirmar, quando a orientação pede | 0 de 12 | 12 de 12 |
+| Oferece caminho para continuar | 0 de 20 | 15 de 20 |
+| Linhas por resposta (média) | 11,2 | 22,4 |
+| Palavras por frase (média) | 15,7 | 15,1 |
 
 **Escolhemos o modelo B como padrão.** O modelo A é mais curto, mas deixa de dizer o que a pessoa precisa confirmar justamente nas orientações em que isso importa (prazo de projeto de lei, regra municipal, merenda em área quilombola) e não oferece o passo seguinte. O custo do B é o tamanho, o dobro de linhas. O teste de facilidade de uso (seção 4) é o que vai dizer se esse tamanho atrapalha. Para usar o A: `python src/sistema.py --modelo A`.
 
@@ -144,23 +144,23 @@ Comparação nas 20 perguntas de teste (`python src/sistema.py --avaliar`):
 
 **Plano.** 20 perguntas de teste fictícias, escritas como uma pessoa da comunidade escreveria: 8 diretas, 4 reformulações, 2 fora do tema, 4 situações-limite (entrada vazia, nome de escola repetido, só palavras comuns, pergunta sem resposta confiável), 1 consulta de escola e 1 código digitado. Cada uma tem a resposta esperada (um ou mais ids aceitos, ou o comportamento esperado). O registro completo, com esperado, obtido, classificação e tempo, está em `data/resultados_testes_modelo_A.csv` e `..._B.csv`.
 
-**Indicadores** (mediana de 30 repetições por pergunta):
+**Indicadores** (mediana de 30 repetições por pergunta, medidos em 06/11/2026 com a base de 27 orientações; na primeira versão, com 20 orientações e sem a detecção do lugar citado, a consulta levava 0,19 ms):
 
 | Indicador | Modelo A | Modelo B |
 |---|---|---|
 | Taxa de acerto (1ª rodada) | 75% | 75% |
 | Taxa de acerto (após ajustes) | 100% | 100% |
-| Tempo médio de consulta | 0,18 ms | 0,19 ms |
-| Tempo máximo | 0,75 ms | 0,75 ms |
+| Tempo médio de consulta | 1,3 ms | 1,4 ms |
+| Tempo máximo | 2,3 ms | 2,5 ms |
 
 **Busca de escolas: linear × índice invertido** (mesmas consultas, mesmos resultados conferidos):
 
 | Consulta | Escolas achadas | Busca linear | Índice invertido |
 |---|---|---|---|
-| Durval Máximo | 1 | 158 ms | 0,006 ms |
-| Escola Municipal São José | 546 | 159 ms | 0,61 ms |
-| Santo Antônio | 396 | 159 ms | 0,33 ms |
-| Quilombo | 10 | 160 ms | 0,008 ms |
+| Durval Máximo | 1 | 171 ms | 0,007 ms |
+| Escola Municipal São José | 546 | 171 ms | 0,69 ms |
+| Santo Antônio | 396 | 172 ms | 0,36 ms |
+| Quilombo | 10 | 171 ms | 0,009 ms |
 
 **Interpretação.** A primeira rodada errou 5 das 20 perguntas, e cada erro mostrou um problema típico de busca:
 
@@ -171,7 +171,7 @@ Comparação nas 20 perguntas de teste (`python src/sistema.py --avaliar`):
 
 O uso interativo achou mais quatro defeitos que a avaliação automática não pegava. O pior foi "são" descartado como verbo dentro de "São José", que fazia a busca devolver escolas sem "São" no nome.
 
-O índice invertido responde de 260 a 26 mil vezes mais rápido que a busca linear, porque só toca as escolas que têm as palavras digitadas. A busca linear compara o nome de todas as 53.759 escolas a cada consulta.
+O índice invertido responde de cerca de 250 a mais de 20 mil vezes mais rápido que a busca linear, porque só toca as escolas que têm as palavras digitadas. A busca linear compara o nome de todas as 53.759 escolas a cada consulta.
 
 **Limitações da avaliação.** Os 100% foram obtidos ajustando as regras nas mesmas 20 perguntas que os medem, o que superestima o acerto. Por isso a avaliação inclui um **segundo conjunto, escrito às cegas** (abaixo). Os tempos foram medidos numa única máquina (servidor ARM, 2 núcleos).
 
@@ -325,7 +325,7 @@ A ficha impressa ocupa 2 páginas A4. Na frente ficam os números, as escolas qu
 
 **Tendência de matrícula.** Testado em quase 2 mil escolas rurais (DF, SP, ES), prever a matrícula pela reta dos anos anteriores errou mais do que supor que ela fica igual ao último ano (erro médio de 24,4 contra 17,7 alunos em SP). Por isso a ficha e o assistente descrevem a série e não projetam.
 
-Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local.py`, `rota.py`, `receptoras.py`, `tendencia.py`, `checklist.py`, `ficha.py`, `site.py`. Regenerar os dados exige os arquivos públicos do INEP, do Ipea e da Geofabrik (cerca de 3 GB, fora do repositório) e as dependências de `pyproject.toml`. O assistente não precisa de nada disso.
+Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local.py`, `rota.py`, `receptoras.py`, `tendencia.py`, `checklist.py`, `ficha.py`, `site.py`. Regenerar os dados exige os arquivos públicos do INEP, do Ipea e da Geofabrik (cerca de 3 GB, fora do repositório) e as dependências de `pyproject.toml`, que pede Python 3.12 ou mais recente. O assistente não precisa de nada disso e roda com Python 3.10 (testado num clone limpo em 06/11/2026).
 
 ### 9. Conclusões, limitações e melhorias
 
