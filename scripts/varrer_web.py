@@ -55,7 +55,7 @@ VERIFICAR = r"""
     const t = n.textContent.replace(/\s+/g, " ").trim();
     if (t.length < 6) continue;
     const el = n.parentElement;
-    if (!el || vistos.has(el) || !el.getClientRects().length) continue;
+    if (!el || vistos.has(el) || !el.getClientRects().length || el.closest(".sr")) continue; // .sr: 1 px de propósito
     const st = getComputedStyle(el);
     if (st.visibility === "hidden" || st.display === "none") continue;
     const r = document.createRange(); r.selectNodeContents(n);
@@ -64,6 +64,7 @@ VERIFICAR = r"""
   }
   for (const el of document.querySelectorAll("main *")) {
     if (["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName)) continue; // campo de digitação rola o próprio texto
+    if (el.closest(".sr")) continue; // só para leitor de tela: a caixa de 1 px é de propósito
     const st = getComputedStyle(el);
     if (!["hidden", "clip"].includes(st.overflowX)) continue;
     if (el.scrollWidth > el.clientWidth + 2 && el.clientWidth > 0) achados.push(`conteúdo cortado na horizontal em ${nome(el)} (${el.scrollWidth}px em ${el.clientWidth}px)`);
@@ -118,6 +119,12 @@ def telas(base: dict) -> list[tuple[str, str]]:
     t += [(f"#/orientacao/{r['id']}", f"orientação {r['id']}") for r in base["registros"]]
     t += [(f"#/pergunta/{quote(q)}", f'pergunta "{q}"') for q in PERGUNTAS if q]
     t += [(f"#/escola/{c}", f"escola {c} ({m})") for c, m in amostra_escolas().items()]
+    # simulador: escolher município, vindo da ficha, plano com indicação (Muniz Freire), plano vazio, código de fora,
+    # município fluvial com escolas sem rota (Breves/PA, 4 escolas) e lugar inexistente
+    t += [("#/simular", "simulador: escolher"), ("#/simular?f=32049501", "simulador: da ficha (Durval)"),
+          ("#/simular/846?f=32049501&i=32049501:anos_iniciais:32050364", "simulador: Muniz com indicação"),
+          ("#/simular/846", "simulador: plano vazio"), ("#/simular/846?f=32049501,99999999", "simulador: código de fora"),
+          ("#/simular/9999", "simulador: lugar inexistente")]
     return t
 
 

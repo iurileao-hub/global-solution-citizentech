@@ -68,6 +68,14 @@ export async function telaSobre(main: HTMLElement, g: number, secao: string | nu
       h("li", null, h("b", null, "Para onde as crianças iriam: "), "as escolas públicas mais próximas por estrada que oferecem " +
         "alguma das mesmas etapas. A abertura da ficha usa a mais próxima que recebe todas as etapas.")),
 
+    h("h2", null, "Quando várias escolas fecham juntas"),
+    h("p", null, "Fechamento costuma vir em lote: 93% das extinções de escolas rurais de 2019 a 2025 aconteceram em município e " +
+      "ano com duas ou mais. Num plano assim, a escola que a ficha aponta pode fechar também. O ",
+      h("a", { href: "#/simular" }, "simulador de plano"), " manda cada etapa para a escola mais próxima por estrada que a " +
+      "oferece e não fecha no plano, entre as 10 calculadas para cada escola. A prefeitura pode indicar outro destino, e a " +
+      "conta passa a usá-lo. Como a ficha responde outra pergunta (a escola que recebe todas as etapas de uma vez), o " +
+      "simulador pode mostrar distâncias menores que as da ficha."),
+
     h("h2", null, "Quanto o cálculo fica abaixo do real"),
     h("p", null, "Em 2025, a prefeitura de Muniz Freire (ES) anunciou o fim do ensino fundamental na EMEF Durval Máximo. A área " +
       "técnica do Tribunal de Contas estimou que os alunos percorreriam até 52 km por dia até a escola indicada para " +

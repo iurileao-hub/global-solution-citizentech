@@ -4,6 +4,8 @@
                         do mapa (EMEF Durval Máximo, Muniz Freire/ES, a escola usada na validação)
   08-web-retrato.png    o retrato do Brasil por UF, no computador, com Mato Grosso escolhido
   09-web-impressao.png  as 2 páginas A4 da ficha impressa, lado a lado
+  10-web-simulador.png  o simulador no celular: Muniz Freire fechando a Durval Máximo E a escola que a ficha dela aponta
+                        (a Paulo Fabio Sartore), o resultado e para onde iria cada etapa
 
 Ferramenta de desenvolvedor (precisa do Playwright, do Pillow e do pdftoppm, do poppler-utils). Rode com o site
 servido localmente:
@@ -87,8 +89,18 @@ def main() -> None:
         subprocess.run(["pdftoppm", "-png", "-r", "80", str(pdf), str(Path(tmp) / "pag")], check=True)
         paginas = sorted(Path(tmp).glob("pag*.png"))
         lado_a_lado([Image.open(x).convert("RGB") for x in paginas], 1400).save(SAIDA / "09-web-impressao.png", optimize=True)
+
+        pg = cel.new_page()
+        abrir(pg, a.url + "#/simular/846?f=32049501,32050836")
+        sim = []
+        for alvo in (".sim-status", ".sim-s-etapas"):
+            pg.evaluate(f"document.querySelector('{alvo}').scrollIntoView({{block: 'start'}})")
+            pg.wait_for_timeout(200)
+            sim.append(Path(tmp) / f"s{len(sim)}.png")
+            pg.screenshot(path=sim[-1])
+        lado_a_lado([Image.open(t).convert("RGB") for t in sim], 1200).save(SAIDA / "10-web-simulador.png", optimize=True)
         nav.close()
-    for nome in ("07-web-celular.png", "08-web-retrato.png", "09-web-impressao.png"):
+    for nome in ("07-web-celular.png", "08-web-retrato.png", "09-web-impressao.png", "10-web-simulador.png"):
         print(nome, f"{(SAIDA / nome).stat().st_size / 1e3:.0f} KB")
 
 

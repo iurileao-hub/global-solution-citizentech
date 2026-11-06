@@ -7,6 +7,7 @@
  *   escolas/NNN.json          ~30 KB, ao abrir uma escola (NNN = código INEP % 256)
  *   tracados/NNNN.json        ao abrir a prancha de uma escola (NNNN = código % 2048); pode não existir
  *   retrato_rotas.json        na página do retrato
+ *   simulacao/LLLL.json       ~2 KB (até 22 KB), ao abrir o simulador de um município (LLLL = linha de lugares em nomes.json)
  * Cada arquivo é pedido uma vez por sessão (a promessa fica guardada).
  */
 
@@ -15,6 +16,7 @@ import type { EscolaNome } from "./nucleo/escolas";
 import { type DocFechamentos, type Fechamentos, preparar } from "./nucleo/fechamentos";
 import { type Contexto, montar } from "./nucleo/nucleo";
 import type { Escola } from "./nucleo/respostas";
+import type { EscolaSim, Municipio } from "./nucleo/simulacao";
 
 export interface Versao {
   esquema: number;
@@ -88,9 +90,13 @@ interface DocNomes {
 }
 
 /** Lista de todas as escolas (código, nome, município, UF), no formato que a busca do núcleo usa. */
+function docNomes(): Promise<DocNomes> {
+  return arquivo<DocNomes>("nomes.json");
+}
+
 export function nomes(): Promise<EscolaNome[]> {
   return uma("nomes:lista", async () => {
-    const doc = await arquivo<DocNomes>("nomes.json");
+    const doc = await docNomes();
     return doc.escolas.map(([c, n, l]) => {
       const [uf, m] = doc.lugares[l];
       return { c, n, m: m || null, uf: uf || null };
@@ -128,6 +134,23 @@ export async function tracados(codigo: number): Promise<Tracado[] | null> {
   } catch {
     return null; // sem traçado a ficha continua; a prancha cai para o esquema de distâncias
   }
+}
+
+/** A tabela de municípios (UF, nome) de nomes.json: o número da linha identifica o município no simulador. */
+export async function lugares(): Promise<[string, string][]> {
+  return (await docNomes()).lugares;
+}
+
+/** Linha de lugares do município da escola, ou null se o código não está no índice. */
+export function lugarDaEscola(codigo: number): Promise<number | null> {
+  return uma(`lugar:${codigo}`, async () => (await docNomes()).escolas.find(([c]) => c === codigo)?.[2] ?? null);
+}
+
+/** As escolas do campo do município, com as 10 receptoras de cada uma (o que o simulador precisa). */
+export async function municipioSim(lugar: number): Promise<Municipio> {
+  const doc = await arquivo<{ lugar: number; uf: string; municipio: string; escolas: EscolaSim[] }>(
+    `simulacao/${String(lugar).padStart(4, "0")}.json`);
+  return { lugar: doc.lugar, uf: doc.uf, municipio: doc.municipio, escolas: doc.escolas };
 }
 
 export function retrato<T>(): Promise<T> {

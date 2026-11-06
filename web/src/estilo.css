@@ -458,6 +458,9 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 .brasil-numeros b { font-family: var(--serifa); font-size: 1.45rem; display: block; line-height: 1.15; font-variant-numeric: lining-nums; }
 
 .carregando { color: var(--tinta-2); padding: 2rem 0; }
+/* só para leitor de tela: some da tela e continua sendo lido (a letra da receptora na ficha, por exemplo) */
+.sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
 .erro { border-left: 4px solid var(--alerta); padding: 0.6rem 0.9rem; background: var(--papel-2); max-width: var(--coluna); }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -467,13 +470,63 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 }
 
 /* ---------- impressão: a ficha vira a folha de duas páginas para a assembleia ---------- */
-.so-impressao, .so-impressao-bloco { display: none; }
+.so-impressao, .so-impressao-bloco, .so-impressao-inline { display: none; }
 /* o verso na tela: recolhido, porque a ficha já é longa no celular */
 .verso-tela { border-top: 1px solid var(--fio); margin-top: 1.6rem; padding-top: 0.6rem; }
 .verso-tela > summary { cursor: pointer; padding: 0.3rem 0; min-height: 2.75rem; }
 .verso-tela > summary h2 { display: inline; margin: 0; }
 .verso-tela > summary .legenda { display: block; margin-top: 0.2rem; }
 .verso-lista li { margin: 0.35rem 0; font-weight: 700; }
+/* ---------- simulador "e se estas escolas fecharem?" ---------- */
+.simulador { max-width: 52rem; }
+.simulador h1 { margin-bottom: 0.2rem; }
+.simulador section { margin-top: 1.6rem; }
+.sim-montagem { border-top: 2px solid var(--tinta); padding-top: 0.4rem; }
+.sim-atalho { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; margin: 0.6rem 0; }
+.sim-atalho input[type="number"] { width: 5.5rem; font: inherit; padding: 0.45rem 0.5rem; border: 1px solid var(--tinta-2);
+  border-radius: 2px; background: var(--papel); color: var(--tinta); min-height: 2.75rem; }
+.sim-filtro { font: inherit; width: 100%; max-width: 24rem; padding: 0.5rem 0.6rem; border: 1px solid var(--tinta-2);
+  border-radius: 2px; background: var(--papel); color: var(--tinta); margin: 0.3rem 0 0.5rem; min-height: 2.75rem; }
+.sim-escolas { list-style: none; padding: 0; margin: 0; max-height: 26rem; overflow-y: auto; border-top: 1px solid var(--fio);
+  border-bottom: 1px solid var(--fio); }
+.sim-escolas li { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.45rem 0.2rem; border-bottom: 1px solid var(--fio); }
+.sim-escolas li:last-child { border-bottom: 0; }
+.sim-escolas input { width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; flex: none; accent-color: var(--terra); }
+.sim-escolas label { cursor: pointer; }
+.sim-municipios { list-style: none; padding: 0; margin: 0.6rem 0; max-width: 30rem; }
+.sim-municipios li { border-bottom: 1px solid var(--fio); }
+.sim-municipios a { display: block; padding: 0.6rem 0.2rem; min-height: 2.75rem; }
+.sim-resultado { margin-top: 1.4rem; }
+.sim-status { margin: 1rem 0 0; font-size: 0.9rem; color: var(--tinta-2); }
+/* celular: cada etapa vira um bloco (nome em cima; destino e seletor na largura toda) */
+@media screen and (max-width: 34rem) {
+  .sim-etapas, .sim-etapas tbody, .sim-etapas tr, .sim-etapas th, .sim-etapas td { display: block; width: auto; }
+  .sim-etapas thead { display: none; }
+  .sim-etapas tr { border-bottom: 1px solid var(--fio); padding: 0.5rem 0; }
+  .sim-etapas tr th[scope="row"], .sim-etapas tr td { border-bottom: 0; padding: 0.15rem 0; width: auto; }
+}
+@media print { .sim-status { display: none; } }
+.sim-resultado > .sem-numero, .sim-resultado > .aviso { margin: 0.8rem 0; }
+.sim-faixas-par { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0 1.6rem; }
+.sim-faixas { max-width: none; }
+.sim-barra-cel { width: 38%; }
+.sim-barra { display: block; height: 0.7rem; margin-top: 0.35rem; background: var(--ocre); border-radius: 1px; min-width: 1px; }
+.sim-escola { border-bottom: 1px solid var(--fio); padding: 0.2rem 0; }
+.sim-escola > summary { cursor: pointer; padding: 0.55rem 0; min-height: 2.75rem; }
+.sim-etapas { max-width: none; margin-top: 0.2rem; table-layout: fixed; }
+.sim-etapas th[scope="row"] { width: 34%; font-weight: 700; }
+.sim-indicar { margin-top: 0.5rem; display: grid; gap: 0.2rem; }
+.sim-indicar label { font-size: 0.85rem; color: var(--tinta-2); }
+.sim-indicar select { font: inherit; font-size: 0.95rem; width: 100%; min-width: 0; padding: 0.45rem 0.4rem; border: 1px solid var(--tinta-2);
+  border-radius: 2px; background: var(--papel); color: var(--tinta); min-height: 2.75rem; }
+.sim-marca { font-size: 0.85em; color: var(--terra); font-weight: 700; }
+.sim-aviso { display: block; font-size: 0.9em; color: var(--alerta); margin-top: 0.2rem; }
+.sim-sem { color: var(--rio); }
+.sim-s-como ul { padding-left: 1.2rem; }
+.sim-s-como li { margin: 0.35rem 0; }
+.sim-chamada { margin-top: 0.9rem; padding: 0.7rem 0.9rem; border-left: 4px solid var(--ocre); background: var(--ocre-claro); max-width: 36rem; }
+.sim-chamada a { font-weight: 700; }
+
 @media print {
   :root { --papel: #fff; --papel-2: #fff; --tinta: #000; --tinta-2: #333; --fio: #999; --varzea: #eaf0e1; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -502,6 +555,7 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
   .rec-km { font-size: 1.1rem; }
   .s-receptoras .legenda { font-size: 0.8rem; }
   .so-impressao { display: block; }
+  .so-impressao-inline { display: inline; }
   .verso-perguntas { grid-template-columns: 1fr 1fr; }
   .so-impressao-bloco { display: grid; }
   /* linhas para escrever à mão, como num caderno */
@@ -517,4 +571,11 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
   .lei .norma { display: inline; margin-left: 0.4em; }
   .lei .norma::before { content: "("; } .lei .norma::after { content: ")"; }
   .s-fonte { margin-top: 0.4rem; padding-top: 0.3rem; font-size: 0.8rem; }
+  /* o diagnóstico do plano no papel: sem a montagem nem os seletores; todas as escolas abertas */
+  .simulador { max-width: none; }
+  .simulador section { margin-top: 0.8rem; }
+  .sim-escola > summary { padding: 0.2rem 0; min-height: 0; list-style: none; }
+  .sim-escola > summary::-webkit-details-marker { display: none; }
+  .sim-etapas tr, .simulador .quadro tr { break-inside: avoid; }
+  .sim-barra { background: #777; }
 }

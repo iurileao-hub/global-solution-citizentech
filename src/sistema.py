@@ -217,8 +217,9 @@ def simular(args) -> int:
     indicacoes = {}
     for x in args.indicar:
         partes = x.split(":")
-        if len(partes) != 3 or not partes[0].isdigit() or not partes[2].isdigit():
-            print(f"Indicação inválida: {x} (formato ESCOLA:ETAPA:RECEPTORA)", file=sys.stderr)
+        if len(partes) != 3 or not partes[0].isdigit() or not partes[2].isdigit() or partes[1] not in sim.ORDEM_ETAPAS:
+            print(f"Indicação inválida: {x} (formato ESCOLA:ETAPA:RECEPTORA; etapas: {', '.join(sim.ORDEM_ETAPAS)})",
+                  file=sys.stderr)
             return 1
         indicacoes[f"{partes[0]}:{partes[1]}"] = int(partes[2])
     r = sim.simular(mun, codigos, indicacoes)

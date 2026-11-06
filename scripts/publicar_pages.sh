@@ -12,8 +12,8 @@ if git -C "$raiz" ls-remote --exit-code --heads origin gh-pages >/dev/null; then
 else
   git -C "$raiz" worktree add -q --orphan -b gh-pages "$tmp"
 fi
-# dados/simulacao/ é da camada 2 (simulador), que ainda não está no site: fica fora até ser usada (44 MB)
-rsync -a --delete --exclude .git --exclude falhas.json --exclude dados/simulacao "$raiz/site/" "$tmp/"
+# dados/simulacao/ (simulador, ~4.500 arquivos, ~9 MB comprimidos) vai junto desde 06/11
+rsync -a --delete --exclude .git --exclude falhas.json "$raiz/site/" "$tmp/"
 git -C "$tmp" add -A
 if git -C "$tmp" diff --cached --quiet; then echo "nada mudou no site"; exit 0; fi
 git -C "$tmp" commit -q -m "Site gerado em $(date +%F)"

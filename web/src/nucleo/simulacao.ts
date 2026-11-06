@@ -151,6 +151,34 @@ function alocar(escolas: Map<number, EscolaSim>, fechadas: ReadonlySet<number>, 
   return aloc;
 }
 
+/** Quantas crianças de OUTRAS escolas do plano teriam cada escola fechada como destino se só ela ficasse aberta, numa
+ * passada só (ver _acolheria em simulacao.py: toda fechada antes da primeira aberta que oferece a etapa, mais a
+ * indicada válida que fecha; indicada válida e aberta não dá nada a ninguém). */
+function acolheriaDe(escolas: Map<number, EscolaSim>, fechadas: ReadonlySet<number>, ind: Record<string, number>):
+  Map<number, number> {
+  const ganha = new Map<number, number>();
+  for (const o of fechadas) {
+    const e = escolas.get(o)!;
+    for (const etapa of etapasDe(e)) {
+      const candidatas = new Set<number>();
+      const x = ind[`${o}:${etapa}`];
+      const r = x !== undefined ? e.r.find((l) => l[0] === x) : undefined;
+      if (r && r[6].includes(etapa)) {
+        if (!fechadas.has(r[0])) continue;
+        candidatas.add(r[0]);
+      }
+      for (const l of e.r) {
+        if (!l[6].includes(etapa)) continue;
+        if (!fechadas.has(l[0])) break;
+        candidatas.add(l[0]);
+      }
+      candidatas.delete(o);
+      for (const c of candidatas) ganha.set(c, (ganha.get(c) ?? 0) + e.e[etapa]);
+    }
+  }
+  return ganha;
+}
+
 const soma = (o: Record<string, number>) => Object.values(o).reduce((a, b) => a + b, 0);
 
 /** O diagnóstico do plano. `indicacoes`: {"código:etapa": código da receptora indicada pela prefeitura}. */
@@ -188,18 +216,16 @@ export function simular(mun: Municipio, fechar: Iterable<number>, indicacoes: Re
   }
   for (const x of carga.values()) x.etapas = ORDEM_ETAPAS.filter((k) => x.etapas.includes(k));
 
+  const acolheria = acolheriaDe(escolas, fechadas, ind);
   const resumo: ResumoEscola[] = [...fechadas].sort(porNumero).map((c) => {
     const e = escolas.get(c)!;
     const mesmas = aloc.filter((a) => a.origem === c);
     const p = principalFicha(e);
-    const semC = new Set([...fechadas].filter((x) => x !== c));
-    const acolheria = semC.size
-      ? alocar(escolas, semC, ind).filter((a) => a.destino === c).reduce((s, a) => s + a.n, 0) : 0;
     return {
       c, n: e.n, criancas: soma(e.e),
       pre_iniciais: ETAPAS_NA_COMUNIDADE.reduce((s, k) => s + (e.e[k] ?? 0), 0),
       destinos: new Set(mesmas.filter((a) => a.destino !== null).map((a) => a.destino)).size,
-      ficha: p, ficha_fecha: p !== null && fechadas.has(p), acolheria,
+      ficha: p, ficha_fecha: p !== null && fechadas.has(p), acolheria: acolheria.get(c) ?? 0,
     };
   });
 

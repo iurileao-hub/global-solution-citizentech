@@ -128,6 +128,37 @@ def _alocar(escolas: dict[int, dict], fechadas: frozenset[int], indicacoes: dict
     return aloc
 
 
+def _acolheria(escolas: dict[int, dict], fechadas: frozenset[int], ind: dict[str, int]) -> dict[int, int]:
+    """Quantas crianças de OUTRAS escolas do plano teriam cada escola fechada como destino se só ela ficasse aberta.
+
+    Definição: rodar o plano sem a escola s e contar quem vai para s. Em vez de refazer o plano para cada s (custo
+    que cresce com o quadrado do tamanho do plano: 160 ms em Santarém, 317 escolas), uma passada só: para cada
+    criança, toda escola FECHADA que aparece na lista antes da primeira aberta que oferece a etapa seria o destino
+    se reabrisse sozinha; a indicada pela prefeitura, se é válida e fecha, também. Indicada válida e aberta: a
+    criança vai para ela em qualquer cenário, ninguém ganha. O teste confere contra a definição."""
+    ganha: dict[int, int] = {}
+    for o in fechadas:
+        e = escolas[o]
+        rs = [_receptora(r) for r in e["r"]]
+        for etapa in _etapas(e):
+            candidatas: set[int] = set()
+            x = ind.get(f"{o}:{etapa}")
+            r = next((r for r in rs if r["c"] == x), None) if x is not None else None
+            if r is not None and etapa in r["etapas"]:
+                if r["c"] not in fechadas:
+                    continue
+                candidatas.add(r["c"])
+            for r in rs:
+                if etapa not in r["etapas"]:
+                    continue
+                if r["c"] not in fechadas:
+                    break
+                candidatas.add(r["c"])
+            for c in candidatas - {o}:
+                ganha[c] = ganha.get(c, 0) + e["e"][etapa]
+    return ganha
+
+
 def simular(mun: dict, fechar: Iterable[int], indicacoes: dict[str, int] | None = None) -> dict:
     """O diagnóstico do plano. `fechar`: códigos INEP (os que não são escola do campo do município são devolvidos
     em "ignoradas"); `indicacoes`: {"código:etapa": código da receptora indicada pela prefeitura}."""
@@ -160,19 +191,18 @@ def simular(mun: dict, fechar: Iterable[int], indicacoes: dict[str, int] | None 
     for r in carga.values():
         r["etapas"] = [k for k in ORDEM_ETAPAS if k in r["etapas"]]
 
+    acolheria = _acolheria(escolas, fechadas, ind)
     resumo_escolas = []
     for c in sorted(fechadas):
         e = escolas[c]
         mesmas = [a for a in aloc if a["origem"] == c]
         p = principal_ficha(e)
-        sem_c = fechadas - {c}
-        acolheria = sum(a["n"] for a in _alocar(escolas, sem_c, ind) if a["destino"] == c) if sem_c else 0
         resumo_escolas.append({
             "c": c, "n": e["n"], "criancas": sum(e["e"].values()),
             "pre_iniciais": sum(e["e"].get(k, 0) for k in ETAPAS_NA_COMUNIDADE),
             "destinos": len({a["destino"] for a in mesmas if a["destino"] is not None}),
             "ficha": p, "ficha_fecha": p is not None and p in fechadas,
-            "acolheria": acolheria,
+            "acolheria": acolheria.get(c, 0),
         })
 
     criancas = sum(a["n"] for a in aloc)
@@ -232,6 +262,18 @@ MOTIVO = {
     ESGOTADA: "todas as receptoras calculadas que oferecem a etapa também fecham neste plano",
     NENHUMA_OFERECE: "nenhuma das 10 receptoras calculadas oferece a etapa",
 }
+
+
+def _pct(x: float) -> str:
+    """Como web/src/formato.ts:pct: inteiro a partir de 10% (meio para cima), uma casa abaixo disso ("3,1%")."""
+    from decimal import ROUND_HALF_UP, Decimal
+    import math
+    v = x * 100
+    if v >= 10 or v == 0:
+        return f"{math.floor(v + 0.5)}%"   # Math.round
+    # toFixed(1): arredonda o valor binário EXATO, meio para cima
+    t = str(Decimal(v).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
+    return t.removesuffix(".0").replace(".", ",") + "%"
 
 
 def texto(r: dict) -> str:
@@ -297,7 +339,7 @@ def texto(r: dict) -> str:
         linhas.append("")
         linhas.append("Quem recebe (a vaga real não é publicada; o aumento é sobre a matrícula de hoje):")
         for x in r["receptoras"]:
-            pct = f", +{round(100 * x['recebe'] / x['mat'])}%" if x["mat"] else ""
+            pct = f", +{_pct(x['recebe'] / x['mat'])}" if x["mat"] else ""
             linhas.append(_par(f"{x['n']}: +{mil(x['recebe'])} alunos (tem {mil(x['mat'] or 0)}{pct}).", "  - ", "    "))
     if len(r["escolas"]) > 1:
         linhas.append("")

@@ -9,6 +9,9 @@
  *   #/escola/<código INEP>     a ficha da escola (?mais=D3,F2 acrescenta sugestões vindas da pergunta)
  *   #/retrato                  o retrato nacional
  *   #/retrato/<UF>             o retrato com uma UF escolhida (o mapa da página inicial leva para cá)
+ *   #/simular                  o simulador "e se estas escolas fecharem?": escolher o município
+ *   #/simular/<lugar>?f=&i=    o plano de um município (escolas que fecham e indicações da prefeitura, no link)
+ *   #/simular?f=<código>       vindo da ficha: abre o plano do município da escola, com ela marcada
  *   #/sobre                    como funciona, limites, privacidade e fontes
  *   #/sobre/palavras           o glossário (LDB, INEP, PL, piso...), aberto direto nele
  */
@@ -38,10 +41,12 @@ function decodificar(t: string): string {
   }
 }
 
-async function rota(): Promise<void> {
-  // o link "Pular para o conteúdo" também mexe no "#": não é uma rota, só leva o foco ao conteúdo
+async function rota(antes?: string): Promise<void> {
+  // o link "Pular para o conteúdo" também mexe no "#": não é uma rota, só leva o foco ao conteúdo. Volta ao endereço
+  // de IMEDIATAMENTE antes (oldURL do evento), que inclui o que a tela gravou com replaceState (o plano do simulador)
   if (location.hash === "#conteudo") {
-    history.replaceState(null, "", ultimaRota);
+    const volta = antes ? new URL(antes).hash : "";
+    history.replaceState(null, "", volta && volta !== "#conteudo" ? volta : ultimaRota);
     main.focus();
     return;
   }
@@ -81,6 +86,11 @@ async function rota(): Promise<void> {
         abrirEm = await telaRetrato(main, g, partes[1] ?? null);
         break;
       }
+      case "simular": {
+        const { telaSimulador } = await import("./telas/simulador");
+        await telaSimulador(main, g, partes[1] ?? null, params);
+        break;
+      }
       case "sobre": {
         const { telaSobre } = await import("./telas/sobre");
         abrirEm = await telaSobre(main, g, partes[1] ?? null);
@@ -118,7 +128,14 @@ async function rota(): Promise<void> {
   }
 }
 
-window.addEventListener("hashchange", () => void rota());
+window.addEventListener("hashchange", (ev) => void rota(ev.oldURL));
+// "Pular para o conteúdo" leva o foco sem trocar o endereço: o simulador guarda o plano no link (replaceState), e
+// voltar a uma rota antiga apagaria o plano. O tratamento de "#conteudo" em rota() fica para quem chegar sem clique.
+document.querySelector<HTMLAnchorElement>("a.pular")?.addEventListener("click", (ev) => {
+  ev.preventDefault();
+  main.scrollIntoView({ block: "start" });
+  main.focus({ preventScroll: true });
+});
 void rota();
 
 versao().then((v) => {

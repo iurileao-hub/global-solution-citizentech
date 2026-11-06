@@ -170,7 +170,9 @@ function receptoras(e: Escola, p: Receptora | null): HTMLElement | null {
     rota.sem_rota ? h("p", null, `Outras ${rota.sem_rota} escola(s) próxima(s) ficaram sem rota na malha viária e não entram na lista.`) : null,
     h("p", { class: "legenda" }, `Conta feita pela malha do OpenStreetMap${quando}, com velocidade de ônibus escolar. ` +
       "A casa de cada criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior. " + margem(e)),
-    h("p", { class: "legenda" }, "Vagas em cada escola: a calcular (o número de vagas não é publicado)."));
+    h("p", { class: "legenda" }, "Vagas em cada escola: a calcular (o número de vagas não é publicado)."),
+    h("p", { class: "sim-chamada nao-imprime" }, h("a", { href: `#/simular?f=${e.c}` }, "E se outras escolas do município também fecharem?"),
+      " Fechamento costuma vir em plano, e a escola indicada aqui pode fechar também: simule o plano."));
 }
 
 function quemEstuda(e: Escola): HTMLElement {

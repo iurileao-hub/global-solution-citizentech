@@ -14,6 +14,7 @@ O projeto foi desenvolvido com o **Claude Code** (Anthropic, modelos da família
 | Base de orientações | rascunho das orientações e verificação de cada norma por um agente que abriu o texto oficial e copiou o trecho literal | aprovação dos temas e dos registros; inclusão da alimentação escolar; decisão de manter os casos indígena/quilombola e o caso de Muniz Freire |
 | Código | escrita do código, dos testes e dos scripts, inclusive a reescrita do núcleo em TypeScript para a versão web e o contrato que a prende ao terminal | decisões de arquitetura (camadas, pré-cálculo, critério de transporte fluvial, linguagem da versão web, publicação) |
 | Revisão adversarial | um segundo modelo recebeu a escolha do problema e, depois, a versão web, com a missão de atacar o que considerávamos mais sólido | quais achados aceitar; os aceitos estão em `docs/metodologia.md` e nas correções do site |
+| Simulador de plano | proposta do desenho, parecer adversarial medido nos dados, código, contrato e revisão antes de publicar | a regra de destino (sem preferência pelo município, com indicação da prefeitura) e a decisão de manter o critério da ficha |
 | Teste do site | três agentes com papéis (agricultora no celular, conselheira que imprime, auditor de dados) testaram o site publicado | a triagem dos achados e as decisões de critério, como arredondar o piso para baixo |
 | Prompts | os dois modelos de instrução de resposta (A e B) foram escritos como especificação e comparados nas perguntas de teste | escolha do modelo padrão |
 | Testes | planejamento das perguntas de teste e dos indicadores | o segundo conjunto de perguntas e o teste de usabilidade, feitos por pessoas que não viram a base |
@@ -43,6 +44,9 @@ Erros da IA no código, achados por teste ou por uso:
 - Ao tirar da tela os códigos das orientações (D1, C5), a primeira versão da troca perdia o texto depois da última citação, e sumia o parágrafo principal das orientações. Os testes passavam, porque conferiam o texto e não a tela; a captura de tela pegou o erro antes da publicação, e um teste novo confere que nenhum trecho se perde.
 - Uma mensagem de commit citou 39.852 escolas sem conferir; o número certo é 41.158. A correção ficou registrada no commit seguinte.
 - O teste por agentes achou erros de critério no código escrito com IA: a distância de "pelo menos" arredondada para cima; o cartão do link arredondando diferente da ficha; o checklist da lei marcando como pronto o diagnóstico do impacto; uma nota sobre outra escola impressa em todas as fichas; e "sem matrícula" em escolas com alunos fora das etapas regulares. Todos foram reproduzidos e corrigidos.
+
+- No simulador, a IA errou três vezes antes da revisão: dobrou um número do parecer ao "corrigi-lo" (a distância do arquivo já era de ida e volta); afirmou que os dados do simulador já estavam publicados quando o script de publicação os excluía; e escreveu no README que o Norte concentrava os maiores fechamentos em lote, quando três dos cinco maiores são do Nordeste. Os três foram achados ao conferir a fonte e corrigidos antes do commit.
+- A revisão do simulador pegou o link do plano errado no rodapé impresso, o plano apagado pelo link "pular para o conteúdo" e a tela que fechava as escolas abertas a cada mudança. Ao corrigir, apareceu um defeito antigo da ficha: o texto só para leitor de tela não tinha estilo, e a letra de cada receptora aparecia repetida na tela ("A. EMEF Alto Monforte"). Nenhum teste nem revisão anterior tinha notado.
 
 ## O que a IA não decidiu
 

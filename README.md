@@ -16,7 +16,7 @@ Global Solution 2026, 2º semestre. Desafio CitizenTech, case Citizen Assist AI.
 > **TL;DR**
 >
 > - **O problema.** Antes de fechar uma escola do campo, a LDB exige um diagnóstico do impacto e a manifestação da comunidade. A comunidade chega à reunião sem saber os direitos e sem os números. De 2019 a 2025, 19.159 escolas públicas rurais foram extintas.
-> - **A solução.** Um assistente que responde em linguagem simples com 27 orientações conferidas no texto oficial, sempre com fonte e data, e que diz "não sei" quando a base não cobre a pergunta. Junto, a ficha de cada uma das **53.759 escolas do campo**: alunos por etapa, transporte, série da matrícula e quanta estrada separa a escola das que receberiam os alunos.
+> - **A solução.** Um assistente que responde em linguagem simples com 27 orientações conferidas no texto oficial, sempre com fonte e data, e que diz "não sei" quando a base não cobre a pergunta. Junto, a ficha de cada uma das **53.759 escolas do campo**: alunos por etapa, transporte, série da matrícula e quanta estrada separa a escola das que receberiam os alunos. E um **simulador de plano**: fechamento costuma vir em lote, e ele mostra para onde iria cada etapa quando várias escolas do município fecham juntas.
 > - **Como funciona.** Regras explícitas e índice invertido, sem modelo de linguagem gerando resposta. Rotas pela malha do OpenStreetMap, com Dijkstra e velocidade de ônibus escolar, pré-calculadas para 36.112 escolas. O terminal usa só a biblioteca padrão do Python; a versão web é o mesmo núcleo em TypeScript, preso ao terminal por um contrato de 130 perguntas.
 > - **O que os números mostram.** Se a escola fechar, a mediana é de pelo menos 12,7 km por dia até a escola mais próxima que recebe todas as etapas. No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais. 930 escolas (114 mil alunos) passariam a 2 horas ou mais de ônibus por dia. Por exemplo, na EMEF Durval Máximo (ES), o cálculo dá 24,9 km por dia até a escola indicada pela prefeitura, coerente como piso com os "até 52 km" estimados pelo Tribunal de Contas, que analisou o caso de fechamento dessa escola.
 > - **A medida honesta.** Em 50 perguntas escritas às cegas, antes de qualquer ajuste, o assistente acertou 68%. Numa rodada nova, com 60 perguntas, 52%, e o erro foi quase todo "não sei" (20 casos contra 3 respostas erradas sem aviso). Os usuários dos testes foram simulados, e isso está declarado.
@@ -252,6 +252,9 @@ cd global-solution-citizentech
 python src/sistema.py                 # assistente (modelo de resposta B)
 python src/sistema.py --modelo A      # mesmo assistente, modelo A
 python src/sistema.py --avaliar       # roda as perguntas de teste e grava os indicadores em data/
+python src/sistema.py --simular 32049501                          # e se esta escola fechar?
+python src/sistema.py --simular "Muniz Freire/ES" --menos-de 60   # e se fecharem as com menos de 60 alunos?
+python src/sistema.py --simular 32049501 --indicar 32049501:anos_iniciais:32050364  # com a escola indicada pela prefeitura
 ```
 
 No Windows, use `py src/sistema.py` se o comando `python` não existir. O programa ajusta o terminal para exibir acentos.
@@ -320,6 +323,16 @@ As escolas sem rota são de cinco tipos: 12.601 sem coordenada na base do Ipea; 
 
 A ficha impressa ocupa 2 páginas A4. Na frente ficam os números, as escolas que receberiam os alunos e o mapa. No verso, as perguntas que só a comunidade responde, com espaço para escrever na assembleia, e o que a lei pede, item por item.
 
+**O simulador de plano ("e se estas escolas fecharem?").** A ficha mede uma escola fechando com todas as outras abertas. Fechamento real vem em lote: 93% das 19.159 extinções de 2019 a 2025 aconteceram em município e ano com duas ou mais, e 56% em lotes de dez ou mais. Num plano assim, a escola que a ficha aponta como destino pode fechar também. Se cada município fechasse as escolas do campo com menos de 30 alunos, isso aconteceria com 29,7% das crianças cuja ficha aponta um destino (35.886 de 120.875). O impacto de um plano não é a soma das fichas.
+
+O simulador (`src/assistente/simulacao.py`, no terminal com `--simular`, e a página "Simular um plano" na versão web) recebe o conjunto de escolas que fecham e manda cada etapa para a escola mais próxima por estrada, entre as 10 pré-calculadas, que oferece a etapa e não fecha no plano. A conta parte sempre da escola de origem da criança, então a ordem dos fechamentos não muda o resultado, e o plano inteiro cabe no link. Quando a prefeitura já indicou o destino, a indicação substitui a regra.
+
+Testamos e descartamos uma regra que preferia escolas do próprio município: ela mandaria 15,6% das crianças para uma escola mais longe do que a mais próxima (mediana de 7 km a mais por dia), e o número deixaria de ser piso. A ficha continua usando outra pergunta, a escola mais próxima que recebe todas as etapas (a família num destino só). Por isso, para a mesma escola, o simulador pode mostrar distâncias menores que a ficha: na Durval Máximo, 18 e 24 km por etapa contra 29 km na ficha.
+
+O resultado começa pelas crianças sem destino calculado, com o motivo, antes de qualquer número. Depois vêm as faixas de distância e de tempo (as mesmas do retrato), as crianças levadas para outro município, quanto cada escola receptora cresceria sobre a matrícula de hoje (vaga e turno não são públicos, então não realocamos) e, para cada escola do plano, quantas crianças de pré-escola e anos iniciais ela tem (a Res. CNE/CEB 2/2008 pede que fiquem na comunidade) e quantas de outras escolas do plano ela receberia se ficasse aberta. A distância é a da estrada entre a escola fechada e a receptora: é piso do caminho do ônibus que sai da comunidade, não o quanto cada criança anda a mais. A versão web e o terminal devolvem o mesmo resultado em 50 planos de teste (`data/regressao_simulacao.json`), entre eles municípios que esgotam as 10 receptoras e áreas sem rota.
+
+<p align="center"><img src="docs/img/10-web-simulador.png" alt="Simulador no celular: Muniz Freire fechando a EMEF Durval Máximo e a escola que a ficha dela aponta; o aviso de que a ficha sozinha não basta e o destino de cada etapa, com a escolha da escola indicada pela prefeitura" width="70%"></p>
+
 **Tendência de matrícula.** Testado em quase 2 mil escolas rurais (DF, SP, ES), prever a matrícula pela reta dos anos anteriores errou mais do que supor que ela fica igual ao último ano (erro médio de 24,4 contra 17,7 alunos em SP). Por isso a ficha e o assistente descrevem a série e não projetam.
 
 Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local.py`, `rota.py`, `receptoras.py`, `tendencia.py`, `checklist.py`, `ficha.py`, `site.py`. Regenerar os dados exige os arquivos públicos do INEP, do Ipea e da Geofabrik (cerca de 3 GB, fora do repositório) e as dependências de `pyproject.toml`, que pede Python 3.12 ou mais recente. O assistente não precisa de nada disso e roda com Python 3.10 (testado num clone limpo em 06/11/2026).
@@ -334,6 +347,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 - As distâncias são piso, de escola a escola. Velocidades de ônibus são parâmetros declarados, sem medição própria.
 - Cerca de 23% das escolas do campo (12.601) não têm coordenada pública e ficam sem distância. A lacuna é da fonte oficial: o Catálogo de Escolas do INEP, de onde vêm as coordenadas do Ipea, tem ponto para só 1 delas (conferido em 05/11/2026; nas 155 mil escolas com ponto nas duas bases, as coordenadas são idênticas).
 - Escola perto da divisa entre regiões só procura receptoras na malha da própria região. Medido em 05/11/2026: em até 174 escolas (0,4% das que têm rota), uma das 4 candidatas mais próximas em linha reta fica em outra região e não entrou na lista, e a receptora real pode estar mais perto que a listada.
+- O simulador fecha só escolas do campo de um município por vez: escola urbana e de outro município entram como destino, mas não podem fechar no plano (os alunos delas não estão no índice). Onde falta rota, falta simulação: num plano "menos de 30 alunos" no país inteiro, 41% das crianças ficariam sem destino calculado, quase todas no Norte, onde está o maior lote de fechamento da série (Afuá/PA, 119 escolas em 2021).
 - As normas mudam. Se o PL 3.091/2024 virar lei, ele substitui o parágrafo único do art. 28 da LDB, e a base precisa ser revista.
 
 **Melhorias possíveis.**
@@ -341,14 +355,14 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 2. Trocar o radical por um algoritmo de redução de palavras feito para o português (como o RSLP).
 3. Um modelo de linguagem como camada opcional de redação, com a resposta conferida contra a base antes de ser mostrada.
 4. Um servidor que calcule na hora a rota de escola ainda não calculada, com fila, alimentando o mesmo índice.
-5. O simulador "e se estas escolas fecharem?" na versão web, para ver para onde iriam os alunos quando várias escolas fecham em cascata. Os dados por município (as 10 receptoras de cada escola) já foram gerados.
+5. Simulador com planos que cruzam a divisa de municípios (a rede estadual fecha escolas de vários municípios ao mesmo tempo) e receptora de garantia para as escolas que esgotam as 10 calculadas.
 6. Recuperar coordenadas pelo cadastro de endereços do IBGE (CNEFE 2022), casando o nome da escola no município. Testado em AC, AM e BA: recupera de 33% a 45% das escolas sem ponto, mas em 5% (BA) a 23% (AC) dos casos de controle o ponto diverge mais de 5 km, então só serviria com rótulo de coordenada estimada.
 
 ## 📁 Estrutura de pastas
 
 * **`src/`** código-fonte. `sistema.py` é o ponto de entrada; `assistente/` é o assistente (só biblioteca padrão); `escola_em_pauta/` lê o Censo, as coordenadas e o OpenStreetMap, calcula as rotas e monta a ficha.
 * **`web/`** a versão web (TypeScript + Vite): `src/nucleo/` é o assistente reescrito, preso ao contrato; `src/telas/` são as telas (ficha, mapa, retrato); `public/sw.js` é o funcionamento sem sinal; `test/` tem os testes, inclusive o do contrato; `scripts/montar_site.mjs` monta o site e as prévias de link.
-* **`data/`** base de orientações, índice de escolas, fechamentos, retrato das rotas, contrato da web, perguntas de teste e resultados da avaliação.
+* **`data/`** base de orientações, índice de escolas, fechamentos, retrato das rotas, dados do simulador (`simulacao.json.gz`: as 10 receptoras de cada escola, por município), contratos da web (assistente e simulador), perguntas de teste e resultados da avaliação.
 * **`docs/`** metodologia, uso de IA, roteiro do teste de usabilidade e imagens do README.
 * **`scripts/`** geração do índice, dos fechamentos e do retrato, pré-cálculo das rotas, preparo dos dados da web, prints do README e publicação do site.
 * **`.github/workflows/`** a verificação automática da versão web (tipos, testes e build) a cada envio.
