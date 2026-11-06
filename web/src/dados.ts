@@ -7,7 +7,9 @@
  *   escolas/NNN.json          ~30 KB, ao abrir uma escola (NNN = código INEP % 256)
  *   tracados/NNNN.json        ao abrir a prancha de uma escola (NNNN = código % 2048); pode não existir
  *   retrato_rotas.json        na página do retrato
- *   simulacao/LLLL.json       ~2 KB (até 22 KB), ao abrir o simulador de um município (LLLL = linha de lugares em nomes.json)
+ *   simulacao/NNN.json        ~16 KB (até 42 KB), ao abrir o simulador de um município (NNN = linha de lugares em nomes.json
+ *                             % pedacos_simulacao; dentro, municipios[linha]: os municípios vão agrupados porque 4.479
+ *                             arquivos a mais faziam o deploy do Pages estourar o limite de 10 minutos)
  * Cada arquivo é pedido uma vez por sessão (a promessa fica guardada).
  */
 
@@ -26,6 +28,7 @@ export interface Versao {
   escolas: number;
   versao: string;
   pedacos_tracado?: number;
+  pedacos_simulacao?: number;
 }
 
 /** [código da receptora, polyline da ida, pares de índices dos trechos de chão] */
@@ -148,9 +151,13 @@ export function lugarDaEscola(codigo: number): Promise<number | null> {
 
 /** As escolas do campo do município, com as 10 receptoras de cada uma (o que o simulador precisa). */
 export async function municipioSim(lugar: number): Promise<Municipio> {
-  const doc = await arquivo<{ lugar: number; uf: string; municipio: string; escolas: EscolaSim[] }>(
-    `simulacao/${String(lugar).padStart(4, "0")}.json`);
-  return { lugar: doc.lugar, uf: doc.uf, municipio: doc.municipio, escolas: doc.escolas };
+  const v = await versao();
+  if (!v.pedacos_simulacao) throw new Error("Esta versão dos dados não tem o simulador.");
+  const doc = await arquivo<{ municipios: Record<string, { uf: string; municipio: string; escolas: EscolaSim[] }> }>(
+    `simulacao/${String(lugar % v.pedacos_simulacao).padStart(3, "0")}.json`);
+  const m = doc.municipios[String(lugar)];
+  if (!m) throw new Error("Município sem escolas do campo nos dados do simulador.");
+  return { lugar, uf: m.uf, municipio: m.municipio, escolas: m.escolas };
 }
 
 export function retrato<T>(): Promise<T> {

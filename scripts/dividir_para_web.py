@@ -17,8 +17,11 @@ UFs): um arquivo por UF ainda daria ~800 KB no MA e na BA. Por isso as escolas v
 
 Com --rotas-v2 (segunda passada, scripts/precalcular_rotas_v2.py), mais dois conjuntos para a camada 2:
 
-  simulacao/LLLL.json  um por município (LLLL = linha da tabela "lugares" de nomes.json): as escolas do campo
-                       do município com matrícula por etapa e até 10 receptoras SEM traçado. É tudo de que o
+  simulacao/NNN.json   os municípios em PEDACOS_SIMULACAO pedaços por número de linha da tabela "lugares" de
+                       nomes.json (pedaço = linha % PEDACOS_SIMULACAO; dentro, {"municipios": {linha: ...}}): as
+                       escolas do campo de cada município com matrícula por etapa e até 10 receptoras SEM traçado.
+                       Era um arquivo por município (4.479); em 06/11 o deploy do Pages passou a estourar o limite
+                       de 10 minutos (que é fixo, inclusive pelo workflow) e os municípios foram agrupados. É tudo de que o
                        simulador "e se estas escolas fecharem?" precisa, no navegador, sem servidor: a cascata
                        percorre a lista de cada escola pulando as que também fecham. Receptora de outro
                        município não fecha na simulação (o simulador é por município).
@@ -55,6 +58,7 @@ INDICE = DADOS / "escolas_campo.json.gz"
 SAIDA = RAIZ / "site" / "dados"
 COPIAS = ("base_orientacoes.json", "fechamentos.json", "retrato_rotas.json")  # o retrato só existe após o fundir
 PEDACOS = 256
+PEDACOS_SIMULACAO = 512  # maior pedaço 41 KB comprimido (256 daria 60 KB, no limite do orçamento)
 PEDACOS_TRACADO = 2048  # ~18 escolas com rota por pedaço; ~1,4 KB comprimido por escola (amostra de 05/11)
 SEM_UF = ""  # 1 escola do índice vem sem UF/município no Censo: entra na tabela como ("", "")
 
@@ -91,8 +95,8 @@ def nome_tracado(i: int) -> str:
     return f"tracados/{i:04d}.json"
 
 
-def nome_simulacao(lugar: int) -> str:
-    return f"simulacao/{lugar:04d}.json"
+def nome_simulacao(pedaco: int) -> str:
+    return f"simulacao/{pedaco:03d}.json"
 
 
 def lugares_de(doc: dict) -> list[tuple[str, str]]:
@@ -122,9 +126,12 @@ def dividir_v2(doc_v2: dict, lugares: list[tuple[str, str]]) -> dict[str, bytes]
         por_lugar.setdefault(lugar, []).append(item)
         if rs:
             tracados[e["c"] % PEDACOS_TRACADO][str(e["c"])] = [[r["c"], r["p"], r.get("pc") or []] for r in rs]  # sem chão, sem pc
-    arquivos = {nome_simulacao(i): compacto({"lugar": i, "uf": lugares[i][0], "municipio": lugares[i][1],
-                                             "colunas_receptora": COLUNAS_RECEPTORA, "escolas": es})
-                for i, es in sorted(por_lugar.items())}
+    pedacos_sim: dict[int, dict] = {}
+    for i, es in sorted(por_lugar.items()):
+        pedacos_sim.setdefault(i % PEDACOS_SIMULACAO, {})[str(i)] = {"uf": lugares[i][0], "municipio": lugares[i][1],
+                                                                      "escolas": es}
+    arquivos = {nome_simulacao(k): compacto({"pedaco": k, "colunas_receptora": COLUNAS_RECEPTORA, "municipios": m})
+                for k, m in sorted(pedacos_sim.items())}
     for i, t in enumerate(tracados):
         arquivos[nome_tracado(i)] = compacto({"pedaco": i, "escolas": t})
     return arquivos
@@ -134,12 +141,14 @@ ARQ_SIMULACAO = DADOS / "simulacao.json.gz"
 
 
 def juntar_simulacao(arquivos: dict[str, bytes], doc: dict, lugares: list[tuple[str, str]]) -> bytes:
-    """simulacao/LLLL.json -> um gzip só (data/simulacao.json.gz), com mtime zero para o hash não mudar à toa."""
+    """simulacao/NNN.json -> um gzip só (data/simulacao.json.gz), com mtime zero para o hash não mudar à toa.
+    Municípios em ordem de linha: o arquivo não depende de como a web agrupa os pedaços."""
     municipios = {}
-    for nome, conteudo in sorted(arquivos.items()):
+    for nome, conteudo in arquivos.items():
         if nome.startswith("simulacao/"):
-            m = json.loads(conteudo)
-            municipios[str(m["lugar"])] = m["escolas"]
+            for linha, m in json.loads(conteudo)["municipios"].items():
+                municipios[linha] = m["escolas"]
+    municipios = dict(sorted(municipios.items(), key=lambda x: int(x[0])))
     junto = compacto({"esquema": 1, "fonte": doc.get("fonte"), "data_verificacao": doc.get("data_verificacao"),
                       "colunas_receptora": COLUNAS_RECEPTORA, "lugares": [list(x) for x in lugares],
                       "municipios": municipios})
@@ -204,6 +213,7 @@ def versao(man: dict) -> dict:
     saida["versao"] = hashlib.sha256(tudo.encode()).hexdigest()[:12]
     if "rotas_v2" in man:
         saida["pedacos_tracado"] = man["rotas_v2"]["pedacos_tracado"]
+        saida["pedacos_simulacao"] = man["rotas_v2"]["pedacos_simulacao"]
     return saida
 
 
@@ -233,9 +243,10 @@ def main(argv: list[str] | None = None) -> int:
     if v2:
         man["rotas_v2"] = {"k": v2["k"], "tolerancia_m": v2["tolerancia_m"], "precisao": v2["precisao"],
                            "campos": v2["campos"], "colunas_receptora": COLUNAS_RECEPTORA,
-                           "pedacos_tracado": PEDACOS_TRACADO,
+                           "pedacos_tracado": PEDACOS_TRACADO, "pedacos_simulacao": PEDACOS_SIMULACAO,
                            "regra_tracado": "codigo_inep % pedacos_tracado, arquivo tracados/NNNN.json com 4 dígitos",
-                           "regra_simulacao": "simulacao/LLLL.json, LLLL = linha de lugares em nomes.json, 4 dígitos"}
+                           "regra_simulacao": "linha de lugares em nomes.json % pedacos_simulacao, arquivo "
+                                              "simulacao/NNN.json com 3 dígitos; dentro, municipios[linha]"}
     if a.saida.exists():
         shutil.rmtree(a.saida)  # pasta gerada: sobra de pedaço velho não pode ficar
     for k, v in {**arquivos, "manifesto.json": compacto(man), "versao.json": compacto(versao(man))}.items():
