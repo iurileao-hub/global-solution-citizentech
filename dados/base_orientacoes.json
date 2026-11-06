@@ -144,12 +144,12 @@
     "definição",
     "população"
    ],
-   "orientacao": "Pode contar. Pela regra federal, escola do campo é a que fica na área rural ou a que fica em área urbana mas atende predominantemente populações do campo. População do campo inclui agricultores familiares, assentados, ribeirinhos, quilombolas, indígenas e outros que vivem do trabalho no meio rural.",
+   "orientacao": "Pode contar. Pela regra federal, escola do campo é a que fica na área rural ou a que fica em área urbana mas atende predominantemente populações do campo. População do campo inclui agricultores familiares, assentados, ribeirinhos, quilombolas, indígenas e outros que vivem do trabalho no meio rural. O Censo Escolar do INEP classifica cada escola só como urbana ou rural; a lei fala em escola do campo, que inclui as rurais e também essas escolas da cidade.",
    "referencia": {
     "titulo": "Decreto 7.352/2010, art. 1º, §1º",
     "url": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2010/decreto/d7352.htm"
    },
-   "data_verificacao": "2026-11-05",
+   "data_verificacao": "2026-11-06",
    "confirmar": "O Censo Escolar mostra quantos alunos moram na zona rural; a consulta de escolas deste assistente traz esse número.",
    "relacionados": [
     "D1",
