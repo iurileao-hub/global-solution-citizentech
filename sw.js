@@ -10,10 +10,10 @@
  * Desligar (kill switch): publicar um arquivo "desligar-sw.txt" na raiz do site. Na próxima vez que a página abrir
  * com sinal, o service worker apaga o que guardou e se remove. Sem o arquivo, nada muda.
  */
-const VERSAO = "306b772c89-228e044b0f03"; // trocado pelo scripts/montar_site.mjs a cada build
+const VERSAO = "bea802844c-228e044b0f03"; // trocado pelo scripts/montar_site.mjs a cada build
 const CASCA = "casca-" + VERSAO;
 const DADOS = "dados";
-const ARQUIVOS_CASCA = ["./","assets/alegreya-BG9rTJo4.woff2","assets/alegreya-italico-BXpar-rJ.woff2","assets/atkinson-next-BcXVPD7q.woff2","assets/ficha-CJLd54Jv.js","assets/formato-C3Hf7GGw.js","assets/index-CwuTxp3F.css","assets/index-vJ3FTOyD.js","assets/retrato-xA4exuD_.js","assets/sobre-BCgg3Ye7.js","assets/ufs-Bm-G0-1V.js","icone-192.png","icone-512.png","icone.svg","manifest.webmanifest"]; // lista trocada pelo scripts/montar_site.mjs
+const ARQUIVOS_CASCA = ["./","assets/alegreya-BG9rTJo4.woff2","assets/alegreya-italico-BXpar-rJ.woff2","assets/atkinson-next-BcXVPD7q.woff2","assets/ficha--dqqXxWx.js","assets/formato-DOmfffy6.js","assets/index-BjO0YEc4.css","assets/index-CxyeTb58.js","assets/retrato-CuhmuhBl.js","assets/simulador-DUAKuac-.js","assets/sobre-CQWSNDls.js","assets/ufs-Bm-G0-1V.js","icone-192.png","icone-512.png","icone.svg","manifest.webmanifest"]; // lista trocada pelo scripts/montar_site.mjs
 
 self.addEventListener("install", (ev) => {
   ev.waitUntil(caches.open(CASCA).then((c) => c.addAll(ARQUIVOS_CASCA)).then(() => self.skipWaiting()));
