@@ -34,6 +34,19 @@ export function principal(e: Escola): Receptora | null {
   return lista.length ? lista.reduce((a, b) => (b.km < a.km ? b : a)) : null;
 }
 
+/** Abaixo de 1 km por dia, ida e volta, é a mesma coordenada (escolas que dividem prédio ou endereço no Catálogo
+ * do INEP): dizer "0,1 km, 1 min de ônibus" seria precisão falsa. */
+export const MESMO_LUGAR_KM = 1;
+
+export function kmDia(x: number): string {
+  return x < MESMO_LUGAR_KM ? "menos de 1 km" : `${km(x)} km`;
+}
+
+export function lugarDe(e: Escola): string {
+  if (!e.m || !e.uf) return "Município não informado no Censo";
+  return e.uf === "DF" ? "Distrito Federal" : `${e.m}, ${UF_NOME[e.uf] ?? e.uf}`;
+}
+
 function quem(e: Escola): string {
   const etapas = Object.keys(e.e);
   return etapas.some((x) => x === "anos_finais" || x === "medio") ? "crianças e adolescentes" : "crianças";
@@ -46,7 +59,12 @@ function manchete(e: Escola): HTMLElement {
   if (etapas.length) partes.push("Aqui estudam ", h("b", null, `${mil(e.t)} ${quem(e)}`), `, ${faixaEtapas(etapas)}. `);
   else partes.push("No Censo mais recente, esta escola não tinha matrícula. ");
   if (e.tp) partes.push(h("b", null, `${mil(e.tp)} ${e.tp === 1 ? "chega" : "chegam"} de transporte escolar público.`), " ");
-  if (p) {
+  if (p && p.km < MESMO_LUGAR_KM) {
+    const todas = recebeTodas(p, e);
+    partes.push(`Se a escola fechar, a mais perto que oferece ${todas ? "as mesmas etapas" : "parte das etapas"} fica ` +
+      "no mesmo lugar ou quase: ", h("b", { class: "piso" }, "menos de 1 km por dia"), " pela localização pública. " +
+      "Confira se é o mesmo prédio: escolas que dividem o endereço aparecem com a mesma coordenada.");
+  } else if (p) {
     const todas = recebeTodas(p, e);
     partes.push(`Se a escola fechar, a mais perto que oferece ${todas ? "as mesmas etapas" : "parte das etapas"} fica a ` +
       `pelo menos ${km(p.km / 2)} km por estrada: `,
@@ -87,14 +105,14 @@ function receptoraItem(r: Receptora, e: Escola, i: number, p: Receptora | null, 
   return h("li", { class: r === p ? "rec-principal" : null },
     h("span", { class: "rec-letra", "aria-hidden": "true" }, LETRAS[i]),
     h("span", { class: "rec-nome" }, h("span", { class: "sr" }, `${LETRAS[i]}. `), nomeLegivel(r.n)),
-    h("span", { class: "rec-km" }, `${km(r.km)} km`, h("small", null, "por dia, pelo menos")),
+    h("span", { class: "rec-km" }, kmDia(r.km), h("small", null, r.km < MESMO_LUGAR_KM ? "mesma coordenada" : "por dia, pelo menos")),
     h("span", { class: "rec-info" }, onde.join(", "),
-      r.min !== undefined && r.min !== null ? `; ${horas(r.min)} de ônibus por dia` : "",
+      r.min !== undefined && r.min !== null && r.km >= MESMO_LUGAR_KM ? `; ${horas(r.min)} de ônibus por dia` : "",
       chao >= 0.5 ? `; ${km(chao)} km de estrada de chão` : "", etapas ? "; " : "", etapas),
     // barra na escala da mais longe da lista: dá para comparar as distâncias de relance
     h("span", { class: "rec-barra", "aria-hidden": "true" },
-      h("span", { class: "pav", style: `width:${(100 * (r.km - chao)) / maior}%` }),
-      h("span", { class: "chao", style: `width:${(100 * chao) / maior}%` })));
+      h("span", { class: "pav", style: `width:${(100 * Math.max(0, r.km - chao)) / Math.max(maior, MESMO_LUGAR_KM)}%` }),
+      h("span", { class: "chao", style: `width:${(100 * chao) / Math.max(maior, MESMO_LUGAR_KM)}%` })));
 }
 
 function receptoras(e: Escola, p: Receptora | null): HTMLElement | null {
@@ -217,7 +235,7 @@ const PERGUNTAS_VERSO = [
 
 function verso(e: Escola): HTMLElement {
   return h("section", { class: "verso" },
-    h("p", { class: "so-impressao" }, h("b", null, nomeLegivel(e.n)), `, ${e.m}/${e.uf}. Verso da ficha: a parte que a comunidade escreve.`),
+    h("p", { class: "so-impressao" }, h("b", null, nomeLegivel(e.n)), `, ${lugarDe(e)}. Verso da ficha: a parte que a comunidade escreve.`),
     h("h2", null, "O que esta ficha não mede"),
     h("p", null, "Os números não dizem o que esta escola é para a comunidade. A lei pede a manifestação da comunidade, e ",
       h("b", null, "esta parte vale tanto quanto os números"), ". Na ficha impressa, estas perguntas ficam com espaço para " +
@@ -230,25 +248,28 @@ function verso(e: Escola): HTMLElement {
 export async function telaFicha(main: HTMLElement, g: number, codigo: number, mais: string[]): Promise<void> {
   trocar(main, carregando("Abrindo a ficha da escola..."));
   if (!Number.isInteger(codigo) || codigo <= 0) {
-    trocar(main, h("p", { class: "erro" }, "Código de escola inválido. ", h("a", { href: "#/" }, "Buscar uma escola"), "."));
+    document.title = "Código inválido: Escola em Pauta";
+    trocar(main, h("div", { class: "erro", role: "alert" }, h("h1", null, "Código de escola inválido"),
+      h("p", null, h("a", { href: "#/" }, "Buscar uma escola"), ".")));
     return;
   }
   const [b, e, v] = await Promise.all([base(), baixarEscola(codigo), versao()]);
   if (!vivo(g)) return;
   if (!e) {
-    trocar(main, h("article", { class: "verbete" }, h("h1", null, `Não há escola do campo com o código ${codigo}`),
+    document.title = "Escola não encontrada: Escola em Pauta";
+    trocar(main, h("article", { class: "verbete", role: "alert" }, h("h1", null, `Não há escola do campo com o código ${codigo}`),
       h("p", null, "A base tem as escolas públicas do campo em atividade no Censo Escolar 2025. Escolas urbanas não aparecem."),
       caixaBusca({ titulo: false })));
     return;
   }
   const nome = nomeLegivel(e.n);
-  document.title = `${nome}, ${e.m}/${e.uf}: Escola em Pauta`;
+  const lugar = lugarDe(e);
+  document.title = `${nome}, ${lugar}: Escola em Pauta`;
   const p = principal(e);
   const rs = e.rota?.receptoras ?? [];
   const lado = h("aside", { class: "ficha-lado", "aria-label": "Mapa" });
   const extras = mais.filter((x) => b.registros.has(x) && !ligacoesDaEscola(b, e).includes(x));
   const urlPrevia = new URL(`escola/${e.c}.html`, document.baseURI).href;
-  const lugar = e.uf === "DF" ? "Distrito Federal" : `${e.m}, ${UF_NOME[e.uf] ?? e.uf}`;
   trocar(main, h("div", { class: "ficha" },
     h("header", { class: "ficha-cabeca" },
       h("a", { class: "voltar nao-imprime", href: "#/" }, "Buscar outra escola"),
@@ -271,12 +292,13 @@ export async function telaFicha(main: HTMLElement, g: number, codigo: number, ma
       h("div", { class: "acoes" },
         h("button", { type: "button", class: "botao", onclick: () => window.print() }, "Imprimir para a assembleia"),
         botaoCopiar("Copiar o texto da ficha", () => textoEscola(b, e, v.fonte, v.data_verificacao, extras)),
-        botaoCompartilhar(`${nome}, ${e.m}/${e.uf}`, urlPrevia))),
+        botaoCompartilhar(`${nome}, ${lugar}`, urlPrevia))),
     h("p", { class: "fonte s-fonte" }, `Fonte: ${v.fonte} (dados baixados em ${data(v.data_verificacao)}). Estradas: © colaboradores ` +
       "do OpenStreetMap (ODbL). ", RODAPE)));
+  // o traçado chega depois, sem segurar a tela: a página já pode rolar e receber o foco
   if (rs.length) {
-    const t = await tracados(codigo);
-    if (!vivo(g)) return;
-    trocar(lado, prancha(e, rs, t, p));
+    void tracados(codigo).then((t) => {
+      if (vivo(g)) trocar(lado, prancha(e, rs, t, p));
+    });
   }
 }

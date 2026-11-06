@@ -18,6 +18,7 @@ import { novaGeracao, vivo } from "./estado";
 import { telaAssunto, telaInicio, telaPergunta } from "./telas/inicio";
 
 const main = document.getElementById("conteudo") as HTMLElement;
+let ultimaRota = "#/";
 
 function marcarNav(primeiro: string): void {
   for (const a of document.querySelectorAll<HTMLAnchorElement>(".nav a")) {
@@ -27,7 +28,22 @@ function marcarNav(primeiro: string): void {
   }
 }
 
+function decodificar(t: string): string {
+  try {
+    return decodeURIComponent(t);
+  } catch {
+    return t; // "%E0" sozinho não é texto válido: usa como veio
+  }
+}
+
 async function rota(): Promise<void> {
+  // o link "Pular para o conteúdo" também mexe no "#": não é uma rota, só leva o foco ao conteúdo
+  if (location.hash === "#conteudo") {
+    history.replaceState(null, "", ultimaRota);
+    main.focus();
+    return;
+  }
+  ultimaRota = location.hash || "#/";
   const g = novaGeracao();
   const hash = location.hash.replace(/^#/, "") || "/";
   const [caminho, consulta = ""] = hash.split("?");
@@ -42,7 +58,7 @@ async function rota(): Promise<void> {
         await telaInicio(main, g);
         break;
       case "pergunta":
-        await telaPergunta(main, g, decodeURIComponent(partes.slice(1).join("/")));
+        await telaPergunta(main, g, decodificar(partes.slice(1).join("/")));
         break;
       case "orientacao":
         await telaPergunta(main, g, partes[1] ?? "", true);

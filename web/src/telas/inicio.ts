@@ -74,7 +74,9 @@ export async function telaAssunto(main: HTMLElement, g: number, tema: string): P
   if (!vivo(g)) return;
   const info = b.temas[tema];
   if (!info) {
-    trocar(main, h("p", { class: "erro" }, "Assunto não encontrado. ", h("a", { href: "#/" }, "Ver todos os assuntos"), "."));
+    document.title = "Assunto não encontrado: Escola em Pauta";
+    trocar(main, h("div", { class: "erro", role: "alert" }, h("h1", null, "Assunto não encontrado"),
+      h("p", null, h("a", { href: "#/" }, "Ver todos os assuntos"), ".")));
     return;
   }
   document.title = `${info.nome}: ${TITULO}`;

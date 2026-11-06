@@ -113,7 +113,7 @@ export function responder<E extends EscolaNome>(ctx: Contexto<E>, texto: string)
   const nada = { ids: [], escolas: [], parcial: false };
   if (!bruto) return { ...nada, tipo: "vazia", mensagem: MENSAGEM.vazia };
 
-  const codigo = codigoFalado(bruto) ?? bruto.replaceAll(" ", "").toUpperCase();
+  const codigo = codigoFalado(bruto) ?? bruto.split(" ").join("").toUpperCase();
   if (base.registros.has(codigo)) {
     return { ...nada, tipo: "codigo", rid: codigo, numeros: numeros(ctx, codigo, ""), ids: [codigo] };
   }

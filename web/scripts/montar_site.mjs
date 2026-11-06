@@ -44,7 +44,9 @@ const doApp = arquivos(DIST).filter((f) => !f.endsWith("sw.js")).sort();
 const hash = createHash("sha256");
 for (const f of doApp) hash.update(relative(DIST, f)).update(readFileSync(f));
 const versao = `${hash.digest("hex").slice(0, 10)}-${versaoDados}`;
-const casca = ["./", ...doApp.map((f) => relative(DIST, f).split("\\").join("/")).filter((f) => f !== "index.html" && !f.endsWith(".md"))];
+// previa.png (105 KB) é só para o cartão do link: o app nunca mostra, então não entra na instalação
+const casca = ["./", ...doApp.map((f) => relative(DIST, f).split("\\").join("/"))
+  .filter((f) => f !== "index.html" && f !== "previa.png" && !f.endsWith(".md"))];
 const sw = readFileSync(join(DIST, "sw.js"), "utf-8").replace("__VERSAO__", versao).replace("__CASCA__", JSON.stringify(casca));
 writeFileSync(join(SITE, "sw.js"), sw);
 
@@ -76,8 +78,11 @@ function resumo(e) {
   const lista = todas.length ? todas : rs;
   if (lista.length) {
     const p = lista.reduce((a, b) => (b.km < a.km ? b : a));
-    partes.push(`Se fechar: pelo menos ${km(p.km)} km por dia de estrada até a escola mais perto que oferece ` +
-      `${todas.length ? "as mesmas etapas" : "parte das etapas"}.`);
+    const qual = todas.length ? "as mesmas etapas" : "parte das etapas";
+    partes.push(p.km < 1
+      ? `Se fechar: a escola mais perto que oferece ${qual} fica no mesmo lugar ou quase (mesma coordenada pública).`
+      : `Se fechar: pelo menos ${km(p.km)} km por dia de estrada até a escola mais perto que oferece ${qual}.`);
+    if (e.rota.aviso) partes.push("Atenção: na região, parte do transporte escolar é por rio.");
   } else if (!e.geo) {
     partes.push("A localização desta escola não é pública no INEP.");
   }
@@ -87,7 +92,8 @@ function resumo(e) {
 
 function previa(e) {
   const nome = legivel(e.n);
-  const lugar = e.uf === "DF" ? "Distrito Federal" : `${e.m}, ${UF_NOME[e.uf] ?? e.uf}`;
+  const lugar = !e.m || !e.uf ? "município não informado no Censo"
+    : e.uf === "DF" ? "Distrito Federal" : `${e.m}, ${UF_NOME[e.uf] ?? e.uf}`;
   const titulo = `${nome}, ${lugar}`;
   const desc = resumo(e);
   const destino = `../#/escola/${e.c}`;

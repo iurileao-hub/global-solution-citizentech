@@ -52,6 +52,10 @@ async function redePrimeiro(req, cache) {
     const guardado = await caches.match(req, { ignoreSearch: req.mode === "navigate" });
     if (guardado) return guardado;
     if (req.mode === "navigate") {
+      // link de prévia (escola/<código>.html) sem rede: manda para a ficha no app, que está guardado. Servir a casca
+      // ali quebraria, porque os caminhos relativos dela (./assets/) apontariam para escola/assets/.
+      const escola = new URL(req.url).pathname.match(/\/escola\/(\d+)\.html$/);
+      if (escola) return Response.redirect(new URL(`./#/escola/${escola[1]}`, self.registration.scope).href, 302);
       const casca = await caches.match(new URL("./", self.registration.scope));
       if (casca) return casca;
     }

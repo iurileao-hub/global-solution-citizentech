@@ -25,6 +25,7 @@ function dadosLocais(): Plugin {
 export default defineConfig({
   base: "./", // caminhos relativos: o mesmo build serve em /global-solution-citizentech/ e em qualquer pasta
   plugins: [dadosLocais()],
-  build: { outDir: "dist", emptyOutDir: true, target: "es2020", assetsInlineLimit: 0 },
+  // es2019: "?." e "??" viram código antigo; Android de 2019 com Chrome < 80 ainda abre a página
+  build: { outDir: "dist", emptyOutDir: true, target: "es2019", assetsInlineLimit: 0 },
   test: { include: ["test/**/*.test.ts"], testTimeout: 60_000 },
 });

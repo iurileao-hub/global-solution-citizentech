@@ -104,7 +104,7 @@ export function prancha(e: Escola, receptoras: Receptora[], tracados: Tracado[] 
   const idDesc = "prancha-d-" + e.c;
   const svg = s("svg", { viewBox: `0 0 ${L} ${H}`, role: "img", "aria-labelledby": `${idTitulo} ${idDesc}` },
     s("title", { id: idTitulo }, `Mapa das estradas desta escola até ${rotas.length} escolas que poderiam receber os alunos`),
-    s("desc", { id: idDesc }, rotas.map((x) => `${x.letra}: ${x.r.n}, ${km(x.r.km)} km por dia, ida e volta`).join("; ")),
+    s("desc", { id: idDesc }, rotas.map((x) => `${x.letra}: ${x.r.n}, ${x.r.km < 1 ? "menos de 1" : km(x.r.km)} km por dia, ida e volta`).join("; ")),
     s("rect", { class: "p-fundo", x: MARGEM, y: MARGEM, width: L - 2 * MARGEM, height: H - 2 * MARGEM }));
 
   // gratícula e graus na moldura

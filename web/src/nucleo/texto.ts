@@ -61,7 +61,7 @@ export function codigoFalado(texto: string): string | null {
 }
 
 export function grafia(p: string): string {
-  return p.replaceAll("x", "ch");
+  return p.split("x").join("ch");
 }
 
 // do mais longo para o mais curto ("eme pe efe" antes de "eme pe"); sort é estável, como o sorted do Python
@@ -69,7 +69,7 @@ const SIGLAS_POR_TAMANHO = [...SIGLAS_FALADAS].sort((a, b) => b[0].length - a[0]
 
 function siglas(t: string): string {
   let s = ` ${t} `;
-  for (const [falada, sigla] of SIGLAS_POR_TAMANHO) s = s.replaceAll(` ${falada} `, ` ${sigla} `);
+  for (const [falada, sigla] of SIGLAS_POR_TAMANHO) s = s.split(` ${falada} `).join(` ${sigla} `);
   return s.trim();
 }
 

@@ -93,12 +93,12 @@ function ufDaChave(chave: string): string {
 function estado(t: string): [string | null, string] {
   for (const [nome, uf] of ESTADOS_POR_TAMANHO) {
     if (t.includes(` ${nome} `) && !EXPLICITO_MUNICIPIO.some((pre) => t.includes(` ${pre} ${nome} `))) {
-      return [uf, t.replaceAll(` ${nome} `, " ")];
+      return [uf, t.split(` ${nome} `).join(" ")];
     }
   }
   if (PARA_DEPOIS_DE.some((pre) => t.includes(` ${pre} para `))) return ["PA", t];
   const sigla = t.split(" ").find((p) => p.length === 2 && UFS_FECH.has(p) && !SIGLAS_AMBIGUAS.includes(p));
-  if (sigla) return [sigla.toUpperCase(), t.replaceAll(` ${sigla} `, " ")];
+  if (sigla) return [sigla.toUpperCase(), t.split(` ${sigla} `).join(" ")];
   return [null, t];
 }
 
