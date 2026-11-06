@@ -56,6 +56,10 @@ Só a biblioteca padrão do Python (3.10 ou mais recente). Funciona sem internet
 
 <p align="center"><img src="docs/img/01-abertura.png" alt="Abertura do assistente com o aviso de não oficial e o menu" width="70%"></p>
 
+A **[versão web](https://iurileao-hub.github.io/global-solution-citizentech/)** é o mesmo assistente no celular, com a ficha de cada escola e o mapa das estradas até as escolas que receberiam os alunos. Abaixo, da esquerda para a direita: uma pergunta respondida com a fonte, a ficha da EMEF Durval Máximo (Muniz Freire, ES) e a prancha do mapa, onde a estrada de chão aparece tracejada.
+
+<p align="center"><img src="docs/img/07-web-celular.png" alt="Versão web no celular: pergunta respondida, ficha da EMEF Durval Máximo e prancha do mapa com as rotas" width="100%"></p>
+
 ### 1. O problema, quem ele atinge e os temas abordados
 
 A LDB (art. 28, parágrafo único, incluído pela Lei 12.960/2014) exige que o fechamento de escolas do campo, indígenas e quilombolas seja precedido de manifestação do Conselho de Educação, que deve considerar a justificativa da Secretaria, um **diagnóstico do impacto** e a **manifestação da comunidade escolar**. A lei não define como esse diagnóstico deve ser feito, e um projeto de lei para padronizá-lo (PL 3.091/2024) está parado na Câmara desde maio de 2026. Na prática, a comunidade costuma ser chamada a se manifestar sem saber quais são os seus direitos, sem os números e sem saber a quem pedir. Os números só aparecem depois, no recurso ao Ministério Público ou na auditoria do Tribunal de Contas.
@@ -225,6 +229,8 @@ As seis personas concluíram as seis tarefas, incluindo a nova, que pede o núme
 
 Notas médias: facilidade 3,2; entendimento 3,8; confiança 3,5.
 
+**Varredura de tela da versão web.** Os testes conferem o texto das respostas, e a tela pode errar com o texto certo. `scripts/varrer_web.py` abre 121 telas (início, retrato, as 27 orientações, perguntas de exemplo e uma amostra de escolas escolhida pelos casos difíceis: cada UF com e sem rota, indígena, quilombola, escola sem município, nome mais longo) em 4 larguras, de 320 a 1.280 px. Ela procura rolagem lateral, texto quebrado letra a letra, conteúdo cortado, "null" ou "0,0 km" na tela e erro no console, e confere se a ficha impressa cabe em 2 páginas. Rodada contra o site publicado antes da correção, ela acusou a tabela do retrato espremida no celular, o defeito que motivou a ferramenta; depois das correções, não achou nenhum.
+
 **Próximo passo: validação com usuários reais** (famílias, professores, conselheiros, lideranças e quem atua nesses conflitos), pelo canal que essas pessoas usam, com as perguntas delas ampliando a base.
 
 <p align="center"><img src="docs/img/06-limites.png" alt="Pergunta fora do tema, entrada vazia e opção inexistente" width="70%"></p>
@@ -293,11 +299,19 @@ OpenStreetMap (Geofabrik)      ──┘
 
 No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais por dia da receptora. No Brasil, 930 escolas (114 mil alunos) passariam a ter 2 horas ou mais de ônibus por dia. "Receptora urbana" quer dizer que a escola mais próxima que recebe todas as etapas fica na cidade.
 
+<p align="center"><img src="docs/img/08-web-retrato.png" alt="Retrato do Brasil na versão web: mapa por UF das escolas a 50 km ou mais por dia" width="90%"></p>
+
+Na versão web, o retrato vira um mapa por UF, em degraus de cor. Amazonas, Pará e Amapá aparecem hachurados e sem número, porque parte do transporte escolar ali é por rio.
+
 A conta procura a receptora entre as 10 escolas mais próximas com rota. A ficha lista as 4 mais próximas e, quando nenhuma delas recebe todas as etapas, acrescenta em 5º lugar a mais próxima que recebe (3.417 escolas). Em 7% das escolas com rota (2.482), nenhuma das 10 recebe todas as etapas, e a família pode precisar de mais de uma escola. A primeira versão do cálculo olhava só as 4 mais próximas: quando nenhuma recebia todas as etapas, a conta caía numa escola que recebe só parte dos alunos, mais perto, e a mediana nacional saía 11,6 km em vez de 12,7.
 
 As escolas sem rota são de cinco tipos: 12.601 sem coordenada na base do Ipea; 4.092 longe demais da estrada mapeada, quase todas no Amazonas e no Pará, onde o transporte pode ser fluvial; 501 sem ligação na malha; 420 sem matrícula em 2025; 33 sem receptora a até 60 km. A cobertura é menor justamente nas escolas indígenas: só 1.142 das 3.664 têm rota.
 
 **Validação.** Em Muniz Freire (ES), na EMEF Durval Máximo, a área técnica do Tribunal de Contas estimou que os alunos "percorreriam até 52 km por dia" até a receptora indicada (Decisão 02423/2025-2). O nosso cálculo, de escola a escola, dá 25 km por dia, cerca da metade, porque não conhece a casa de cada criança. O resultado confirma o número como piso. Com uma única referência externa, ele vale como ordem de grandeza.
+
+<p align="center"><img src="docs/img/09-web-impressao.png" alt="Ficha da EMEF Durval Máximo impressa em duas páginas A4" width="90%"></p>
+
+A ficha impressa ocupa 2 páginas A4. Na frente ficam os números, as escolas que receberiam os alunos e o mapa. No verso, as perguntas que só a comunidade responde, com espaço para escrever na assembleia, e o que a lei pede, item por item.
 
 **Tendência de matrícula.** Testado em quase 2 mil escolas rurais (DF, SP, ES), prever a matrícula pela reta dos anos anteriores errou mais do que supor que ela fica igual ao último ano (erro médio de 24,4 contra 17,7 alunos em SP). Por isso a ficha e o assistente descrevem a série e não projetam.
 

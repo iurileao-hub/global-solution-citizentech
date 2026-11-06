@@ -125,6 +125,9 @@ a { color: var(--rio); text-underline-offset: 0.18em; text-decoration-thickness:
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--ocre); outline-offset: 2px; border-radius: 2px; }
 main:focus { outline: none; }
+/* o título recebe o foco a cada troca de tela (o leitor de tela anuncia onde a pessoa está); o contorno de foco
+   ali não indica nada que a pessoa possa acionar, e aparecia até na impressão */
+h1[tabindex="-1"]:focus { outline: none; }
 
 h1, h2, h3 {
   font-family: var(--serifa);
@@ -297,6 +300,9 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 .quadro caption { text-align: left; font-family: var(--serifa); font-weight: 700; font-size: 1.1rem; padding-bottom: 0.4rem; }
 .quadro th, .quadro td { text-align: left; padding: 0.45rem 0.5rem 0.45rem 0; border-bottom: 1px solid var(--fio); vertical-align: top; }
 .quadro td.num, .quadro th.num { text-align: right; white-space: nowrap; }
+/* o body usa overflow-wrap: anywhere (link longo não estoura a tela), mas numa tabela isso deixa a coluna de texto
+   encolher até uma letra por linha: "anywhere" entra na largura mínima da coluna, "break-word" não. */
+.quadro th, .quadro td { overflow-wrap: break-word; }
 .quadro thead th { font-size: 0.85rem; color: var(--tinta-2); font-weight: 700; border-bottom: 2px solid var(--tinta); }
 .serie { display: flex; align-items: flex-end; gap: 3px; height: 5.2rem; margin: 0.4rem 0 0.2rem; max-width: 24rem; }
 .serie .barra { flex: 1; background: var(--ocre); min-height: 1px; position: relative; }
@@ -422,6 +428,11 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 .uf-detalhe { min-height: 3.2rem; font-size: 0.95rem; }
 .tabela-rolagem { overflow-x: auto; }
 .tabela-rolagem .quadro { max-width: none; min-width: 34rem; }
+/* a coluna do lugar fica parada quando a tabela rola para o lado: sem ela, a linha perde o nome */
+.tabela-rolagem .quadro th[scope="row"], .tabela-rolagem .quadro thead th:first-child {
+  position: sticky; left: 0; z-index: 1; background: var(--papel); min-width: 8.5rem; max-width: 11rem;
+  box-shadow: 1px 0 0 var(--fio);
+}
 .brasil-numeros { display: grid; gap: 0.2rem 1.5rem; margin: 1rem 0; padding: 0; list-style: none; }
 @media (min-width: 40rem) { .brasil-numeros { grid-template-columns: 1fr 1fr; } }
 .brasil-numeros li { border-top: 1px solid var(--fio); padding: 0.6rem 0; }
