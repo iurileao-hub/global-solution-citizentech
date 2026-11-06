@@ -3,6 +3,8 @@
 Executar (na raiz do repositório):   python src/sistema.py
 Opções:  --modelo A|B   escolhe o modelo de resposta (padrão: B)
          --avaliar      roda as perguntas de teste e grava data/resultados_testes.csv
+         --simular      "e se estas escolas fecharem?" (ex.: --simular 32049501 ou
+                        --simular "Muniz Freire/ES" --menos-de 60)
 
 Só usa a biblioteca padrão do Python (3.10 ou mais recente) e funciona sem internet.
 Não pede nem guarda nenhum dado pessoal.
@@ -185,6 +187,48 @@ def sobre(ctx: Contexto) -> None:
         print(respostas._par(f"Escolas consultáveis: {n_esc} ({ctx.escolas.doc['fonte']})."))
 
 
+ARQ_SIMULACAO = RAIZ / "data" / "simulacao.json.gz"
+
+
+def simular(args) -> int:
+    """Modo de linha de comando do simulador (src/assistente/simulacao.py): imprime o diagnóstico do plano."""
+    from assistente import simulacao as sim
+    try:
+        doc = sim.carregar(ARQ_SIMULACAO)
+    except (OSError, ValueError) as e:
+        print(f"Simulador indisponível: {e}", file=sys.stderr)
+        return 1
+    alvo = args.simular.strip()
+    if re.fullmatch(r"[\d,\s]+", alvo):
+        codigos = [int(x) for x in re.split(r"[,\s]+", alvo) if x]
+        lugar = sim.lugar_da_escola(doc, codigos[0])
+        if lugar is None:
+            print(f"A escola {codigos[0]} não está entre as escolas do campo do índice.", file=sys.stderr)
+            return 1
+    else:
+        lugar = sim.lugar_por_nome(doc, alvo)
+        if lugar is None:
+            print(f'Município não encontrado: "{alvo}". Use "Município/UF", por exemplo "Muniz Freire/ES".', file=sys.stderr)
+            return 1
+        codigos = []
+    mun = sim.municipio(doc, lugar)
+    if args.menos_de is not None:
+        codigos = sorted(set(codigos) | set(sim.menores_que(mun, args.menos_de)))
+    indicacoes = {}
+    for x in args.indicar:
+        partes = x.split(":")
+        if len(partes) != 3 or not partes[0].isdigit() or not partes[2].isdigit():
+            print(f"Indicação inválida: {x} (formato ESCOLA:ETAPA:RECEPTORA)", file=sys.stderr)
+            return 1
+        indicacoes[f"{partes[0]}:{partes[1]}"] = int(partes[2])
+    r = sim.simular(mun, codigos, indicacoes)
+    if r["ignoradas"]:
+        print(f"Fora do plano (não são escolas do campo de {mun['municipio']}/{mun['uf']} no índice): "
+              + ", ".join(map(str, r["ignoradas"])))
+    print(sim.texto(r))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")   # terminal do Windows: acentos sem erro
@@ -197,7 +241,14 @@ def main(argv: list[str] | None = None) -> int:
                     help="arquivo de perguntas em data/ (ex.: perguntas_cegas.json)")
     ap.add_argument("--base", default=str(ARQ_BASE))
     ap.add_argument("--escolas", default=str(ARQ_ESCOLAS))
+    ap.add_argument("--simular", metavar="PLANO",
+                    help='"e se estas escolas fecharem?": códigos INEP separados por vírgula, ou "Município/UF" com --menos-de')
+    ap.add_argument("--menos-de", type=int, metavar="N", help="com --simular: todas as escolas do município com menos de N alunos")
+    ap.add_argument("--indicar", action="append", default=[], metavar="ESCOLA:ETAPA:RECEPTORA",
+                    help="com --simular: a receptora indicada pela prefeitura (ex.: 32049501:anos_iniciais:32050364)")
     args = ap.parse_args(argv)
+    if args.simular:
+        return simular(args)
 
     try:
         base = base_mod.carregar(args.base)

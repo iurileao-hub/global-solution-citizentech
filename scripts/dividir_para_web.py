@@ -22,6 +22,9 @@ Com --rotas-v2 (segunda passada, scripts/precalcular_rotas_v2.py), mais dois con
                        simulador "e se estas escolas fecharem?" precisa, no navegador, sem servidor: a cascata
                        percorre a lista de cada escola pulando as que também fecham. Receptora de outro
                        município não fecha na simulação (o simulador é por município).
+  data/simulacao.json.gz  os mesmos municípios num arquivo só, VERSIONADO: é o que o simulador do terminal
+                       (src/assistente/simulacao.py, `python src/sistema.py --simular`) e o contrato
+                       data/regressao_simulacao.json leem. Sai do MESMO dicionário que simulacao/: não divergem.
   tracados/NNNN.json   traçado da ida de cada rota (polyline do Google, precisão 5) e trechos de chão, em
                        PEDACOS_TRACADO pedaços por código INEP. Só baixa quando a pessoa abre o mapa da escola.
 
@@ -127,6 +130,22 @@ def dividir_v2(doc_v2: dict, lugares: list[tuple[str, str]]) -> dict[str, bytes]
     return arquivos
 
 
+ARQ_SIMULACAO = DADOS / "simulacao.json.gz"
+
+
+def juntar_simulacao(arquivos: dict[str, bytes], doc: dict, lugares: list[tuple[str, str]]) -> bytes:
+    """simulacao/LLLL.json -> um gzip só (data/simulacao.json.gz), com mtime zero para o hash não mudar à toa."""
+    municipios = {}
+    for nome, conteudo in sorted(arquivos.items()):
+        if nome.startswith("simulacao/"):
+            m = json.loads(conteudo)
+            municipios[str(m["lugar"])] = m["escolas"]
+    junto = compacto({"esquema": 1, "fonte": doc.get("fonte"), "data_verificacao": doc.get("data_verificacao"),
+                      "colunas_receptora": COLUNAS_RECEPTORA, "lugares": [list(x) for x in lugares],
+                      "municipios": municipios})
+    return gzip.compress(junto, compresslevel=9, mtime=0)
+
+
 def dividir(doc: dict) -> dict[str, bytes]:
     """Índice -> {caminho relativo: conteúdo}. Sem tocar em disco (o teste usa direto)."""
     arquivos: dict[str, bytes] = {}
@@ -203,6 +222,8 @@ def main(argv: list[str] | None = None) -> int:
         from precalcular_rotas import ler_todas
         v2 = json.loads((a.rotas_v2 / "meta.json").read_text())
         arquivos.update(dividir_v2(aplicar_v2(doc, ler_todas(a.rotas_v2)), lugares_de(doc)))
+        ARQ_SIMULACAO.write_bytes(juntar_simulacao(arquivos, doc, lugares_de(doc)))
+        print(f"  {ARQ_SIMULACAO.relative_to(RAIZ)}: {ARQ_SIMULACAO.stat().st_size / 1e6:.1f} MB")
     for nome in COPIAS:
         if (DADOS / nome).exists():
             arquivos[nome] = (DADOS / nome).read_bytes()
