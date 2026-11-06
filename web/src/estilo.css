@@ -284,7 +284,6 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 .caminhos ul { list-style: none; padding: 0; margin: 0 0 1rem; }
 .caminhos li { margin: 0; }
 .caminhos a { display: inline-block; padding: 0.5rem 0; }
-.codigo { font-variant-numeric: tabular-nums; color: var(--tinta-2); font-size: 0.85rem; margin-right: 0.35rem; }
 .opcoes { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
 .opcoes a {
   display: block; padding: 0.7rem 0.9rem; border: 1px solid var(--fio); border-radius: 2px;

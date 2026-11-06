@@ -1,5 +1,7 @@
 /** Desenha a resposta do assistente (o objeto do núcleo) como um "verbete". O texto é o da base, palavra por
- * palavra; o que muda do terminal é só a diagramação (links no lugar de "[C1]", tabela no lugar das linhas). */
+ * palavra; o que muda do terminal é só a diagramação (links no lugar de "[C1]", tabela no lugar das linhas).
+ * O código da orientação ("D1") não aparece na tela: é atalho de teclado do terminal, e para quem lê no celular
+ * o nome da orientação é a própria pergunta. A busca continua aceitando "D1", e o texto copiado é o do terminal. */
 
 import { h } from "../dom";
 import type { Base } from "../nucleo/base";
@@ -13,8 +15,7 @@ import { botaoCompartilhar, botaoCopiar, comCodigos } from "./componentes";
 type Ctx = Contexto<EscolaNome>;
 
 function linkOrientacao(base: Base, rid: string): HTMLElement {
-  return h("li", null, h("a", { href: `#/orientacao/${rid}` },
-    h("span", { class: "codigo" }, rid), base.registros.get(rid)!.pergunta));
+  return h("li", null, h("a", { href: `#/orientacao/${rid}` }, base.registros.get(rid)!.pergunta));
 }
 
 export function caminhos(base: Base, titulo: string, ids: string[]): HTMLElement | null {
@@ -81,7 +82,7 @@ function verbeteOrientacao(ctx: Ctx, r: Extract<Resposta, { tipo: "unica" | "cod
   const base = ctx.base;
   const reg = base.registros.get(r.rid)!;
   const tema = base.temas[reg.tema];
-  const existe = (c: string) => base.registros.has(c);
+  const pergunta = (c: string) => base.registros.get(c)?.pergunta;
   const fora = r.tipo === "unica" ? r.fora : [];
   const extras = r.tipo === "unica" ? r.extras : [];
   const rel = (reg.relacionados ?? []).slice(0, 3);
@@ -92,15 +93,14 @@ function verbeteOrientacao(ctx: Ctx, r: Extract<Resposta, { tipo: "unica" | "cod
       avisoParcial(fora).replace(/^Atenção: /, "")) : null,
     h("a", { class: "tema-rotulo", href: `#/assunto/${reg.tema}` }, tema.nome),
     h("h1", null, reg.pergunta),
-    h("p", null, comCodigos(reg.orientacao, existe)),
+    h("p", null, comCodigos(reg.orientacao, pergunta)),
     r.numeros ? quadroFechamentos(r.numeros) : null,
-    reg.confirmar ? h("div", { class: "confirme" }, h("strong", null, "Confirme"), h("span", null, comCodigos(reg.confirmar, existe))) : null,
+    reg.confirmar ? h("div", { class: "confirme" }, h("strong", null, "Confirme"), h("span", null, comCodigos(reg.confirmar, pergunta))) : null,
     h("p", { class: "fonte" },
       reg.dados
         ? ["Fonte: ", h("a", { href: ref.url, rel: "noopener" }, ref.titulo), ". Os totais foram contados pelo projeto; o texto ",
           `desta orientação foi conferido em ${data(reg.data_verificacao)}.`]
-        : ["Fonte: ", h("a", { href: ref.url, rel: "noopener" }, ref.titulo), `. Conferida em ${data(reg.data_verificacao)}.`],
-      " ", h("span", { class: "codigo" }, `(orientação ${reg.id})`)),
+        : ["Fonte: ", h("a", { href: ref.url, rel: "noopener" }, ref.titulo), `. Conferida em ${data(reg.data_verificacao)}.`]),
     caminhos(base, "Para continuar", rel),
     caminhos(base, "Talvez também interesse", extras),
     h("div", { class: "acoes" },
@@ -113,7 +113,7 @@ function verbeteAmbigua(ctx: Ctx, ids: string[]): HTMLElement {
   return h("article", { class: "verbete" },
     h("h1", null, "Sua pergunta combina com mais de um assunto. Qual deles?"),
     h("ul", { class: "opcoes" }, ids.map((x) => h("li", null, h("a", { href: `#/orientacao/${x}` },
-      h("span", { class: "codigo" }, x), ctx.base.registros.get(x)!.pergunta)))),
+      ctx.base.registros.get(x)!.pergunta)))),
     h("p", null, "Ou reformule a pergunta com outras palavras."));
 }
 

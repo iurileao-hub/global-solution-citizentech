@@ -106,15 +106,25 @@ export function botaoCompartilhar(titulo: string, url: string): HTMLButtonElemen
   return b;
 }
 
-/** Troca "D1", "C5" citados no texto da base por links para a orientação. */
-export function comCodigos(texto: string, existe: (c: string) => boolean): (string | HTMLElement)[] {
-  const partes: (string | HTMLElement)[] = [];
+/** Corta o texto da base nas citações de outra orientação ("veja C1"): trechos de texto e, entre eles, a orientação
+ * citada com a sua pergunta. Código que não existe na base fica como texto. Parte pura: os testes conferem que
+ * nenhum trecho se perde. */
+export function partesComCodigos(texto: string, pergunta: (c: string) => string | undefined):
+  (string | { rid: string; pergunta: string })[] {
+  const partes: (string | { rid: string; pergunta: string })[] = [];
   let ultimo = 0;
   for (const m of texto.matchAll(/\b([CDFT]\d{1,2})\b/g)) {
-    if (!existe(m[1])) continue;
-    partes.push(texto.slice(ultimo, m.index), h("a", { href: `#/orientacao/${m[1]}` }, m[1]));
+    const p = pergunta(m[1]);
+    if (!p) continue;
+    partes.push(texto.slice(ultimo, m.index), { rid: m[1], pergunta: p });
     ultimo = m.index! + m[0].length;
   }
   partes.push(texto.slice(ultimo));
   return partes;
+}
+
+/** "(veja C1)" vira "(veja “Como pedir à prefeitura…?”)", com link: o código só faz sentido no terminal. */
+export function comCodigos(texto: string, pergunta: (c: string) => string | undefined): (string | HTMLElement)[] {
+  return partesComCodigos(texto, pergunta).map((x) =>
+    typeof x === "string" ? x : h("a", { href: `#/orientacao/${x.rid}` }, `“${x.pergunta}”`));
 }

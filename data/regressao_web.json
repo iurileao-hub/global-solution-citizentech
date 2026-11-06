@@ -3,7 +3,7 @@
  "descricao": "Gera data/regressao_web.json: o que o núcleo Python responde às 130 perguntas rotuladas e a buscas de escola.",
  "modelo": "B",
  "insumos": {
-  "base_orientacoes.json": "5320a917aedb0114d998265f6ab834ed96381764897cfee5aa6470d5db15128b",
+  "base_orientacoes.json": "eb5102db5990aa6c6cfc62c7428b8062eb04f1f96bbdb7688a17e212f30b817c",
   "fechamentos.json": "a630e384d4fe57c1d4729ac75b5b872175e3a5a3be68ea3e1ba080abb62960af",
   "escolas_campo.json.gz": "587ba442b91924877c9c40131ed2e420c18bd1c147d6518d3b247db9b6fe6175",
   "perguntas_teste.json": "4fc281400f4c7fffa01f7791acb2a3e12553cefab19f51e068d66e3610936f79",
@@ -68,7 +68,7 @@
     ],
     "escolas": [],
     "parcial": false,
-    "texto": "Assunto: Uma escola na cidade com alunos da zona rural conta como escola do campo? [Direitos e leis] Pode contar. Pela regra federal, escola do campo é a que fica na área rural ou a que fica em área urbana mas atende predominantemente populações do campo. População do campo inclui agricultores familiares, assentados, ribeirinhos, quilombolas, indígenas e outros que vivem do trabalho no meio rural. Fonte: Decreto 7.352/2010, art. 1º, §1º. Conferida em 05/11/2026 em https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2010/decreto/d7352.htm Confirme: O Censo Escolar mostra quantos alunos moram na zona rural; a consulta de escolas deste assistente traz esse número. Para continuar: [D1] O que a lei exige antes de fechar uma escola do campo? [F1] De onde vêm os números das escolas? Talvez também interesse: [F5] Quantas escolas do campo já fecharam no meu estado ou município? (Não oficial: confira com o órgão responsável.)"
+    "texto": "Assunto: Uma escola na cidade com alunos da zona rural conta como escola do campo? [Direitos e leis] Pode contar. Pela regra federal, escola do campo é a que fica na área rural ou a que fica em área urbana mas atende predominantemente populações do campo. População do campo inclui agricultores familiares, assentados, ribeirinhos, quilombolas, indígenas e outros que vivem do trabalho no meio rural. O Censo Escolar do INEP classifica cada escola só como urbana ou rural; a lei fala em escola do campo, que inclui as rurais e também essas escolas da cidade. Fonte: Decreto 7.352/2010, art. 1º, §1º. Conferida em 06/11/2026 em https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2010/decreto/d7352.htm Confirme: O Censo Escolar mostra quantos alunos moram na zona rural; a consulta de escolas deste assistente traz esse número. Para continuar: [D1] O que a lei exige antes de fechar uma escola do campo? [F1] De onde vêm os números das escolas? Talvez também interesse: [F5] Quantas escolas do campo já fecharam no meu estado ou município? (Não oficial: confira com o órgão responsável.)"
    }
   },
   {
