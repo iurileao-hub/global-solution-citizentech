@@ -13,6 +13,15 @@
 
 Global Solution 2026, 2º semestre. Desafio CitizenTech, case Citizen Assist AI.
 
+> **TL;DR**
+>
+> - **O problema.** Antes de fechar uma escola do campo, a LDB exige um diagnóstico do impacto e a manifestação da comunidade. A comunidade chega à reunião sem saber os direitos e sem os números. De 2019 a 2025, 19.159 escolas públicas rurais foram extintas.
+> - **A solução.** Um assistente que responde em linguagem simples com 27 orientações conferidas no texto oficial, sempre com fonte e data, e que diz "não sei" quando a base não cobre a pergunta. Junto, a ficha de cada uma das **53.759 escolas do campo**: alunos por etapa, transporte, série da matrícula e quanta estrada separa a escola das que receberiam os alunos.
+> - **Como funciona.** Regras explícitas e índice invertido, sem modelo de linguagem gerando resposta. Rotas pela malha do OpenStreetMap, com Dijkstra e velocidade de ônibus escolar, pré-calculadas para 36.112 escolas. O terminal usa só a biblioteca padrão do Python; a versão web é o mesmo núcleo em TypeScript, preso ao terminal por um contrato de 130 perguntas.
+> - **O que os números mostram.** Se a escola fechar, a mediana é de pelo menos 12,7 km por dia até a escola mais próxima que recebe todas as etapas. No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais. 930 escolas (114 mil alunos) passariam a 2 horas ou mais de ônibus por dia. Na EMEF Durval Máximo (ES), o cálculo dá 25 km por dia, coerente como piso com os "até 52 km" estimados pelo Tribunal de Contas.
+> - **A medida honesta.** Em 50 perguntas escritas às cegas, antes de qualquer ajuste, o assistente acertou 68%. Numa rodada nova, com 60 perguntas, 52%, e o erro foi quase todo "não sei" (20 casos contra 3 respostas erradas sem aviso). Os usuários dos testes foram simulados, e isso está declarado.
+> - **Para usar.** `python src/sistema.py` (Python 3.10 ou mais recente, sem instalar nada, sem internet) ou a **[versão web](https://iurileao-hub.github.io/global-solution-citizentech/)** no celular, que funciona sem sinal depois da primeira visita.
+
 ## Grupo 9
 
 ## 👨‍🎓 Integrantes
@@ -76,6 +85,9 @@ O problema foi escolhido por um processo explícito, antes de qualquer decisão 
 | `perguntas_cegas.json` | 50 perguntas escritas às cegas por personas simuladas, com o rótulo do juiz |
 | `perguntas_r3.json` | 60 perguntas da terceira rodada (seis personas novas), com o rótulo de um juiz novo |
 | `fechamentos.json` | Escolas públicas rurais ativas, paralisadas e extintas de 2019 a 2025, por UF e município (Censo), gerado por `scripts/gerar_fechamentos.py` |
+| `retrato_rotas.json` | O retrato nacional das rotas por Brasil, região, UF e localização diferenciada (seção 8), gerado por `scripts/gerar_retrato_rotas.py` |
+| `regressao_web.json` | O contrato entre o terminal e a versão web: as respostas do Python às 130 perguntas rotuladas e a 12 buscas de escola (ver Decisões Técnicas) |
+| `resultados_*.csv`, `indicadores*.json` | O registro de cada rodada de avaliação (seção 4): esperado, obtido, classificação e tempo |
 
 **Origem das orientações.** Cada norma foi lida no texto oficial (Planalto, MEC/CNE, Senado, Câmara, FNDE, INEP, Prefeitura de Santa Cruz do Sul, Ministério Público de Contas do ES) em 05/11/2026. A conferência registrou correções que mudaram o texto da base: o mínimo de compra da agricultura familiar no PNAE subiu para **45%** em 2026 (a página do FNDE ainda diz 30%); a nucleação dos anos iniciais é permitida em caráter excepcional, dentro do campo; e "paralisada", no Censo, significa atividades **temporariamente suspensas**, sem extinção formal.
 
@@ -98,7 +110,7 @@ O problema foi escolhido por um processo explícito, antes de qualquer decisão 
 
 ### 3. Regras de resposta, modelos de instrução e tratamento das limitações
 
-As respostas nunca saem da base: o texto da orientação é o do registro, palavra por palavra. A ordem das regras, em `src/assistente/nucleo.py`, é: entrada vazia → código digitado (D1, C5...) → nome de escola → busca nas orientações → "sem base suficiente".
+As respostas nunca saem da base: o texto da orientação é o do registro, palavra por palavra. A ordem das regras, em `src/assistente/nucleo.py`, é: entrada vazia → código digitado (D1, C5, ou falado: "ce um") → número solto, que não é código de escola → nome de escola → números de fechamento, quando a pergunta pede contagem ou cita um lugar ("quantas escolas fecharam no Piauí?") → busca nas orientações → "sem base suficiente". A primeira regra que se aplica decide.
 
 **Dois modelos de instrução de resposta**, escritos como especificação (papel, formato, regras) em `src/assistente/respostas.py` e cumpridos por código:
 
@@ -253,11 +265,12 @@ A versão web está publicada no link da seção Links. Para rodá-la localmente
 - **Não oficial.** O aviso aparece na abertura e no rodapé de cada resposta: o assistente é feito por estudantes, não fala por nenhum órgão público, e a pessoa deve confirmar com a Secretaria, o Conselho, o Ministério Público ou a Defensoria. O assistente não promete atendimento nem integração com órgão público.
 - **Privacidade.** O assistente não pede nome, endereço nem documento, e não grava o que é digitado. Os números das escolas são públicos e contam escolas, nunca identificam crianças. Por isso a distância é sempre de escola a escola: calcular a partir da casa de cada criança exigiria um dado pessoal que o problema não justifica.
 - **Clareza.** Orientações em frases curtas (15 palavras por frase, em média, no modelo B), com o termo técnico explicado quando aparece ("nucleação", "órgão normativo"). O assistente mostra o assunto que entendeu, para a pessoa conferir.
-- **Acessibilidade.** A interface é só texto, o que funciona com leitores de tela e em computadores modestos, sem internet. As entradas aceitam erros de acento e maiúsculas.
+- **Acessibilidade.** A interface do terminal é só texto, o que funciona com leitores de tela e em computadores modestos, sem internet. As entradas aceitam erros de acento e maiúsculas, a grafia do reconhecimento de voz ("fexar") e siglas ditas letra a letra ("elê dê bê").
+- **Versão web.** Fonte Atkinson Hyperlegible, desenhada para leitores com baixa visão; contraste conferido; alvos de toque grandes; link para pular ao conteúdo. A primeira tela pesa 38 KB comprimidos, para abrir em conexão fraca, e depois da primeira visita o site funciona sem sinal. A ficha impressa sai em 2 páginas A4, com o verso livre para a comunidade escrever na assembleia.
 
 ### 8. De onde vêm os números das escolas
 
-O assistente é a camada de consulta da **Escola em Pauta**, que gera, para cada escola, uma ficha de duas páginas com o mesmo número para a comunidade e o Conselho ([site com as fichas](https://iurileao-hub.github.io/global-solution-citizentech/)).
+O assistente é a camada de consulta da **Escola em Pauta**, que gera, para cada escola, uma ficha de duas páginas com o mesmo número para a comunidade e o Conselho ([versão web](https://iurileao-hub.github.io/global-solution-citizentech/), com o mapa das estradas até as receptoras).
 
 ```
 Censo Escolar (INEP, 2019-2025) ─┐
@@ -307,14 +320,17 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 2. Trocar o radical por um algoritmo de redução de palavras feito para o português (como o RSLP).
 3. Um modelo de linguagem como camada opcional de redação, com a resposta conferida contra a base antes de ser mostrada.
 4. Um servidor que calcule na hora a rota de escola ainda não calculada, com fila, alimentando o mesmo índice.
-5. Recuperar coordenadas pelo cadastro de endereços do IBGE (CNEFE 2022), casando o nome da escola no município. Testado em AC, AM e BA: recupera de 33% a 45% das escolas sem ponto, mas em 5% (BA) a 23% (AC) dos casos de controle o ponto diverge mais de 5 km, então só serviria com rótulo de coordenada estimada.
+5. O simulador "e se estas escolas fecharem?" na versão web, para ver para onde iriam os alunos quando várias escolas fecham em cascata. Os dados por município (as 10 receptoras de cada escola) já foram gerados.
+6. Recuperar coordenadas pelo cadastro de endereços do IBGE (CNEFE 2022), casando o nome da escola no município. Testado em AC, AM e BA: recupera de 33% a 45% das escolas sem ponto, mas em 5% (BA) a 23% (AC) dos casos de controle o ponto diverge mais de 5 km, então só serviria com rótulo de coordenada estimada.
 
 ## 📁 Estrutura de pastas
 
-* **`src/`** código-fonte. `sistema.py` é o ponto de entrada; `assistente/` é o assistente (só biblioteca padrão); `escola_em_pauta/` gera fichas, site e rotas.
-* **`data/`** base de orientações, índice de escolas, perguntas de teste e resultados da avaliação.
+* **`src/`** código-fonte. `sistema.py` é o ponto de entrada; `assistente/` é o assistente (só biblioteca padrão); `escola_em_pauta/` lê o Censo, as coordenadas e o OpenStreetMap, calcula as rotas e monta a ficha.
+* **`web/`** a versão web (TypeScript + Vite): `src/nucleo/` é o assistente reescrito, preso ao contrato; `src/telas/` são as telas (ficha, mapa, retrato); `public/sw.js` é o funcionamento sem sinal; `test/` tem os testes, inclusive o do contrato; `scripts/montar_site.mjs` monta o site e as prévias de link.
+* **`data/`** base de orientações, índice de escolas, fechamentos, retrato das rotas, contrato da web, perguntas de teste e resultados da avaliação.
 * **`docs/`** metodologia, uso de IA, roteiro do teste de usabilidade e imagens do README.
-* **`scripts/`** geração do índice, pré-cálculo das rotas, prints do README e publicação do site.
+* **`scripts/`** geração do índice, dos fechamentos e do retrato, pré-cálculo das rotas, preparo dos dados da web, prints do README e publicação do site.
+* **`.github/workflows/`** a verificação automática da versão web (tipos, testes e build) a cada envio.
 * **`README.md`** este arquivo.
 
 ## 📎 Links e Observações

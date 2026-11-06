@@ -12,7 +12,8 @@ O projeto foi desenvolvido com o **Claude Code** (Anthropic, modelos da família
 |---|---|---|
 | Escolha do problema | levantamento de queixas em 5 famílias de fontes, agrupamento e pontuação (ver `docs/metodologia.md`) | a escolha entre os finalistas, o recorte e o teto de esforço |
 | Base de orientações | rascunho das orientações e verificação de cada norma por um agente que abriu o texto oficial e copiou o trecho literal | aprovação dos temas e dos registros; inclusão da alimentação escolar; decisão de manter os casos indígena/quilombola e o caso de Muniz Freire |
-| Código | escrita do código, dos testes e dos scripts | decisões de arquitetura (camadas, pré-cálculo, critério de transporte fluvial) |
+| Código | escrita do código, dos testes e dos scripts, inclusive a reescrita do núcleo em TypeScript para a versão web e o contrato que a prende ao terminal | decisões de arquitetura (camadas, pré-cálculo, critério de transporte fluvial, linguagem da versão web, publicação) |
+| Revisão adversarial | um segundo modelo recebeu a escolha do problema e, depois, a versão web, com a missão de atacar o que considerávamos mais sólido | quais achados aceitar; os aceitos estão em `docs/metodologia.md` e nas correções do site |
 | Prompts | os dois modelos de instrução de resposta (A e B) foram escritos como especificação e comparados nas perguntas de teste | escolha do modelo padrão |
 | Testes | planejamento das perguntas de teste e dos indicadores | o segundo conjunto de perguntas e o teste de usabilidade, feitos por pessoas que não viram a base |
 | Textos | revisão de linguagem do README | revisão final |
@@ -36,6 +37,10 @@ Erros da IA no código, achados por teste ou por uso:
 - Para tirar o nome do lugar da conta da busca, o programa passou a apagar nomes de município da pergunta. "Própria" e "Modelo" são municípios (Propriá, em Sergipe, e Modelo, em Santa Catarina), e sumiam de "escola própria" e "modelo de diagnóstico". O nome agora só conta como lugar depois de "em", "de", "no" ou antes da sigla do estado.
 - A primeira contagem de escolas indígenas e quilombolas fechadas deu zero no Brasil inteiro. O Censo só marca a localização diferenciada enquanto a escola funciona; paralisada e extinta vêm em branco. A contagem passou a usar a localização do último ano em atividade e é apresentada como piso ("pelo menos").
 - Uma URL de lei foi escrita de memória na base e trocada pela que o agente de fontes de fato abriu, antes do commit.
+- Na versão web, o leitor dos traçados seguia um formato provisório, diferente do arquivo que o pré-cálculo de fato gravou. A captura de tela de uma escola de Mato Grosso mostrou o mapa sem estrada, e o leitor foi corrigido.
+- A revisão adversarial da versão web achou cinco problemas que bloqueavam a publicação, todos corrigidos antes de publicar: o link "pular para o conteúdo" levava a uma página de erro; 171 fichas diziam "0,0 km" para escolas no mesmo endereço (agora "no mesmo lugar ou quase"); o cartão do link das escolas do Norte saía sem o aviso de transporte por rio; uma escola sem município no Censo aparecia como "null, null"; e o link antigo da ficha não abria sem sinal.
+- Ao tirar da tela os códigos das orientações (D1, C5), a primeira versão da troca perdia o texto depois da última citação, e sumia o parágrafo principal das orientações. Os testes passavam, porque conferiam o texto e não a tela; a captura de tela pegou o erro antes da publicação, e um teste novo confere que nenhum trecho se perde.
+- Uma mensagem de commit citou 39.852 escolas sem conferir; o número certo é 41.158. A correção ficou registrada no commit seguinte.
 
 ## O que a IA não decidiu
 

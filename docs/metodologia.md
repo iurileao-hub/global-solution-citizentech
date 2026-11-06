@@ -117,6 +117,11 @@ Os 70% são otimistas pelo mesmo motivo das rodadas anteriores. Além disso, um 
 
 Uma falha do próprio teste também entrou no registro: os agentes rodavam ao mesmo tempo e alguns gravaram um script auxiliar com o mesmo nome numa pasta compartilhada, então teclas de uma persona chegaram ao terminal de outra. Quem percebeu refez as tarefas num terminal isolado. Sessões separadas não bastaram; cada agente precisa de um terminal próprio e de arquivos com nome único.
 
+**6. Versão web: mesma resposta, conferida na tela.** O assistente foi reescrito em TypeScript para rodar no celular, e uma reescrita pode divergir sem ninguém notar. Três verificações seguram isso:
+- **Contrato com o terminal.** O núcleo Python gravou o que responde às 130 perguntas rotuladas das três rodadas, a 12 buscas de escola e à normalização dos nomes das 53.759 escolas (`data/regressao_web.json`). O teste da web exige o mesmo texto, palavra por palavra, e roda a cada envio ao GitHub. Bateu de primeira, porque as diferenças entre as linguagens foram previstas lendo o código; a principal é o arredondamento (o Python leva 12,5 para 12, o JavaScript para 13).
+- **Revisão adversarial antes de publicar.** Um segundo modelo recebeu o site com a missão de quebrá-lo e achou cinco problemas que bloqueavam a publicação, todos corrigidos. O mais instrutivo: 171 fichas diziam "0,0 km, 1 min de ônibus" para escolas no mesmo endereço. Era um número tecnicamente certo e enganoso para quem lê, e virou "no mesmo lugar ou quase". A revisão também tentou, sem conseguir, injetar código pela busca e pelo endereço e misturar versões de dados guardadas no celular.
+- **Captura de tela de cada mudança visível.** Os testes conferem o texto da resposta, e a tela pode errar mesmo com o texto certo. Duas falhas só apareceram na captura: um mapa sem estrada, porque o leitor seguia um formato provisório dos traçados, e um parágrafo que sumia depois de uma citação. A segunda ganhou um teste automático; a leitura dos traçados ainda é conferida só na tela.
+
 **Próximo passo: validação com usuários reais.** O teste simulado acha defeitos grosseiros, mas não substitui pessoas. Um agente lê a tela inteira, não cansa, sabe usar terminal e escreve melhor que muita gente; o tempo que ele leva numa tarefa não diz nada sobre o tempo de uma pessoa. A validação seguinte deveria:
 - ouvir quem vive o problema: famílias e professores de escolas do campo, conselheiros municipais, lideranças quilombolas e indígenas, e quem já atua nesses conflitos (Defensoria, Ministério Público, fóruns de educação do campo);
 - usar o canal que essas pessoas usam, provavelmente o celular, e não o terminal;
@@ -133,7 +138,7 @@ Uma falha do próprio teste também entrou no registro: os agentes rodavam ao me
 
 ## Uso de IA
 
-As buscas da Fase 1, a anamnese documental da Fase 3, a revisão adversarial, a conferência das fontes da base e o teste de usabilidade simulado foram executados por agentes de IA (modelos Claude, da Anthropic), com instruções e critérios definidos pela equipe. A pontuação, a conferência de fontes e as escolhas passam por revisão humana. O registro detalhado do uso de IA acompanha a entrega.
+As buscas da Fase 1, a anamnese documental da Fase 3, a revisão adversarial, a conferência das fontes da base e o teste de usabilidade simulado foram executados por agentes de IA (modelos Claude, da Anthropic), com instruções e critérios definidos pela equipe. A pontuação, a conferência de fontes e as escolhas passam por revisão humana. O registro detalhado, com os erros da IA que a conferência pegou, está em [`docs/uso_ia.md`](uso_ia.md).
 
 ## Limitações
 
