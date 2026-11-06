@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Publica a pasta site/ (montada por web/scripts/montar_site.mjs) na branch gh-pages, servida pelo GitHub Pages.
+# Publica a pasta site/ (montada por web/scripts/montar_site.mjs) na branch gh-pages e dispara o deploy do Pages
+# (workflow .github/workflows/pages.yml).
 # A branch gh-pages só tem o site gerado; o código fica na main. Uso: scripts/publicar_pages.sh
 set -euo pipefail
 raiz=$(git rev-parse --show-toplevel)
@@ -18,4 +19,8 @@ git -C "$tmp" add -A
 if git -C "$tmp" diff --cached --quiet; then echo "nada mudou no site"; exit 0; fi
 git -C "$tmp" commit -q -m "Site gerado em $(date +%F)"
 git -C "$tmp" push -q origin gh-pages
-echo "publicado na branch gh-pages"
+echo "enviado para a branch gh-pages"
+# o Pages publica pelo workflow .github/workflows/pages.yml (fonte "GitHub Actions", limite de tempo nosso):
+# o deploy automático da branch estourava os 10 minutos com ~60 mil arquivos
+gh workflow run pages.yml --ref main -R iurileao-hub/global-solution-citizentech
+echo "deploy disparado: gh run list --workflow pages.yml"

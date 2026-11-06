@@ -1,0 +1,35 @@
+# Publica no GitHub Pages o site que já está na branch gh-pages (montado na VM por web/scripts/montar_site.mjs e
+# enviado por scripts/publicar_pages.sh, que dispara este workflow no fim).
+#
+# Por que um workflow próprio (decisão de Iúri, 06/11/2026): o deploy automático do Pages a partir da branch tem
+# limite fixo de 10 minutos, e com ~60 mil arquivos (53.759 prévias de link + 4.479 municípios do simulador +
+# traçados) a sincronização passou a estourar o limite em toda tentativa. Aqui o limite é nosso (timeout).
+# O site não é montado no CI: os dados brutos (Censo, OpenStreetMap, ~3 GB) não estão no repositório.
+name: pages
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 1
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: .
+      - id: deploy
+        uses: actions/deploy-pages@v5
+        with:
+          timeout: 2400000 # 40 minutos
