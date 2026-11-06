@@ -19,7 +19,7 @@ const ORDEM_ETAPAS = ["creche", "pre_escola", "anos_iniciais", "anos_finais", "m
 export const ESGOTADA = "lista_esgotada";
 export const NENHUMA_OFERECE = "nenhuma_oferece";
 
-/** Linha de receptora em simulacao/LLLL.json: [c, n, rural, km, min, chao, etapas, mat, salas, m, uf]. */
+/** Linha de receptora em simulacao/NNN.json (municipios[linha].escolas[].r): [c, n, rural, km, min, chao, etapas, mat, salas, m, uf]. */
 export type LinhaReceptora = [number, string, boolean, number, number, number | null, string[], number | null,
   number | null, string | null, string | null];
 

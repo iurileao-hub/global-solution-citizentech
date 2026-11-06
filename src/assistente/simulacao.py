@@ -64,7 +64,7 @@ def carregar(caminho: Path) -> dict:
 
 
 def municipio(doc: dict, lugar: int) -> dict:
-    """O mesmo formato de site/dados/simulacao/LLLL.json."""
+    """Um município no formato que o simulador usa (o mesmo de municipios[linha] em site/dados/simulacao/NNN.json)."""
     uf, m = doc["lugares"][lugar]
     return {"lugar": lugar, "uf": uf, "municipio": m, "escolas": doc["municipios"].get(str(lugar), [])}
 
