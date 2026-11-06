@@ -59,7 +59,9 @@ def filtrar(escolas: list[dict], municipio: str = "", uf: str = "") -> list[dict
     m, u = normalizar(municipio), uf.strip().lower()
     saida = [e for e in escolas
              if (not m or m in normalizar(e["m"] or "")) and (not u or (e["uf"] or "").lower() == u)]
-    return sorted(saida, key=lambda e: (e["uf"] or "", e["m"] or "", e["n"] or ""))
+    # o código desempata nome repetido no mesmo município: sem ele a ordem seguiria a do conjunto da interseção,
+    # que o Python não garante, e a versão web (que tem de mostrar a mesma lista) não teria como reproduzir
+    return sorted(saida, key=lambda e: (e["uf"] or "", e["m"] or "", e["n"] or "", e["c"]))
 
 
 def busca_linear(escolas: list[dict], consulta: str) -> list[dict]:

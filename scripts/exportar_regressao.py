@@ -33,6 +33,7 @@ from assistente import escolas as escolas_mod  # noqa: E402
 from assistente import fechamentos as fech_mod  # noqa: E402
 from assistente.avaliacao import classificar  # noqa: E402
 from assistente.nucleo import montar, responder  # noqa: E402
+from assistente.texto import normalizar  # noqa: E402
 
 DADOS = RAIZ / "data"
 SAIDA = DADOS / "regressao_web.json"
@@ -91,7 +92,22 @@ def gerar() -> dict:
                    | {arq: sha256(DADOS / arq) for _, arq in CONJUNTOS},
         "perguntas": perguntas,
         "buscas_escola": escolas,
+        "normalizacao": normalizacao(ctx),
     }
+
+
+BLOCO_NORMALIZACAO = 1000
+
+
+def normalizacao(ctx) -> dict:
+    """Hash de normalizar() aplicado ao nome e ao município de cada escola, em blocos de BLOCO_NORMALIZACAO escolas
+    na ordem do índice. A versão web refaz a conta com a sua normalização: bloco com hash diferente aponta onde
+    as duas divergem (acento, cedilha, caractere raro) sem guardar 53 mil nomes no contrato."""
+    nomes = [f"{normalizar(e['n'] or '')}|{normalizar(e['m'] or '')}" for e in ctx.escolas.doc["escolas"]]
+    blocos = [nomes[i:i + BLOCO_NORMALIZACAO] for i in range(0, len(nomes), BLOCO_NORMALIZACAO)]
+    return {"descricao": "sha256 de normalizar(nome)|normalizar(município), uma escola por linha, por bloco",
+            "escolas": len(nomes), "por_bloco": BLOCO_NORMALIZACAO,
+            "hashes": [hashlib.sha256("\n".join(b).encode("utf-8")).hexdigest() for b in blocos]}
 
 
 def main() -> None:
