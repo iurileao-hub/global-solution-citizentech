@@ -229,7 +229,7 @@ As seis personas concluíram as seis tarefas, incluindo a nova, que pede o núme
 
 Notas médias: facilidade 3,2; entendimento 3,8; confiança 3,5.
 
-**Varredura de tela da versão web.** Os testes conferem o texto das respostas, e a tela pode errar com o texto certo. `scripts/varrer_web.py` abre 121 telas (início, retrato, as 27 orientações, perguntas de exemplo e uma amostra de escolas escolhida pelos casos difíceis: cada UF com e sem rota, indígena, quilombola, escola sem município, nome mais longo) em 4 larguras, de 320 a 1.280 px. Ela procura rolagem lateral, texto quebrado letra a letra, conteúdo cortado, "null" ou "0,0 km" na tela e erro no console, e confere se a ficha impressa cabe em 2 páginas. Rodada contra o site publicado antes da correção, ela acusou a tabela do retrato espremida no celular, o defeito que motivou a ferramenta; depois das correções, não achou nenhum.
+**Varredura de tela da versão web.** Os testes conferem o texto das respostas, e a tela pode errar com o texto certo. `scripts/varrer_web.py` abre 126 telas (início, retrato, o retrato de cinco UFs, as 27 orientações, perguntas de exemplo e uma amostra de escolas escolhida pelos casos difíceis: cada UF com e sem rota, indígena, quilombola, escola sem município, nome mais longo) em 4 larguras, de 320 a 1.280 px. Ela procura rolagem lateral, texto quebrado letra a letra, conteúdo cortado, "null" ou "0,0 km" na tela e erro no console, e confere se a ficha impressa cabe em 2 páginas. Rodada contra o site publicado antes da correção, ela acusou a tabela do retrato espremida no celular, o defeito que motivou a ferramenta; depois das correções, não achou nenhum.
 
 **Próximo passo: validação com usuários reais** (famílias, professores, conselheiros, lideranças e quem atua nesses conflitos), pelo canal que essas pessoas usam, com as perguntas delas ampliando a base.
 
@@ -301,7 +301,7 @@ No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais por dia da receptora. 
 
 <p align="center"><img src="docs/img/08-web-retrato.png" alt="Retrato do Brasil na versão web: mapa por UF das escolas a 50 km ou mais por dia" width="90%"></p>
 
-Na versão web, o retrato vira um mapa por UF, em degraus de cor. Amazonas, Pará e Amapá aparecem hachurados e sem número, porque parte do transporte escolar ali é por rio.
+Na versão web, o retrato vira um mapa por UF, em degraus de cor. Tocar numa UF mostra os números dela e leva aos fechamentos do estado; cada UF tem endereço próprio (por exemplo, `#/retrato/MT`), para compartilhar. Amazonas, Pará e Amapá aparecem hachurados e sem número, porque parte do transporte escolar ali é por rio.
 
 A conta procura a receptora entre as 10 escolas mais próximas com rota. A ficha lista as 4 mais próximas e, quando nenhuma delas recebe todas as etapas, acrescenta em 5º lugar a mais próxima que recebe (3.417 escolas). Em 7% das escolas com rota (2.482), nenhuma das 10 recebe todas as etapas, e a família pode precisar de mais de uma escola. A primeira versão do cálculo olhava só as 4 mais próximas: quando nenhuma recebia todas as etapas, a conta caía numa escola que recebe só parte dos alunos, mais perto, e a mediana nacional saía 11,6 km em vez de 12,7.
 

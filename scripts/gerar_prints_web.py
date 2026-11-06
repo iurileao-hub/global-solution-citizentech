@@ -2,7 +2,7 @@
 
   07-web-celular.png    três telas de celular lado a lado: a pergunta respondida, a ficha da escola e a prancha
                         do mapa (EMEF Durval Máximo, Muniz Freire/ES, a escola usada na validação)
-  08-web-retrato.png    o retrato do Brasil por UF, no computador
+  08-web-retrato.png    o retrato do Brasil por UF, no computador, com Mato Grosso escolhido
   09-web-impressao.png  as 2 páginas A4 da ficha impressa, lado a lado
 
 Ferramenta de desenvolvedor (precisa do Playwright, do Pillow e do pdftoppm, do poppler-utils). Rode com o site
@@ -71,10 +71,12 @@ def main() -> None:
         pg.screenshot(path=telas[-1])
         lado_a_lado([Image.open(t).convert("RGB") for t in telas], 1800).save(SAIDA / "07-web-celular.png", optimize=True)
 
-        pc = nav.new_context(viewport={"width": 1280, "height": 1500}, device_scale_factor=1.5, service_workers="block", reduced_motion="reduce",
+        pc = nav.new_context(viewport={"width": 1280, "height": 1900}, device_scale_factor=1.5, service_workers="block", reduced_motion="reduce",
                              color_scheme="light")
         pg = pc.new_page()
         abrir(pg, a.url + "#/retrato")
+        pg.click('path[data-uf="MT"]')  # mostra o painel da UF escolhida
+        pg.wait_for_timeout(300)
         pg.screenshot(path=SAIDA / "08-web-retrato.png")
         img = Image.open(SAIDA / "08-web-retrato.png").convert("RGB")
         img.resize((1600, round(img.height * 1600 / img.width)), Image.LANCZOS).save(SAIDA / "08-web-retrato.png", optimize=True)

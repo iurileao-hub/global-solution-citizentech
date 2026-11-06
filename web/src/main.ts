@@ -8,6 +8,7 @@
  *   #/assunto/<tema>           as orientações de um tema
  *   #/escola/<código INEP>     a ficha da escola (?mais=D3,F2 acrescenta sugestões vindas da pergunta)
  *   #/retrato                  o retrato nacional
+ *   #/retrato/<UF>             o retrato com uma UF escolhida (o mapa da página inicial leva para cá)
  *   #/sobre                    como funciona, limites, privacidade e fontes
  */
 
@@ -52,6 +53,8 @@ async function rota(): Promise<void> {
   marcarNav(partes[0] ?? "");
   const navegou = document.body.dataset.navegou === "1";
   document.body.dataset.navegou = "1";
+  // a tela pode pedir para abrir num ponto que não é o topo (o retrato com uma UF escolhida abre no mapa)
+  let abrirEm: HTMLElement | void = undefined;
   try {
     switch (partes[0]) {
       case undefined:
@@ -74,7 +77,7 @@ async function rota(): Promise<void> {
       }
       case "retrato": {
         const { telaRetrato } = await import("./telas/retrato");
-        await telaRetrato(main, g);
+        abrirEm = await telaRetrato(main, g, partes[1] ?? null);
         break;
       }
       case "sobre": {
@@ -96,7 +99,12 @@ async function rota(): Promise<void> {
       h("p", null, h("a", { href: location.hash || "#/" }, "Tentar de novo"), " ou ", h("a", { href: "#/" }, "voltar ao início"), ".")));
   }
   if (!vivo(g)) return;
-  if (navegou) {
+  if (abrirEm) {
+    // leva a tela e o foco ao ponto pedido: quem usa leitor de tela ouve o que foi escolhido
+    abrirEm.scrollIntoView({ block: "start" });
+    abrirEm.tabIndex = -1;
+    abrirEm.focus({ preventScroll: true });
+  } else if (navegou) {
     window.scrollTo(0, 0);
     // leva o foco ao título da nova página: quem usa leitor de tela ouve onde chegou
     const titulo = main.querySelector<HTMLElement>("h1");

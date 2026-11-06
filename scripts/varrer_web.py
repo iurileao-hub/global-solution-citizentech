@@ -112,6 +112,7 @@ def amostra_escolas() -> dict[int, str]:
 
 def telas(base: dict) -> list[tuple[str, str]]:
     t = [("#/", "início"), ("#/retrato", "retrato"), ("#/sobre", "sobre")]
+    t += [(f"#/retrato/{uf}", f"retrato {uf}") for uf in ("MT", "AM", "DF", "RS", "XX")]
     t += [(f"#/assunto/{k}", f"assunto {k}") for k in base["temas"]]
     t += [(f"#/orientacao/{r['id']}", f"orientação {r['id']}") for r in base["registros"]]
     t += [(f"#/pergunta/{quote(q)}", f'pergunta "{q}"') for q in PERGUNTAS if q]

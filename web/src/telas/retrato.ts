@@ -9,6 +9,7 @@ import { retrato } from "../dados";
 import { h, s, trocar } from "../dom";
 import { vivo } from "../estado";
 import { mil, pct, UF_NOME } from "../formato";
+import { NOME_UF } from "../nucleo/fechamentos";
 import { carregando } from "./componentes";
 
 interface Faixa { escolas: number; alunos: number }
@@ -75,6 +76,14 @@ const INDICADORES: Indicador[] = [
     valor: (r) => (r.com_rota ? r.receptora_urbana / r.com_rota : null), texto: pct, limites: [0.15, 0.25, 0.35, 0.5] },
 ];
 
+/** Rolagem suave, menos para quem pediu menos movimento ao sistema. */
+const suave = (): ScrollBehavior => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
+
+function encher<T extends HTMLElement>(el: T, ...filhos: Parameters<typeof trocar>[1][]): T {
+  trocar(el, ...filhos);
+  return el;
+}
+
 function classe(v: number, limites: number[]): number {
   return 1 + limites.filter((l) => v >= l).length;
 }
@@ -92,32 +101,31 @@ function hachura(): SVGElement {
     s("line", { x1: 0, y1: 0, x2: 0, y2: 8, stroke: "var(--rio)", "stroke-width": 2 })));
 }
 
-function desenharMapa(mapa: Mapa, dados: Retrato, ind: Indicador, aoEscolher: ((uf: string) => void) | null): SVGElement {
-  const svg = s("svg", { viewBox: `0 0 ${mapa.largura} ${mapa.altura}`, role: aoEscolher ? "group" : "img",
-    "aria-label": `Mapa do Brasil por UF: ${ind.titulo.toLowerCase()}` }, hachura());
+/** `aoEscolher`: o que tocar numa UF faz. `escolhida`: a UF marcada. `siglasPequenas`: escrever a sigla das UFs
+ * pequenas do litoral (no mapa pequeno do início, elas se atropelam). */
+function desenharMapa(mapa: Mapa, dados: Retrato, ind: Indicador, aoEscolher: (uf: string) => void,
+  escolhida: string | null, siglasPequenas: boolean): SVGElement {
+  const svg = s("svg", { viewBox: `0 0 ${mapa.largura} ${mapa.altura}`, role: "group",
+    "aria-label": `Mapa do Brasil por UF: ${ind.titulo.toLowerCase()}. Escolha uma UF para ver os números dela.` }, hachura());
   for (const [uf, g] of Object.entries(mapa.ufs)) {
     const r = dados.uf[uf];
     const v = r ? ind.valor(r) : null;
     const fluvial = Boolean(r?.aviso_fluvial);
     const cls = fluvial ? "uf fluvial" : v === null ? "uf k1" : `uf k${classe(v, ind.limites)}`;
     const rotulo = `${UF_NOME[uf]}: ${fluvial ? "transporte em parte por rio, sem número no mapa" : v === null ? "sem dado" : ind.texto(v)}`;
-    const path = s("path", { class: cls, d: g.d }, s("title", null, rotulo));
-    if (aoEscolher) {
-      path.setAttribute("tabindex", "0");
-      path.setAttribute("role", "button");
-      path.setAttribute("aria-label", rotulo);
-      path.addEventListener("click", () => aoEscolher(uf));
-      path.addEventListener("keydown", (ev) => {
-        if ((ev as KeyboardEvent).key === "Enter" || (ev as KeyboardEvent).key === " ") {
-          ev.preventDefault();
-          aoEscolher(uf);
-        }
-      });
-    }
+    const path = s("path", { class: cls + (uf === escolhida ? " escolhida" : ""), d: g.d, "data-uf": uf, tabindex: "0",
+      role: "button", "aria-label": rotulo, "aria-pressed": String(uf === escolhida) }, s("title", null, rotulo));
+    path.addEventListener("click", () => aoEscolher(uf));
+    path.addEventListener("keydown", (ev) => {
+      if ((ev as KeyboardEvent).key === "Enter" || (ev as KeyboardEvent).key === " ") {
+        ev.preventDefault();
+        aoEscolher(uf);
+      }
+    });
     svg.append(path);
   }
   for (const [uf, g] of Object.entries(mapa.ufs)) {
-    if (["DF", "SE", "AL", "RN", "PB", "ES", "RJ"].includes(uf) && !aoEscolher) continue;
+    if (["DF", "SE", "AL", "RN", "PB", "ES", "RJ"].includes(uf) && !siglasPequenas) continue;
     svg.append(s("text", { class: "uf-sigla", x: g.x, y: g.y + 4, "text-anchor": "middle" }, uf));
   }
   return svg;
@@ -135,11 +143,13 @@ export async function pranchaBrasil(alvo: HTMLElement, texto: HTMLElement): Prom
   const [dados, mapa] = await Promise.all([retrato<Retrato>(), import("../mapa/ufs.json").then((m) => m.default as Mapa)]);
   const ind = INDICADORES[0];
   const b = dados.brasil;
+  const abrir = (uf: string) => { location.hash = `#/retrato/${uf}`; };
   trocar(alvo,
     h("figure", { class: "prancha", style: "margin:0" },
       h("div", { class: "prancha-titulo" }, h("h2", null, "O Brasil, por UF"), h("span", null, "escolas a 50 km ou mais por dia")),
-      h("div", { class: "prancha-moldura" }, desenharMapa(mapa, dados, ind, null)),
-      legenda(ind)));
+      h("div", { class: "prancha-moldura" }, desenharMapa(mapa, dados, ind, abrir, null, false)),
+      legenda(ind),
+      h("figcaption", null, "Toque numa UF para abrir o retrato dela.")));
   trocar(texto, h("section", { class: "coluna" },
     h("h2", null, "O retrato do país"),
     h("p", null, `Calculamos a rota por estrada de ${mil(b.com_rota)} escolas do campo até as escolas que poderiam receber ` +
@@ -150,9 +160,9 @@ export async function pranchaBrasil(alvo: HTMLElement, texto: HTMLElement): Prom
     h("p", null, h("a", { class: "botao secundario", href: "#/retrato" }, "Ver o retrato completo"))));
 }
 
-function linhaTabela(nome: string, r: Recorte, tipo: "regiao" | "uf" | "brasil"): HTMLElement {
+function linhaTabela(nome: string, r: Recorte, tipo: "regiao" | "uf" | "brasil", uf?: string): HTMLElement {
   const fluvial = r.aviso_fluvial;
-  return h("tr", { class: tipo === "uf" ? null : "regiao" },
+  return h("tr", { class: tipo === "uf" ? null : "regiao", "data-uf": uf ?? null },
     h("th", { scope: "row", class: tipo === "uf" ? "sub" : null }, nome, fluvial ? h("span", { title: "transporte em parte por rio" }, " (rio)") : null),
     h("td", { class: "num" }, `${mil(r.com_rota)} de ${mil(r.escolas)}`),
     h("td", { class: "num" }, r.km_ida_volta.mediana === null ? "" : `${String(r.km_ida_volta.mediana).replace(".", ",")} km`),
@@ -162,7 +172,16 @@ function linhaTabela(nome: string, r: Recorte, tipo: "regiao" | "uf" | "brasil")
     h("td", { class: "num" }, r.com_rota ? pct(r.receptora_urbana / r.com_rota) : ""));
 }
 
-function detalheUf(uf: string, r: Recorte | undefined): (string | HTMLElement)[] {
+/** O painel da UF escolhida: os números dela e o passo seguinte (os fechamentos do estado, a linha da tabela). */
+function detalheUf(uf: string, r: Recorte | undefined, verNaTabela: () => void): (string | HTMLElement)[] {
+  const pergunta = `Quantas escolas do campo fecharam ${NOME_UF[uf]}?`; // "na Bahia", "no Paraná": a forma do núcleo
+  const acoes = h("p", { class: "acoes-uf" },
+    h("a", { href: `#/pergunta/${encodeURIComponent(pergunta)}` }, pergunta),
+    r ? h("button", { type: "button", class: "botao-texto", onclick: verNaTabela }, "Ver a linha na tabela") : null);
+  return [h("p", null, detalheNumeros(uf, r)), acoes];
+}
+
+function detalheNumeros(uf: string, r: Recorte | undefined): (string | HTMLElement)[] {
   if (!r) return [`${UF_NOME[uf]}: sem dado.`];
   const partes: (string | HTMLElement)[] = [h("b", null, UF_NOME[uf]), `: ${mil(r.escolas)} escolas do campo, ${mil(r.alunos)} alunos. `,
     `Rota calculada para ${mil(r.com_rota)}. `];
@@ -175,7 +194,8 @@ function detalheUf(uf: string, r: Recorte | undefined): (string | HTMLElement)[]
   return partes;
 }
 
-export async function telaRetrato(main: HTMLElement, g: number): Promise<void> {
+/** Devolve o painel da UF quando o endereço já traz uma (#/retrato/MT): a tela abre ali, e não no topo. */
+export async function telaRetrato(main: HTMLElement, g: number, ufPedida: string | null = null): Promise<HTMLElement | void> {
   document.title = "Retrato do Brasil: Escola em Pauta";
   trocar(main, carregando("Carregando o retrato..."));
   const [dados, mapa] = await Promise.all([retrato<Retrato>(), import("../mapa/ufs.json").then((m) => m.default as Mapa)]);
@@ -185,11 +205,36 @@ export async function telaRetrato(main: HTMLElement, g: number): Promise<void> {
   const lugarMapa = h("div", { class: "prancha-moldura" });
   const lugarLegenda = h("div");
   const tituloMapa = h("span");
-  const detalhe = h("p", { class: "uf-detalhe", "aria-live": "polite" }, "Toque numa UF para ver os números dela.");
-  const escolher = (uf: string) => trocar(detalhe, detalheUf(uf, dados.uf[uf]));
+  const detalhe = h("div", { class: "uf-detalhe", "aria-live": "polite" }, "Toque numa UF no mapa para ver os números dela.");
+  const pedida = ufPedida ? ufPedida.toUpperCase() : null;
+  let escolhida: string | null = pedida && UF_NOME[pedida] ? pedida : null;
+  const corpoTabela = h("tbody");
+  const verNaTabela = (uf: string) => {
+    const linha = corpoTabela.querySelector<HTMLElement>(`tr[data-uf="${uf}"]`);
+    if (!linha) return;
+    corpoTabela.querySelectorAll("tr.destaque").forEach((tr) => tr.classList.remove("destaque"));
+    linha.classList.add("destaque");
+    linha.scrollIntoView({ block: "center", behavior: suave() });
+  };
+  const mostrar = (uf: string) => trocar(detalhe, detalheUf(uf, dados.uf[uf], () => verNaTabela(uf)));
+  const escolher = (uf: string) => {
+    escolhida = uf;
+    for (const p of lugarMapa.querySelectorAll<SVGElement>("path[data-uf]")) {
+      const sim = p.dataset.uf === uf;
+      p.classList.toggle("escolhida", sim);
+      p.setAttribute("aria-pressed", String(sim));
+      // a escolhida por cima das vizinhas, para o contorno não ficar escondido (as siglas continuam por cima)
+      if (sim) p.parentNode!.insertBefore(p, p.parentNode!.querySelector("text"));
+    }
+    mostrar(uf);
+    // o endereço passa a ter a UF (dá para compartilhar), sem redesenhar a tela
+    history.replaceState(null, "", `#/retrato/${uf}`);
+    const r = detalhe.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) detalhe.scrollIntoView({ block: "nearest", behavior: suave() });
+  };
   const botoes = INDICADORES.map((x) => h("button", { type: "button", "aria-pressed": String(x === ind) }, x.rotulo));
   const desenhar = () => {
-    trocar(lugarMapa, desenharMapa(mapa, dados, ind, escolher));
+    trocar(lugarMapa, desenharMapa(mapa, dados, ind, escolher, escolhida, true));
     trocar(lugarLegenda, legenda(ind));
     tituloMapa.textContent = ind.titulo;
     botoes.forEach((bt, i) => bt.setAttribute("aria-pressed", String(INDICADORES[i] === ind)));
@@ -214,11 +259,11 @@ export async function telaRetrato(main: HTMLElement, g: number): Promise<void> {
       h("figure", { class: "prancha", style: "margin:1rem 0" },
         h("div", { class: "prancha-titulo" }, h("h2", null, "Prancha do Brasil"), tituloMapa),
         h("div", { class: "indicadores", role: "group", "aria-label": "O que o mapa mostra" }, botoes),
-        lugarMapa, lugarLegenda,
+        lugarMapa, detalhe, lugarLegenda,
         h("figcaption", null, "Cores em degraus. A conta usa a escola mais próxima que recebe todas as etapas; quando nenhuma das " +
           `${dados.receptoras_por_escola ?? 4} mais próximas recebe, usa a mais próxima (${mil(b.nenhuma_recebe_todas)} escolas). ` +
           `Malha de UFs: ${mapa.fonte}.`)),
-      h("div", null, h("h2", null, "A UF escolhida"), detalhe,
+      h("div", null, h("h2", null, "No país todo"),
         h("p", null, `Em ${mil(b.outro_municipio)} escolas, a escola que receberia os alunos fica em outro município. Em `,
           `${mil(b.metade_ou_mais_em_chao)}, metade ou mais da estrada é de chão.`),
         h("p", { class: "legenda" }, "Como contamos: para cada escola, a mais próxima por estrada que recebe todas as etapas dela " +
@@ -229,15 +274,18 @@ export async function telaRetrato(main: HTMLElement, g: number): Promise<void> {
       h("thead", null, h("tr", null, h("th", null, "Lugar"), h("th", { class: "num" }, "Com rota"), h("th", { class: "num" }, "Mediana"),
         h("th", { class: "num" }, "1 em 10 passa de"), h("th", { class: "num" }, "50 km ou mais"), h("th", { class: "num" }, "2 h ou mais"),
         h("th", { class: "num" }, "Para a cidade"))),
-      h("tbody", null,
+      encher(corpoTabela,
         linhaTabela("Brasil", b, "brasil"),
         Object.entries(dados.regiao).flatMap(([reg, r]) => [
           linhaTabela(NOME_REGIAO[reg] ?? reg, r, "regiao"),
           ...Object.entries(dados.uf).filter(([, u]) => u.regiao === reg).sort((a, c) => UF_NOME[a[0]].localeCompare(UF_NOME[c[0]], "pt-BR"))
-            .map(([uf, u]) => linhaTabela(UF_NOME[uf], u, "uf")),
+            .map(([uf, u]) => linhaTabela(UF_NOME[uf], u, "uf", uf)),
         ])))),
     h("p", { class: "legenda" }, "Km e minutos por dia, ida e volta, de escola a escola, sempre como piso. \"Com rota\": escolas com " +
       "rota calculada, do total de escolas do campo. \"1 em 10 passa de\": o percentil 90. \"(rio)\": parte do transporte é " +
       `fluvial. Fonte: ${dados.fonte}; estradas do OpenStreetMap de ${dados.data_osm.map((d) => d.split("-").reverse().join("/")).join(", ")}.`));
   desenhar();
+  if (!escolhida) return;
+  mostrar(escolhida);
+  return lugarMapa.closest("figure") as HTMLElement;
 }

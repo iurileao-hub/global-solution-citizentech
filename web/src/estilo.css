@@ -127,7 +127,7 @@ a:hover { text-decoration-thickness: 2px; }
 main:focus { outline: none; }
 /* o título recebe o foco a cada troca de tela (o leitor de tela anuncia onde a pessoa está); o contorno de foco
    ali não indica nada que a pessoa possa acionar, e aparecia até na impressão */
-h1[tabindex="-1"]:focus { outline: none; }
+[tabindex="-1"]:focus { outline: none; }
 
 h1, h2, h3 {
   font-family: var(--serifa);
@@ -412,7 +412,9 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 
 /* mapa do Brasil (retrato) */
 .uf { stroke: var(--papel); stroke-width: 1.2; stroke-linejoin: round; }
-.uf:hover, .uf:focus { stroke: var(--tinta); stroke-width: 2.2; outline: none; }
+.uf[role="button"] { cursor: pointer; }
+.uf[role="button"]:hover, .uf:focus-visible { stroke: var(--tinta); stroke-width: 2.2; outline: none; }
+.uf.escolhida { stroke: var(--tinta); stroke-width: 3.6; }
 .uf-sigla { font: 700 21px var(--sans); fill: var(--tinta); pointer-events: none; paint-order: stroke; stroke: var(--papel); stroke-width: 4px; opacity: 0.9; }
 .k1 { fill: var(--c1); } .k2 { fill: var(--c2); } .k3 { fill: var(--c3); } .k4 { fill: var(--c4); } .k5 { fill: var(--c5); }
 .fluvial { fill: url(#hachura-rio); }
@@ -425,7 +427,13 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
   background: var(--papel); color: var(--tinta); border: 1px solid var(--tinta-2);
 }
 .indicadores button[aria-pressed="true"] { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
-.uf-detalhe { min-height: 3.2rem; font-size: 0.95rem; }
+.uf-detalhe { min-height: 3.2rem; font-size: 0.95rem; border-left: 4px solid var(--mata); background: var(--papel-2);
+  padding: 0.6rem 0.85rem; margin: 0.7rem 0 0.4rem; scroll-margin: 1rem; }
+.uf-detalhe p { margin: 0; }
+.acoes-uf { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; align-items: center; margin-top: 0.6rem !important; }
+.botao-texto { font: inherit; color: var(--rio); background: none; border: 0; padding: 0.5rem 0; min-height: 2.75rem;
+  text-decoration: underline; text-underline-offset: 0.18em; cursor: pointer; }
+.quadro tr.destaque th, .quadro tr.destaque td, .tabela-rolagem .quadro tr.destaque th[scope="row"] { background: var(--ocre-claro); }
 .tabela-rolagem { overflow-x: auto; }
 .tabela-rolagem .quadro { max-width: none; min-width: 34rem; }
 /* a coluna do lugar fica parada quando a tabela rola para o lado: sem ela, a linha perde o nome */
