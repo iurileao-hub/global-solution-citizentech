@@ -11,8 +11,9 @@ UFs): um arquivo por UF ainda daria ~800 KB no MA e na BA. Por isso as escolas v
                      "a pergunta nomeia uma escola" do assistente precisam. Município e UF vão numa tabela à
                      parte (cada escola guarda só o número da linha): ~20% menor que repetir os textos.
   base_orientacoes.json, fechamentos.json, retrato_rotas.json   cópias sem mudança (pequenos).
-  manifesto.json     esquema, fonte, legendas dos campos, PEDACOS e o hash e o tamanho de cada arquivo. O hash
-                     serve de versão: o navegador pode guardar os arquivos e só baixar de novo o que mudou.
+  manifesto.json     esquema, fonte, legendas dos campos, PEDACOS e o hash e o tamanho de cada arquivo.
+  versao.json        o resumo que o navegador lê ao abrir: fonte, data, PEDACOS e a VERSÃO (hash de todos os
+                     hashes), que vai em cada pedido (?v=...) para o cache velho nunca servir dado misturado.
 
 Com --rotas-v2 (segunda passada, scripts/precalcular_rotas_v2.py), mais dois conjuntos para a camada 2:
 
@@ -175,6 +176,18 @@ def estouros(man: dict) -> list[str]:
     return saida
 
 
+def versao(man: dict) -> dict:
+    """O pouco que o navegador lê ao abrir (versao.json, ~1 KB): o manifesto inteiro passa de 300 KB com os
+    pedaços da camada 2. "versao" é o hash de todos os hashes: muda quando QUALQUER arquivo muda, e o navegador
+    pede os arquivos com ?v=<versao>, o que fura o cache velho de uma vez só."""
+    tudo = "".join(f"{k}:{v['sha256']}" for k, v in sorted(man["arquivos"].items()))
+    saida = {k: man[k] for k in ("esquema", "fonte", "data_verificacao", "pedacos", "escolas")}
+    saida["versao"] = hashlib.sha256(tudo.encode()).hexdigest()[:12]
+    if "rotas_v2" in man:
+        saida["pedacos_tracado"] = man["rotas_v2"]["pedacos_tracado"]
+    return saida
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--saida", type=Path, default=SAIDA)
@@ -204,7 +217,7 @@ def main(argv: list[str] | None = None) -> int:
                            "regra_simulacao": "simulacao/LLLL.json, LLLL = linha de lugares em nomes.json, 4 dígitos"}
     if a.saida.exists():
         shutil.rmtree(a.saida)  # pasta gerada: sobra de pedaço velho não pode ficar
-    for k, v in {**arquivos, "manifesto.json": compacto(man)}.items():
+    for k, v in {**arquivos, "manifesto.json": compacto(man), "versao.json": compacto(versao(man))}.items():
         (a.saida / k).parent.mkdir(parents=True, exist_ok=True)
         (a.saida / k).write_bytes(v)
     gz = [v["gzip"] for k, v in man["arquivos"].items() if k.startswith("escolas/")]

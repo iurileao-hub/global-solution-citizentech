@@ -5,7 +5,7 @@
  "insumos": {
   "base_orientacoes.json": "5320a917aedb0114d998265f6ab834ed96381764897cfee5aa6470d5db15128b",
   "fechamentos.json": "a630e384d4fe57c1d4729ac75b5b872175e3a5a3be68ea3e1ba080abb62960af",
-  "escolas_campo.json.gz": "7ce5fd7f1998d33cd7fd130f24a759f69845cb5093bc1b5abdf312a98cc0fdfe",
+  "escolas_campo.json.gz": "587ba442b91924877c9c40131ed2e420c18bd1c147d6518d3b247db9b6fe6175",
   "perguntas_teste.json": "4fc281400f4c7fffa01f7791acb2a3e12553cefab19f51e068d66e3610936f79",
   "perguntas_cegas.json": "e1a5896a2e32addccad3a7ccf4c9ab7a54f9b1584ad3ad6b1fd8a26d4c26ca67",
   "perguntas_r3.json": "a10296adcdbea7125040669e56e4faf821858d29e7a3e84bdaab27216db46f82"

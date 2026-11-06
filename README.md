@@ -263,22 +263,24 @@ Escolas geolocalizadas (Ipea)  ──┼─► diagnosticar(codigo_inep) ─► 
 OpenStreetMap (Geofabrik)      ──┘
 ```
 
-**Rotas.** A malha viária do OpenStreetMap vira um grafo em lista de adjacência (cerca de 2 arestas por nó: uma matriz seria quase toda vazia). O menor caminho sai do algoritmo de Dijkstra com fila de prioridade (`heapq`), com velocidade de ônibus por tipo de via e superfície. As rotas de todas as escolas são **pré-calculadas** por `scripts/precalcular_rotas.py` (retomável, lê cada recorte regional uma vez só) e gravadas no índice, para o assistente responder em milissegundos sem depender de servidor.
+**Rotas.** A malha viária do OpenStreetMap vira um grafo em lista de adjacência (cerca de 2 arestas por nó: uma matriz seria quase toda vazia). O menor caminho sai do algoritmo de Dijkstra com fila de prioridade (`heapq`), com velocidade de ônibus por tipo de via e superfície. As rotas de todas as escolas são **pré-calculadas** por `scripts/precalcular_rotas.py` (retomável, lê cada recorte regional uma vez só) e gravadas no índice, para o assistente responder em milissegundos sem depender de servidor. Uma segunda passada (`scripts/precalcular_rotas_v2.py`) guarda até 10 receptoras por escola e o traçado de cada rota, que a versão web desenha no mapa da escola.
 
 **O retrato nacional.** `scripts/gerar_retrato_rotas.py` resume as rotas em `data/retrato_rotas.json`, por Brasil, região, UF e localização diferenciada. Para cada escola conta a receptora mais próxima por estrada que recebe todas as etapas da escola, o mesmo critério da ficha. Os valores são de ida e volta por dia, de escola a escola, e são piso.
 
 | Recorte | Escolas com rota | Mediana por dia | 1 em cada 10 passa de | 50 km ou mais por dia | Receptora urbana |
 |---|---|---|---|---|---|
-| Brasil | 35.917 de 53.759 | 12 km / 21 min | 34 km / 62 min | 1.419 (4%) | 27% |
-| Sudeste | 5.749 de 6.750 | 14 km / 26 min | 35 km / 66 min | 177 (3%) | 45% |
-| Sul | 3.624 de 4.595 | 17 km / 29 min | 35 km / 66 min | 111 (3%) | 51% |
-| Centro-Oeste | 990 de 1.503 | 32 km / 51 min | 85 km / 155 min | 312 (32%) | 47% |
-| Nordeste | 20.272 de 27.483 | 9 km / 18 min | 26 km / 50 min | 375 (2%) | 20% |
-| Norte | 5.282 de 13.427 | 12 km / 24 min | 46 km / 85 min | 444 (8%) | 14% |
+| Brasil | 36.112 de 53.759 | 13 km / 23 min | 37 km / 68 min | 1.810 (5%) | 26% |
+| Sudeste | 5.757 de 6.750 | 16 km / 27 min | 39 km / 72 min | 258 (4%) | 45% |
+| Sul | 3.634 de 4.595 | 18 km / 31 min | 38 km / 71 min | 148 (4%) | 52% |
+| Centro-Oeste | 992 de 1.503 | 35 km / 56 min | 92 km / 161 min | 346 (35%) | 45% |
+| Nordeste | 20.379 de 27.483 | 10 km / 19 min | 30 km / 55 min | 509 (2%) | 18% |
+| Norte | 5.350 de 13.427 | 14 km / 26 min | 51 km / 94 min | 549 (10%) | 13% |
 
-No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais por dia da receptora. No Brasil, 721 escolas (88 mil alunos) passariam a ter 2 horas ou mais de ônibus por dia. "Receptora urbana" quer dizer que a escola mais próxima que recebe todas as etapas fica na cidade. Em 16% das escolas com rota, nenhuma das 4 receptoras listadas recebe todas as etapas, e a família pode precisar de mais de uma escola.
+No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais por dia da receptora. No Brasil, 930 escolas (114 mil alunos) passariam a ter 2 horas ou mais de ônibus por dia. "Receptora urbana" quer dizer que a escola mais próxima que recebe todas as etapas fica na cidade.
 
-As escolas sem rota são de cinco tipos: 12.601 sem coordenada na base do Ipea; 4.282 longe demais da estrada mapeada, quase todas no Amazonas e no Pará, onde o transporte pode ser fluvial; 506 sem ligação na malha; 420 sem matrícula em 2025; 33 sem receptora a até 60 km. A cobertura é menor justamente nas escolas indígenas: só 1.099 das 3.664 têm rota.
+A conta procura a receptora entre as 10 escolas mais próximas com rota. A ficha lista as 4 mais próximas e, quando nenhuma delas recebe todas as etapas, acrescenta em 5º lugar a mais próxima que recebe (3.417 escolas). Em 7% das escolas com rota (2.482), nenhuma das 10 recebe todas as etapas, e a família pode precisar de mais de uma escola. A primeira versão do cálculo olhava só as 4 mais próximas: quando nenhuma recebia todas as etapas, a conta caía numa escola que recebe só parte dos alunos, mais perto, e a mediana nacional saía 11,6 km em vez de 12,7.
+
+As escolas sem rota são de cinco tipos: 12.601 sem coordenada na base do Ipea; 4.092 longe demais da estrada mapeada, quase todas no Amazonas e no Pará, onde o transporte pode ser fluvial; 501 sem ligação na malha; 420 sem matrícula em 2025; 33 sem receptora a até 60 km. A cobertura é menor justamente nas escolas indígenas: só 1.142 das 3.664 têm rota.
 
 **Validação.** Em Muniz Freire (ES), na EMEF Durval Máximo, a área técnica do Tribunal de Contas estimou que os alunos "percorreriam até 52 km por dia" até a receptora indicada (Decisão 02423/2025-2). O nosso cálculo, de escola a escola, dá 25 km por dia, cerca da metade, porque não conhece a casa de cada criança. O resultado confirma o número como piso. Com uma única referência externa, ele vale como ordem de grandeza.
 
