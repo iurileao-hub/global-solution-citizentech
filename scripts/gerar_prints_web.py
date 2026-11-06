@@ -5,7 +5,7 @@
   08-web-retrato.png    o retrato do Brasil por UF, no computador, com Mato Grosso escolhido
   09-web-impressao.png  as 2 páginas A4 da ficha impressa, lado a lado
   10-web-simulador.png  o simulador no celular: Muniz Freire fechando a Durval Máximo E a escola que a ficha dela aponta
-                        (a Paulo Fabio Sartore), o resultado e para onde iria cada etapa
+                        (a Paulo Fabio Sartore): os números do plano, para onde iria cada etapa e o mapa das estradas
 
 Ferramenta de desenvolvedor (precisa do Playwright, do Pillow e do pdftoppm, do poppler-utils). Rode com o site
 servido localmente:
@@ -93,8 +93,10 @@ def main() -> None:
         pg = cel.new_page()
         abrir(pg, a.url + "#/simular/846?f=32049501,32050836")
         sim = []
-        for alvo in (".sim-status", ".sim-s-etapas"):
-            pg.evaluate(f"document.querySelector('{alvo}').scrollIntoView({{block: 'start'}})")
+        pg.wait_for_selector(".sim-mapa svg")  # o mapa chega depois do resto (traçados baixados por escola)
+        # os números, os cartões "de onde para onde" e o mapa (no celular, nesta ordem); o recuo é a altura da barra fixa do plano
+        for alvo in (".sim-cartoes", ".sim-origens", ".sim-mapa"):
+            pg.evaluate(f"document.querySelector('{alvo}').scrollIntoView({{block: 'start'}}); scrollBy(0, -64)")
             pg.wait_for_timeout(200)
             sim.append(Path(tmp) / f"s{len(sim)}.png")
             pg.screenshot(path=sim[-1])

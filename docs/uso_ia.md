@@ -6,7 +6,7 @@ O Assistente Escola em Pauta (`python src/sistema.py`) responde só com regras e
 
 ## Onde a IA foi usada no desenvolvimento
 
-O projeto foi desenvolvido com o **Claude Code** (Anthropic, modelos da família Claude), sob direção e revisão humanas. Usos:
+O projeto foi desenvolvido com o **Claude Code** (Anthropic, modelos da família Claude), sob direção e revisão humanas. Na revisão de usabilidade do simulador entrou também o **Codex CLI** (OpenAI), como segundo revisor independente. Usos:
 
 | Etapa | Uso da IA | O que ficou com a equipe |
 |---|---|---|
@@ -15,6 +15,7 @@ O projeto foi desenvolvido com o **Claude Code** (Anthropic, modelos da família
 | Código | escrita do código, dos testes e dos scripts, inclusive a reescrita do núcleo em TypeScript para a versão web e o contrato que a prende ao terminal | decisões de arquitetura (camadas, pré-cálculo, critério de transporte fluvial, linguagem da versão web, publicação) |
 | Revisão adversarial | um segundo modelo recebeu a escolha do problema e, depois, a versão web, com a missão de atacar o que considerávamos mais sólido | quais achados aceitar; os aceitos estão em `docs/metodologia.md` e nas correções do site |
 | Simulador de plano | proposta do desenho, parecer adversarial medido nos dados, código, contrato e revisão antes de publicar | a regra de destino (sem preferência pelo município, com indicação da prefeitura) e a decisão de manter o critério da ficha |
+| Usabilidade do simulador | dois revisores (Claude e Codex) analisaram a página em separado, sem ver um a opinião do outro; o redesenho foi atacado de novo pelos dois | o pedido de uma página mais fácil de entender; quais achados aceitar |
 | Teste do site | três agentes com papéis (agricultora no celular, conselheira que imprime, auditor de dados) testaram o site publicado | a triagem dos achados e as decisões de critério, como arredondar o piso para baixo |
 | Prompts | os dois modelos de instrução de resposta (A e B) foram escritos como especificação e comparados nas perguntas de teste | escolha do modelo padrão |
 | Testes | planejamento das perguntas de teste e dos indicadores | o segundo conjunto de perguntas e o teste de usabilidade, feitos por pessoas que não viram a base |
@@ -48,6 +49,7 @@ Erros da IA no código, achados por teste ou por uso:
 - No simulador, a IA errou três vezes antes da revisão: dobrou um número do parecer ao "corrigi-lo" (a distância do arquivo já era de ida e volta); afirmou que os dados do simulador já estavam publicados quando o script de publicação os excluía; e escreveu no README que o Norte concentrava os maiores fechamentos em lote, quando três dos cinco maiores são do Nordeste. Os três foram achados ao conferir a fonte e corrigidos antes do commit.
 - A revisão do simulador pegou o link do plano errado no rodapé impresso, o plano apagado pelo link "pular para o conteúdo" e a tela que fechava as escolas abertas a cada mudança. Ao corrigir, apareceu um defeito antigo da ficha: o texto só para leitor de tela não tinha estilo, e a letra de cada receptora aparecia repetida na tela ("A. EMEF Alto Monforte"). Nenhum teste nem revisão anterior tinha notado.
 
+- No redesenho do simulador, a IA agrupou as etapas que iam para a mesma escola e juntou uma etapa indicada pela prefeitura com outra que ia para lá pela regra: a etiqueta "indicada pela prefeitura" passou a valer para as duas. O teste da interação achou antes do commit. O pedido aos revisores também dizia que o maior município tinha cerca de 120 escolas do campo; um deles mediu 317 (Santarém/PA).
 - Para o deploy do site, que passou a estourar o limite de 10 minutos do GitHub Pages, a IA recomendou um workflow próprio com tempo maior, apoiada na descrição da opção de tempo da action oficial. O código da action corta qualquer valor em 10 minutos, e o deploy falhou de novo. A solução foi reduzir o número de arquivos (os 4.479 municípios do simulador viraram 512 pedaços). A lição ficou registrada: conferir o código, e não só a documentação, antes de recomendar uma configuração.
 
 ## O que a IA não decidiu

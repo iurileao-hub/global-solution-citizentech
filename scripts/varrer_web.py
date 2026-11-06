@@ -112,6 +112,15 @@ def amostra_escolas() -> dict[int, str]:
     return escolha
 
 
+def plano_grande() -> list[int]:
+    """Santarém/PA (317 escolas do campo, o maior município do índice) com o atalho padrão: menos de 30 alunos."""
+    sys.path.insert(0, str(RAIZ / "src"))
+    from assistente import simulacao  # noqa: PLC0415 (só a varredura precisa)
+
+    doc = simulacao.carregar(RAIZ / "data" / "simulacao.json.gz")
+    return simulacao.menores_que(simulacao.municipio(doc, 2154), 30)
+
+
 def telas(base: dict) -> list[tuple[str, str]]:
     t = [("#/", "início"), ("#/retrato", "retrato"), ("#/sobre", "sobre")]
     t += [(f"#/retrato/{uf}", f"retrato {uf}") for uf in ("MT", "AM", "DF", "RS", "XX")]
@@ -120,11 +129,13 @@ def telas(base: dict) -> list[tuple[str, str]]:
     t += [(f"#/pergunta/{quote(q)}", f'pergunta "{q}"') for q in PERGUNTAS if q]
     t += [(f"#/escola/{c}", f"escola {c} ({m})") for c, m in amostra_escolas().items()]
     # simulador: escolher município, vindo da ficha, plano com indicação (Muniz Freire), plano vazio, código de fora,
-    # município fluvial com escolas sem rota (Breves/PA, 4 escolas) e lugar inexistente
+    # município fluvial com escolas sem rota (Breves/PA, 4 escolas), lugar inexistente, o maior plano (Santarém) e Eldorado vazio
     t += [("#/simular", "simulador: escolher"), ("#/simular?f=32049501", "simulador: da ficha (Durval)"),
           ("#/simular/846?f=32049501&i=32049501:anos_iniciais:32050364", "simulador: Muniz com indicação"),
           ("#/simular/846", "simulador: plano vazio"), ("#/simular/846?f=32049501,99999999", "simulador: código de fora"),
-          ("#/simular/9999", "simulador: lugar inexistente")]
+          ("#/simular/9999", "simulador: lugar inexistente"),
+          ("#/simular/2154?f=" + ",".join(map(str, plano_grande())), "simulador: Santarém, plano grande (123 escolas)"),
+          ("#/simular/4172", "simulador: Eldorado vazio")]
     return t
 
 

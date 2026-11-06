@@ -404,6 +404,8 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 .p-origem { fill: var(--tinta); stroke: var(--papel); stroke-width: 2; }
 .p-receptora { fill: var(--papel); stroke: var(--terra); stroke-width: 2.4; }
 .p-rotulo { font: 700 15px var(--sans); fill: var(--terra); }
+.sim-mapa .p-rotulo-origem { font: 700 26px var(--sans); font-style: normal; stroke-width: 5px; }
+.sim-mapa .p-rotulo { font-size: 19px; }
 .p-rotulo-origem { font: italic 600 17px var(--serifa); fill: var(--tinta); paint-order: stroke; stroke: var(--varzea); stroke-width: 3px; }
 .p-escala-a { fill: var(--tinta); }
 .p-escala-b { fill: var(--papel); stroke: var(--tinta); stroke-width: 0.8; }
@@ -459,6 +461,7 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 
 .carregando { color: var(--tinta-2); padding: 2rem 0; }
 /* só para leitor de tela: some da tela e continua sendo lido (a letra da receptora na ficha, por exemplo) */
+[hidden] { display: none !important; }
 .sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
 .erro { border-left: 4px solid var(--alerta); padding: 0.6rem 0.9rem; background: var(--papel-2); max-width: var(--coluna); }
@@ -478,51 +481,126 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 .verso-tela > summary .legenda { display: block; margin-top: 0.2rem; }
 .verso-lista li { margin: 0.35rem 0; font-weight: 700; }
 /* ---------- simulador "e se estas escolas fecharem?" ---------- */
-.simulador { max-width: 52rem; }
+.simulador { max-width: 64rem; }
 .simulador h1 { margin-bottom: 0.2rem; }
+.simulador > header .legenda, .simulador section > p, .simulador .sem-numero, .simulador .aviso { max-width: 40rem; }
 .simulador section { margin-top: 1.6rem; }
-.sim-montagem { border-top: 2px solid var(--tinta); padding-top: 0.4rem; }
-.sim-atalho { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; margin: 0.6rem 0; }
+/* a barra do plano fica no alto da tela enquanto se rola: o que está marcado e o caminho de volta para a lista */
+.sim-barra-plano { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between;
+  gap: 0.4rem 1rem; padding: 0.45rem 0; margin-top: 0.8rem; background: var(--papel); border-bottom: 1px solid var(--fio); }
+.sim-barra-plano .sim-status { margin: 0; font-weight: 700; color: var(--tinta); font-size: 0.92rem; flex: 1 1 auto; min-width: 0; }
+.sim-barra-plano .botao { padding: 0.35rem 0.7rem; min-height: 2.5rem; flex: none; white-space: nowrap; }
+.sim-resultado:focus { outline: none; }
+.sim-resultado { scroll-margin-top: 3.6rem; }
+.sim-fim-lista { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; }
+.sim-status { margin: 1rem 0 0; font-size: 0.9rem; color: var(--tinta-2); }
+.sim-montagem { border-bottom: 2px solid var(--tinta); padding-bottom: 0.4rem; scroll-margin-top: 3.6rem; }
+.sim-montagem > summary { cursor: pointer; padding: 0.7rem 0; min-height: 2.75rem; }
+.sim-montagem-t { font-family: var(--serifa); font-weight: 700; font-size: var(--t1); color: var(--mata-forte); }
+.sim-filtros { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 1rem; margin: 0.3rem 0 0.5rem; }
+.sim-filtro { font: inherit; width: 100%; max-width: 24rem; padding: 0.5rem 0.6rem; border: 1px solid var(--tinta-2);
+  border-radius: 2px; background: var(--papel); color: var(--tinta); min-height: 2.75rem; }
+.sim-so { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; cursor: pointer; }
+.sim-so input { width: 1.2rem; height: 1.2rem; accent-color: var(--terra); }
+.sim-escolas { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--fio); border-bottom: 1px solid var(--fio);
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); column-gap: 1.6rem; }
+/* lista longa (Santarém tem 317): rolagem própria, com o filtro e "Só as marcadas" logo acima */
+.sim-escolas.longa { max-height: min(32rem, 65vh); overflow-y: auto; }
+.sim-escolas li { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.45rem 0.2rem; border-bottom: 1px solid var(--fio); }
+.sim-escolas input { width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; flex: none; accent-color: var(--terra); }
+.sim-escolas label { cursor: pointer; display: grid; gap: 0.05rem; }
+.sim-escolas label .legenda { font-size: 0.86rem; }
+.sim-nome { font-weight: 700; }
+.sim-selo { justify-self: start; font-size: 0.76rem; color: var(--tinta-2); border: 1px solid var(--tinta-2); border-radius: 999px;
+  padding: 0 0.45rem; margin-top: 0.15rem; }
+.sim-atalho { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; margin: 0.9rem 0 0.2rem; }
 .sim-atalho input[type="number"] { width: 5.5rem; font: inherit; padding: 0.45rem 0.5rem; border: 1px solid var(--tinta-2);
   border-radius: 2px; background: var(--papel); color: var(--tinta); min-height: 2.75rem; }
-.sim-filtro { font: inherit; width: 100%; max-width: 24rem; padding: 0.5rem 0.6rem; border: 1px solid var(--tinta-2);
-  border-radius: 2px; background: var(--papel); color: var(--tinta); margin: 0.3rem 0 0.5rem; min-height: 2.75rem; }
-.sim-escolas { list-style: none; padding: 0; margin: 0; max-height: 26rem; overflow-y: auto; border-top: 1px solid var(--fio);
-  border-bottom: 1px solid var(--fio); }
-.sim-escolas li { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.45rem 0.2rem; border-bottom: 1px solid var(--fio); }
-.sim-escolas li:last-child { border-bottom: 0; }
-.sim-escolas input { width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; flex: none; accent-color: var(--terra); }
-.sim-escolas label { cursor: pointer; }
+.sim-previa { margin: 0.1rem 0 0.4rem; min-height: 1.4em; }
 .sim-municipios { list-style: none; padding: 0; margin: 0.6rem 0; max-width: 30rem; }
 .sim-municipios li { border-bottom: 1px solid var(--fio); }
 .sim-municipios a { display: block; padding: 0.6rem 0.2rem; min-height: 2.75rem; }
-.sim-resultado { margin-top: 1.4rem; }
-.sim-status { margin: 1rem 0 0; font-size: 0.9rem; color: var(--tinta-2); }
-/* celular: cada etapa vira um bloco (nome em cima; destino e seletor na largura toda) */
-@media screen and (max-width: 34rem) {
-  .sim-etapas, .sim-etapas tbody, .sim-etapas tr, .sim-etapas th, .sim-etapas td { display: block; width: auto; }
-  .sim-etapas thead { display: none; }
-  .sim-etapas tr { border-bottom: 1px solid var(--fio); padding: 0.5rem 0; }
-  .sim-etapas tr th[scope="row"], .sim-etapas tr td { border-bottom: 0; padding: 0.15rem 0; width: auto; }
-}
+.sim-resultado { margin-top: 1.2rem; }
 @media print { .sim-status { display: none; } }
 .sim-resultado > .sem-numero, .sim-resultado > .aviso { margin: 0.8rem 0; }
+/* os números do plano */
+.sim-cartoes { list-style: none; padding: 0; margin: 1rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.6rem), 1fr)); gap: 0.6rem; }
+@media (min-width: 48rem) { .sim-cartoes { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); } }
+.sim-cartoes li { background: var(--papel-2); border-top: 3px solid var(--terra); padding: 0.6rem 0.8rem 0.7rem; }
+.sim-cartoes li:first-child { border-top-color: var(--tinta); }
+.sim-cartoes b { display: block; font-family: var(--serifa); font-size: var(--t3); line-height: 1.1; color: var(--terra); }
+.sim-cartoes li:first-child b { color: var(--tinta); }
+.sim-cartoes span { display: block; font-size: 0.88rem; line-height: 1.4; margin-top: 0.2rem; }
+/* para onde iriam: o mapa ao lado dos cartões das escolas (no celular, um embaixo do outro) */
+.sim-destinos { display: grid; gap: 1rem 1.6rem; }
+@media screen and (min-width: 60rem) {
+  .sim-destinos.com-mapa { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+}
+/* o mapa acompanha a rolagem dos cartões só quando cabe inteiro na tela */
+@media screen and (min-width: 60rem) and (min-height: 58rem) { .sim-destinos.com-mapa .sim-mapa { position: sticky; top: 3.8rem; } }
+.sim-mapa .prancha-moldura { margin-top: 0; }
+/* no celular os cartões (a resposta em texto) vêm antes do mapa */
+@media screen and (max-width: 59.99rem) { .sim-destinos .sim-mapa { order: 2; } }
+.sim-motivo { margin: 0.6rem 0 0.1rem; font-weight: 700; }
+@media screen and (min-width: 48rem) {
+  .sim-destinos:not(.com-mapa) .sim-origens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.6rem; align-items: start; }
+  .sim-destinos:not(.com-mapa) .sim-escola:nth-child(2) { border-top: 1px solid var(--fio); }
+}
+.sim-juntas ul { columns: 16rem; margin: 0.5rem 0 0; padding-left: 1.1rem; }
+.sim-juntas li { break-inside: avoid; margin: 0.15rem 0; }
+.simulador .sim-juntas { max-width: none; }
+.sim-escola { border-bottom: 1px solid var(--fio); padding: 0.1rem 0; }
+.sim-escola:first-child { border-top: 1px solid var(--fio); }
+.sim-escola > summary { cursor: pointer; list-style: none; padding: 0.55rem 0; min-height: 2.75rem; display: flex; gap: 0.55rem; align-items: baseline; }
+.sim-escola > summary::-webkit-details-marker { display: none; }
+.sim-escola > summary::after { content: "+"; margin-left: auto; font-family: var(--serifa); font-size: 1.3rem; color: var(--mata); }
+.sim-escola[open] > summary::after { content: "\2212"; }
+.sim-letra { flex: none; display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; background: var(--tinta); color: var(--papel);
+  font-weight: 700; font-size: 0.8rem; border-radius: 2px; transform: translateY(0.1rem); }
+.sim-num { display: inline-grid; place-items: center; min-width: 1.45rem; height: 1.45rem; padding: 0 0.2rem; margin-right: 0.4rem;
+  border: 2px solid var(--terra); border-radius: 999px; font-weight: 700; font-size: 0.78rem; vertical-align: 0.05rem; }
+.sim-fluxos { list-style: none; padding: 0; margin: 0 0 0.4rem; }
+.sim-fluxos li { padding: 0.5rem 0 0.55rem 0.2rem; border-top: 1px dotted var(--fio); }
+.sim-de { font-weight: 700; }
+.sim-de .legenda { font-weight: 400; }
+.sim-para { display: flex; gap: 0.5rem; align-items: baseline; margin-top: 0.15rem; }
+.sim-seta { color: var(--terra); font-weight: 700; font-size: 1.15rem; flex: none; }
+.sim-km { font-size: 0.92rem; color: var(--tinta-2); }
+.sim-etiqueta { display: inline-block; font-size: 0.76rem; font-weight: 700; color: var(--alerta); background: var(--ocre-claro);
+  padding: 0 0.4rem; margin-left: 0.4rem; border-radius: 2px; }
+.sim-indicar { margin: 0.2rem 0 0.4rem; }
+.sim-indicar > summary { cursor: pointer; color: var(--rio); text-decoration: underline; text-underline-offset: 0.18em; padding: 0.35rem 0;
+  min-height: 2.5rem; font-size: 0.95rem; }
+.sim-indicar-linha { display: grid; gap: 0.2rem; margin: 0.4rem 0 0.6rem; }
+.sim-indicar-linha label { font-size: 0.85rem; color: var(--tinta-2); }
+.sim-indicar select { font: inherit; font-size: 0.95rem; width: 100%; min-width: 0; padding: 0.45rem 0.4rem; border: 1px solid var(--tinta-2);
+  border-radius: 2px; background: var(--papel); color: var(--tinta); min-height: 2.75rem; }
+.sim-ficha { margin: 0.1rem 0 0.6rem; font-size: 0.95rem; }
 .sim-faixas-par { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0 1.6rem; }
 .sim-faixas { max-width: none; }
 .sim-barra-cel { width: 38%; }
 .sim-barra { display: block; height: 0.7rem; margin-top: 0.35rem; background: var(--ocre); border-radius: 1px; min-width: 1px; }
-.sim-escola { border-bottom: 1px solid var(--fio); padding: 0.2rem 0; }
-.sim-escola > summary { cursor: pointer; padding: 0.55rem 0; min-height: 2.75rem; }
-.sim-etapas { max-width: none; margin-top: 0.2rem; table-layout: fixed; }
-.sim-etapas th[scope="row"] { width: 34%; font-weight: 700; }
-.sim-indicar { margin-top: 0.5rem; display: grid; gap: 0.2rem; }
-.sim-indicar label { font-size: 0.85rem; color: var(--tinta-2); }
-.sim-indicar select { font: inherit; font-size: 0.95rem; width: 100%; min-width: 0; padding: 0.45rem 0.4rem; border: 1px solid var(--tinta-2);
-  border-radius: 2px; background: var(--papel); color: var(--tinta); min-height: 2.75rem; }
+.sim-nenhuma { font-size: 0.92rem; color: var(--tinta-2); margin: 0.3rem 0 0.8rem; }
 .sim-marca { font-size: 0.85em; color: var(--terra); font-weight: 700; }
-.sim-aviso { display: block; font-size: 0.9em; color: var(--alerta); margin-top: 0.2rem; }
+.sim-aviso { display: block; font-size: 0.9em; color: var(--alerta); margin: 0.2rem 0; }
 .sim-sem { color: var(--rio); }
-.sim-s-como ul { padding-left: 1.2rem; }
+.simulador .sim-empilha { max-width: none; }
+.quadro.sim-empilha thead th.num, .quadro.sim-empilha td.num:last-child { white-space: normal; }
+.sim-s-escolas .sim-empilha thead th.num:last-child { min-width: 9rem; }
+/* celular: tabela de números vira um bloco por escola, cada número com o seu rótulo (nada escondido de lado) */
+@media screen and (max-width: 34rem) {
+  .sim-empilha, .sim-empilha tbody, .sim-empilha tr, .sim-empilha th, .sim-empilha td { display: block; width: auto; }
+  .sim-empilha thead { display: none; }
+  .sim-empilha tr { border-bottom: 1px solid var(--fio); padding: 0.5rem 0; }
+  .sim-empilha tr th[scope="row"], .sim-empilha tr td { border-bottom: 0; padding: 0.1rem 0; }
+  .sim-empilha td, .quadro.sim-empilha td.num { display: flex; justify-content: space-between; gap: 1rem; text-align: right; white-space: normal; }
+  .sim-empilha td::before { content: attr(data-rotulo); color: var(--tinta-2); text-align: left; font-weight: 400; }
+}
+.sim-empilha tr.sim-mais { display: none; }
+.sim-empilha.sim-todas tr.sim-mais { display: table-row; }
+@media screen and (max-width: 34rem) { .sim-empilha.sim-todas tr.sim-mais { display: block; } }
+@media print { .sim-empilha tr.sim-mais { display: table-row; } }
+.sim-s-como ul { padding-left: 1.2rem; max-width: 40rem; }
 .sim-s-como li { margin: 0.35rem 0; }
 .sim-chamada { margin-top: 0.9rem; padding: 0.7rem 0.9rem; border-left: 4px solid var(--ocre); background: var(--ocre-claro); max-width: 36rem; }
 .sim-chamada a { font-weight: 700; }
@@ -533,7 +611,8 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
   html { font-size: 9.2pt; }
   body { line-height: 1.4; }
   .topo nav, .pular, .busca, .acoes, .voltar, .rodape, .nao-imprime { display: none !important; }
-  main { padding: 0; }
+  main { padding: 0; min-height: 0; }
+  .simulador > .fonte:last-child { margin-bottom: 0; }
   a { color: inherit; text-decoration: none; }
   h2 { margin-top: 0.9rem; font-size: 1.2rem; }
   /* a ficha impressa: frente (números) e verso (a comunidade escreve), como a folha do protótipo */
@@ -576,6 +655,13 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
   .simulador section { margin-top: 0.8rem; }
   .sim-escola > summary { padding: 0.2rem 0; min-height: 0; list-style: none; }
   .sim-escola > summary::-webkit-details-marker { display: none; }
-  .sim-etapas tr, .simulador .quadro tr { break-inside: avoid; }
+  .sim-escola > summary::after, .sim-escola[open] > summary::after { content: none; }
+  .simulador h2, .quadro caption { break-after: avoid; }
+  .simulador .quadro tr, .sim-fluxos li, .sim-cartoes li { break-inside: avoid; }
   .sim-barra { background: #777; }
+  .sim-cartoes { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 1fr; }
+  .sim-faixas-par, .sim-faixas, .sim-s-faixas > div, .sim-s-faixas { break-inside: avoid; }
+  .sim-cartoes b { font-size: 1.5rem; }
+  .sim-destinos.com-mapa { grid-template-columns: 1fr 1fr; align-items: start; }
+  .sim-mapa { break-inside: avoid; }
 }

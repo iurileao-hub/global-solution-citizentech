@@ -14,8 +14,8 @@ import type { Escola, Receptora } from "../nucleo/respostas";
 
 export const LETRAS = "ABCDEFGHIJ";
 
-const L = 600; // largura do desenho, em unidades do SVG
-const MARGEM = 30; // faixa da moldura onde vão os graus
+export const L = 600; // largura do desenho, em unidades do SVG
+export const MARGEM = 30; // faixa da moldura onde vão os graus
 
 interface Rota {
   r: Receptora;
@@ -60,18 +60,12 @@ export function trechos(n: number, pares: number[]): { i: number; j: number; cha
   return saida;
 }
 
-export function prancha(e: Escola, receptoras: Receptora[], tracados: Tracado[] | null, principal: Receptora | null):
-  HTMLElement {
-  const porCodigo = new Map((tracados ?? []).map((t) => [t[0], t]));
-  const rotas: Rota[] = [];
-  receptoras.forEach((r, i) => {
-    const t = porCodigo.get(r.c);
-    if (t) rotas.push({ r, letra: LETRAS[i], pontos: decodificar(t[1]), chao: t[2] ?? [] });
-  });
-  if (!rotas.length) return esquema(e, receptoras, principal);
-
-  // enquadramento: todos os pontos, com folga, e proporção entre 3:4 e 4:3
-  const todos = rotas.flatMap((x) => x.pontos);
+/** O enquadramento da prancha (proporção entre 3:4 e 4:3, folga, moldura com graus) para um conjunto de pontos
+ * [lat, lon]. Usado pela ficha (uma escola e as receptoras) e pelo simulador (o plano inteiro). */
+export function quadro(todos: [number, number][]): {
+  x: (lon: number) => number; y: (lat: number) => number; H: number; kmPorUnidade: number;
+  grade: (svg: SVGElement) => void; escalaENorte: (svg: SVGElement) => void;
+} {
   let [la0, la1] = [Math.min(...todos.map((p) => p[0])), Math.max(...todos.map((p) => p[0]))];
   let [lo0, lo1] = [Math.min(...todos.map((p) => p[1])), Math.max(...todos.map((p) => p[1]))];
   const cos = Math.cos(((la0 + la1) / 2) * Math.PI / 180);
@@ -100,31 +94,66 @@ export function prancha(e: Escola, receptoras: Receptora[], tracados: Tracado[] 
   const y = (lat: number) => MARGEM + ((la1 - lat) + alt * folga) * k;
   const kmPorUnidade = 111.32 / k;
 
+  // gratícula e graus na moldura
+  const grade = (svg: SVGElement) => {
+    const lat0 = la0 - alt * folga;
+    const lat1 = la1 + alt * folga;
+    const lon0 = lo0 - (w * folga) / cos;
+    const lon1 = lo1 + (w * folga) / cos;
+    const pLat = passoGraus(lat1 - lat0);
+    const pLon = passoGraus(lon1 - lon0);
+    for (let g = Math.ceil(lat0 / pLat) * pLat; g <= lat1; g += pLat) {
+      const yy = y(g);
+      svg.append(s("line", { class: "p-grade", x1: MARGEM, x2: L - MARGEM, y1: yy, y2: yy }),
+        s("text", { class: "p-grau", x: MARGEM - 9, y: yy, "text-anchor": "middle", transform: `rotate(-90 ${MARGEM - 9} ${yy})` },
+          grau(g, "lat").replace(" ", "")));
+    }
+    for (let g = Math.ceil(lon0 / pLon) * pLon; g <= lon1; g += pLon) {
+      const xx = x(g);
+      svg.append(s("line", { class: "p-grade", y1: MARGEM, y2: H - MARGEM, x1: xx, x2: xx }),
+        s("text", { class: "p-grau", x: xx, y: MARGEM - 9, "text-anchor": "middle" }, grau(g, "lon").replace(" ", "")));
+    }
+  };
+
+  // escala gráfica alternada e o N
+  const escalaENorte = (svg: SVGElement) => {
+    const ek = escalaKm(kmPorUnidade);
+    const eL = ek / kmPorUnidade;
+    const ex = MARGEM + 12;
+    const ey = H - MARGEM - 16;
+    svg.append(s("rect", { class: "p-escala-b", x: ex - 4, y: ey - 15, width: eL + 30, height: 26, opacity: 0.85 }));
+    for (let i = 0; i < 4; i++) {
+      svg.append(s("rect", { class: i % 2 ? "p-escala-b" : "p-escala-a", x: ex + (i * eL) / 4, y: ey, width: eL / 4, height: 5 }));
+    }
+    svg.append(s("text", { class: "p-escala-txt", x: ex, y: ey - 4 }, "0"),
+      s("text", { class: "p-escala-txt", x: ex + eL, y: ey - 4, "text-anchor": "middle" }, `${String(ek).replace(".", ",")} km`));
+    const nx = L - MARGEM - 20;
+    const ny = MARGEM + 14;
+    svg.append(s("path", { class: "p-norte", d: `M${nx},${ny - 8}l6,16l-6,-4l-6,4z` }),
+      s("text", { class: "p-norte", x: nx, y: ny + 22, "text-anchor": "middle" }, "N"));
+  };
+  return { x, y, H, kmPorUnidade, grade, escalaENorte };
+}
+
+export function prancha(e: Escola, receptoras: Receptora[], tracados: Tracado[] | null, principal: Receptora | null):
+  HTMLElement {
+  const porCodigo = new Map((tracados ?? []).map((t) => [t[0], t]));
+  const rotas: Rota[] = [];
+  receptoras.forEach((r, i) => {
+    const t = porCodigo.get(r.c);
+    if (t) rotas.push({ r, letra: LETRAS[i], pontos: decodificar(t[1]), chao: t[2] ?? [] });
+  });
+  if (!rotas.length) return esquema(e, receptoras, principal);
+
+  const q = quadro(rotas.flatMap((x) => x.pontos));
+  const { x, y, H } = q;
   const idTitulo = "prancha-t-" + e.c;
   const idDesc = "prancha-d-" + e.c;
   const svg = s("svg", { viewBox: `0 0 ${L} ${H}`, role: "img", "aria-labelledby": `${idTitulo} ${idDesc}` },
     s("title", { id: idTitulo }, `Mapa das estradas desta escola até ${rotas.length} escolas que poderiam receber os alunos`),
     s("desc", { id: idDesc }, rotas.map((x) => `${x.letra}: ${x.r.n}, ${x.r.km < 1 ? "menos de 1" : km(x.r.km)} km por dia, ida e volta`).join("; ")),
     s("rect", { class: "p-fundo", x: MARGEM, y: MARGEM, width: L - 2 * MARGEM, height: H - 2 * MARGEM }));
-
-  // gratícula e graus na moldura
-  const lat0 = la0 - alt * folga;
-  const lat1 = la1 + alt * folga;
-  const lon0 = lo0 - (w * folga) / cos;
-  const lon1 = lo1 + (w * folga) / cos;
-  const pLat = passoGraus(lat1 - lat0);
-  const pLon = passoGraus(lon1 - lon0);
-  for (let g = Math.ceil(lat0 / pLat) * pLat; g <= lat1; g += pLat) {
-    const yy = y(g);
-    svg.append(s("line", { class: "p-grade", x1: MARGEM, x2: L - MARGEM, y1: yy, y2: yy }),
-      s("text", { class: "p-grau", x: MARGEM - 9, y: yy, "text-anchor": "middle", transform: `rotate(-90 ${MARGEM - 9} ${yy})` },
-        grau(g, "lat").replace(" ", "")));
-  }
-  for (let g = Math.ceil(lon0 / pLon) * pLon; g <= lon1; g += pLon) {
-    const xx = x(g);
-    svg.append(s("line", { class: "p-grade", y1: MARGEM, y2: H - MARGEM, x1: xx, x2: xx }),
-      s("text", { class: "p-grau", x: xx, y: MARGEM - 9, "text-anchor": "middle" }, grau(g, "lon").replace(" ", "")));
-  }
+  q.grade(svg);
 
   // linhas retas de referência (só para quem não é a principal) e as rotas
   const caminho = (pts: [number, number][]) =>
@@ -157,21 +186,7 @@ export function prancha(e: Escola, receptoras: Receptora[], tracados: Tracado[] 
   svg.append(s("rect", { class: "p-origem", x: x(oo) - 9, y: y(oa) - 9, width: 18, height: 18, transform: `rotate(45 ${x(oo)} ${y(oa)})` }),
     s("text", { class: "p-rotulo-origem", x: x(oo) + 15, y: y(oa) - 12 }, "esta escola"));
 
-  // escala gráfica alternada e o N
-  const ek = escalaKm(kmPorUnidade);
-  const eL = ek / kmPorUnidade;
-  const ex = MARGEM + 12;
-  const ey = H - MARGEM - 16;
-  svg.append(s("rect", { class: "p-escala-b", x: ex - 4, y: ey - 15, width: eL + 30, height: 26, opacity: 0.85 }));
-  for (let i = 0; i < 4; i++) {
-    svg.append(s("rect", { class: i % 2 ? "p-escala-b" : "p-escala-a", x: ex + (i * eL) / 4, y: ey, width: eL / 4, height: 5 }));
-  }
-  svg.append(s("text", { class: "p-escala-txt", x: ex, y: ey - 4 }, "0"),
-    s("text", { class: "p-escala-txt", x: ex + eL, y: ey - 4, "text-anchor": "middle" }, `${String(ek).replace(".", ",")} km`));
-  const nx = L - MARGEM - 20;
-  const ny = MARGEM + 14;
-  svg.append(s("path", { class: "p-norte", d: `M${nx},${ny - 8}l6,16l-6,-4l-6,4z` }),
-    s("text", { class: "p-norte", x: nx, y: ny + 22, "text-anchor": "middle" }, "N"));
+  q.escalaENorte(svg);
 
   const temChao = rotas.some((r) => r.chao.length);
   const fig = h("figure", { class: "prancha", style: "margin:0" },
@@ -189,7 +204,7 @@ export function prancha(e: Escola, receptoras: Receptora[], tracados: Tracado[] 
   return fig;
 }
 
-function amostra(tipo: "origem" | "receptora" | "pav" | "chao"): SVGElement {
+export function amostra(tipo: "origem" | "receptora" | "pav" | "chao"): SVGElement {
   const svg = s("svg", { viewBox: "0 0 40 16", "aria-hidden": "true" });
   if (tipo === "origem") svg.append(s("rect", { class: "p-origem", x: 15, y: 3, width: 10, height: 10, transform: "rotate(45 20 8)" }));
   if (tipo === "receptora") svg.append(s("circle", { class: "p-receptora", cx: 20, cy: 8, r: 6 }));
@@ -199,7 +214,7 @@ function amostra(tipo: "origem" | "receptora" | "pav" | "chao"): SVGElement {
 }
 
 /** O único movimento da página: as estradas se desenham uma vez quando a prancha aparece. */
-function animar(fig: HTMLElement): void {
+export function animar(fig: HTMLElement): void {
   if (!matchMedia("(prefers-reduced-motion: no-preference)").matches || !("IntersectionObserver" in window)) return;
   const obs = new IntersectionObserver((itens) => {
     if (!itens.some((i) => i.isIntersecting)) return;
