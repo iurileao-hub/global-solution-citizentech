@@ -1,0 +1,16 @@
+{
+  "name": "Escola em Pauta",
+  "short_name": "Escola em Pauta",
+  "description": "O impacto de fechar uma escola do campo, medido antes da decisão.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F8F9F4",
+  "theme_color": "#3F6B45",
+  "icons": [
+    { "src": "icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

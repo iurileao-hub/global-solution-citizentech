@@ -231,6 +231,8 @@ python src/sistema.py --avaliar       # roda as perguntas de teste e grava os in
 
 No Windows, use `py src/sistema.py` se o comando `python` não existir. O programa ajusta o terminal para exibir acentos.
 
+A versão web está publicada no link da seção Links. Para rodá-la localmente (precisa do Node.js 22 ou mais recente e dos dados gerados por `scripts/dividir_para_web.py`): `cd web && npm ci && npm test && npm run dev`.
+
 ### 6. Exemplos
 
 | Entrada | Comportamento |
@@ -320,7 +322,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 ### 🔗 Links do Projeto
 
 * **Vídeo de apresentação (YouTube, não listado):** *a publicar*
-* **[Site com as fichas das escolas](https://iurileao-hub.github.io/global-solution-citizentech/)**: 256 fichas do DF, do Vale do Ribeira (SP) e de Muniz Freire (ES).
+* **[Versão web](https://iurileao-hub.github.io/global-solution-citizentech/)**: o mesmo assistente no navegador do celular, com a ficha de cada uma das 53.759 escolas do campo, o mapa das estradas até as escolas receptoras e o retrato por UF. Funciona sem servidor e, depois da primeira visita, sem sinal.
 
 ### 🧠 Decisões Técnicas
 
@@ -329,6 +331,8 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 > **Regras explícitas, sem modelo de linguagem**, porque o enunciado pede respostas com fonte verificável e sem invenção, e porque regras podem ser testadas uma a uma.
 >
 > **Rotas pré-calculadas.** Calculada na hora, uma rota nova levava 107 s e 4,6 GB de memória; pré-calculada, a consulta leva menos de 1 ms.
+>
+> **Versão web sem servidor, presa ao terminal por um contrato.** A busca foi reescrita em TypeScript (`web/`) para rodar no celular sem baixar 6 MB de Python. O arquivo `data/regressao_web.json` guarda o que o núcleo Python responde às 130 perguntas rotuladas e às buscas de escola, e o teste da web (`web/test/contrato.test.ts`, rodado no GitHub Actions) exige a mesma resposta, palavra por palavra.
 >
 > **Distância como piso.** Sem o endereço das crianças (dado pessoal), o cálculo de escola a escola só pode garantir o mínimo, e a resposta diz isso.
 

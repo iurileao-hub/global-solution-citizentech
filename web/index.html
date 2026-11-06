@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Escola em Pauta</title>
+<meta name="description" content="Antes de uma escola do campo fechar, a lei manda medir o impacto. Ficha de cada uma das 53.759 escolas do campo, com dados públicos, e um assistente sobre os direitos da comunidade.">
+<meta name="theme-color" content="#3F6B45" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141C1E" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Escola em Pauta">
+<meta property="og:description" content="O impacto de fechar uma escola do campo, medido antes da decisão. Dados públicos para a comunidade e o Conselho lerem a mesma coisa.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="previa.png">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<header class="topo">
+  <a class="marca" href="#/" aria-label="Escola em Pauta, página inicial">
+    <svg class="marca-sinal" viewBox="0 0 32 32" aria-hidden="true"><use href="#sinal"/></svg>
+    <span>Escola em Pauta</span>
+  </a>
+  <nav class="nav" aria-label="Seções">
+    <a href="#/retrato">Retrato do Brasil</a>
+    <a href="#/sobre">Como funciona</a>
+  </nav>
+</header>
+<main id="conteudo" tabindex="-1">
+  <noscript>
+    <section class="verbete">
+      <h1>Esta página precisa de JavaScript</h1>
+      <p>O assistente e as fichas funcionam no próprio navegador, sem servidor. Ative o JavaScript ou use a versão de
+      terminal, descrita no <a href="https://github.com/iurileao-hub/global-solution-citizentech">repositório</a>.</p>
+    </section>
+  </noscript>
+</main>
+<footer class="rodape">
+  <p class="rodape-aviso"><strong>Não oficial.</strong> Projeto acadêmico de estudantes (Global Solution FIAP 2026,
+  tema CitizenTech). Não fala em nome de nenhum órgão público: confira sempre com a Secretaria de Educação, o Conselho
+  de Educação, o Ministério Público ou a Defensoria.</p>
+  <p>Dados: Censo Escolar (INEP), localização das escolas (Ipea), malha de UFs (IBGE) e estradas ©
+  <a href="https://www.openstreetmap.org/copyright">colaboradores do OpenStreetMap</a> (licença ODbL). Esta página não
+  pede, não guarda e não envia nenhum dado pessoal.
+  <a href="https://github.com/iurileao-hub/global-solution-citizentech">Código aberto</a>.</p>
+  <p class="rodape-versao" id="versao-dados"></p>
+</footer>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- o sinal da marca: uma escola (telhado) sobre a linha da pauta, desenhada como curva de nível -->
+  <symbol id="sinal" viewBox="0 0 32 32">
+    <path d="M6 15 16 7l10 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M9 14v8h14v-8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M14 22v-4.5h4V22" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M3 26.5c4-2 8 1.5 13 0s9-2 13 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+  </symbol>
+</svg>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

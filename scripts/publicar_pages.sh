@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Publica a pasta site/ (gerada por `escola-em-pauta site`) na branch gh-pages, servida pelo GitHub Pages.
+# Publica a pasta site/ (montada por web/scripts/montar_site.mjs) na branch gh-pages, servida pelo GitHub Pages.
 # A branch gh-pages só tem o site gerado; o código fica na main. Uso: scripts/publicar_pages.sh
 set -euo pipefail
 raiz=$(git rev-parse --show-toplevel)
-[ -f "$raiz/site/index.html" ] || { echo "site/ vazio: rode 'escola-em-pauta site' antes" >&2; exit 1; }
+[ -f "$raiz/site/index.html" ] || { echo "site/ vazio: rode scripts/dividir_para_web.py e, em web/, npm run build && node scripts/montar_site.mjs" >&2; exit 1; }
 tmp=$(mktemp -d)
 trap 'git -C "$raiz" worktree remove --force "$tmp" 2>/dev/null || true' EXIT
 if git -C "$raiz" ls-remote --exit-code --heads origin gh-pages >/dev/null; then
