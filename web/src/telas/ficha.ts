@@ -103,7 +103,7 @@ function receptoras(e: Escola, p: Receptora | null): HTMLElement | null {
   const rs = rota.receptoras;
   const rurais = rs.filter((r) => r.rural).length;
   const quando = rota.osm ? `, dados de ${data(rota.osm)}` : "";
-  return h("section", null,
+  return h("section", { class: "s-receptoras" },
     h("h2", null, "Para onde as crianças iriam, e quanta estrada a mais"),
     h("p", null, "Medimos a estrada de escola a escola, ida e volta, por dia. ", h("b", null, "É o mínimo."),
       " O ônibus real passa de casa em casa, por isso o caminho de verdade é maior. ",
@@ -111,7 +111,7 @@ function receptoras(e: Escola, p: Receptora | null): HTMLElement | null {
       rurais === 0 ? "nenhuma é rural." : `${rurais} ${rurais === 1 ? "é rural" : "são rurais"}.`),
     h("ol", { class: "receptoras", "aria-label": "Escolas que poderiam receber os alunos, da mais perto à mais longe" },
       rs.map((r, i) => receptoraItem(r, e, i, p, Math.max(...rs.map((x) => x.km))))),
-    p ? h("p", { class: "legenda" }, `A faixa amarela marca a escola da frase de abertura: a mais perto que ` +
+    p ? h("p", { class: "legenda nao-imprime" }, `A faixa amarela marca a escola da frase de abertura: a mais perto que ` +
       `${recebeTodas(p, e) ? "recebe todas as etapas desta escola" : "recebe parte das etapas (nenhuma das listadas recebe todas)"}.`) : null,
     rota.sem_rota ? h("p", null, `Outras ${rota.sem_rota} escola(s) próxima(s) ficaram sem rota na malha viária e não entram na lista.`) : null,
     h("p", { class: "legenda" }, `Conta feita pela malha do OpenStreetMap${quando}, com velocidade de ônibus escolar. ` +
@@ -123,7 +123,7 @@ function quemEstuda(e: Escola): HTMLElement {
   const etapas = ordenarEtapas(Object.keys(e.e));
   const maior = Math.max(1, ...Object.values(e.e));
   const zr = e.zr ?? null;
-  return h("section", null,
+  return h("section", { class: "s-quem" },
     h("h2", null, "Quem estuda aqui"),
     etapas.length ? h("div", { class: "etapas", role: "list" }, etapas.map((x) => [
       h("span", { role: "listitem" }, ETAPA_ROTULO[x].charAt(0).toUpperCase() + ETAPA_ROTULO[x].slice(1),
@@ -139,7 +139,7 @@ function serie(e: Escola): HTMLElement | null {
   if (anos.length < 2) return null;
   const maior = Math.max(1, ...anos.map((a) => e.s[a]));
   const [a0, a1] = [anos[0], anos[anos.length - 1]];
-  return h("section", null,
+  return h("section", { class: "s-serie" },
     h("h2", null, "A matrícula ao longo dos anos"),
     h("p", null, `De ${a0} a ${a1}, a matrícula foi de ${mil(e.s[a0])} para ${mil(e.s[a1])} alunos.`),
     h("figure", { style: "margin:0" },
@@ -195,7 +195,7 @@ function lei(e: Escola): HTMLElement {
           ? `a escola rural mais próxima com essas etapas é ${nomeLegivel(maisPerto.n)} (${km(maisPerto.km / 2)} km por estrada)`
           : "nenhuma das escolas próximas com essas etapas é rural")],
   ];
-  return h("section", null,
+  return h("section", { class: "s-lei" },
     h("h2", null, "O que a lei pede e o que já está pronto"),
     h("p", { class: "convencoes-lei" }, "■ pronto: está nesta ficha. □ a preencher: depende de pessoas. ◇ a calcular: " +
       "depende de dado que não é público."),
@@ -272,7 +272,7 @@ export async function telaFicha(main: HTMLElement, g: number, codigo: number, ma
         h("button", { type: "button", class: "botao", onclick: () => window.print() }, "Imprimir para a assembleia"),
         botaoCopiar("Copiar o texto da ficha", () => textoEscola(b, e, v.fonte, v.data_verificacao, extras)),
         botaoCompartilhar(`${nome}, ${e.m}/${e.uf}`, urlPrevia))),
-    h("p", { class: "fonte" }, `Fonte: ${v.fonte} (dados baixados em ${data(v.data_verificacao)}). Estradas: © colaboradores ` +
+    h("p", { class: "fonte s-fonte" }, `Fonte: ${v.fonte} (dados baixados em ${data(v.data_verificacao)}). Estradas: © colaboradores ` +
       "do OpenStreetMap (ODbL). ", RODAPE)));
   if (rs.length) {
     const t = await tracados(codigo);

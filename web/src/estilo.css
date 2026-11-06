@@ -440,16 +440,40 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 /* ---------- impressão: a ficha vira a folha de duas páginas para a assembleia ---------- */
 .so-impressao { display: none; }
 @media print {
-  :root { --papel: #fff; --papel-2: #fff; --tinta: #000; --tinta-2: #333; --fio: #999; }
-  html { font-size: 10.5pt; }
-  .topo nav, .pular, .busca, .acoes, .voltar, .rodape .rodape-versao, .nao-imprime { display: none !important; }
-  .ficha { display: block; }
-  .ficha-lado { position: static; }
-  .prancha { break-inside: avoid; max-width: 15cm; }
-  .verso { break-before: page; }
-  .so-impressao { display: block; }
-  .verso-perguntas li { padding-bottom: 2.6cm; }
+  :root { --papel: #fff; --papel-2: #fff; --tinta: #000; --tinta-2: #333; --fio: #999; --varzea: #eaf0e1; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html { font-size: 9.2pt; }
+  body { line-height: 1.4; }
+  .topo nav, .pular, .busca, .acoes, .voltar, .rodape, .nao-imprime { display: none !important; }
+  main { padding: 0; }
   a { color: inherit; text-decoration: none; }
-  h2 { margin-top: 1.2rem; }
+  h2 { margin-top: 0.9rem; font-size: 1.2rem; }
+  /* a ficha impressa: frente (números) e verso (a comunidade escreve), como a folha do protótipo */
+  .ficha { display: grid; grid-template-columns: minmax(0, 1fr) 7.2cm; gap: 0 0.8cm; padding-top: 0.3rem; }
+  .ficha-cabeca { grid-column: 1; grid-row: 1; }
+  .ficha-cabeca h1 { font-size: 1.9rem; }
+  .manchete { font-size: 1.05rem; }
+  .ficha-lado { grid-column: 2; grid-row: 1 / span 2; position: static; }
+  .prancha { margin: 0; }
+  .prancha figcaption, .convencoes { font-size: 0.78rem; }
+  .s-receptoras { grid-column: 1; grid-row: 2; }
+  .s-quem { grid-column: 1; grid-row: 3; }
+  .s-serie { grid-column: 2; grid-row: 3; }
+  .verso { grid-column: 1 / -1; grid-row: 4; break-before: page; }
+  .s-lei { grid-column: 1 / -1; grid-row: 5; }
+  .s-fonte { grid-column: 1 / -1; grid-row: 6; }
+  .ficha section { max-width: none; }
+  .receptoras li { padding: 0.35rem 0; break-inside: avoid; }
+  .rec-km { font-size: 1.1rem; }
+  .s-receptoras .legenda { font-size: 0.8rem; }
+  .so-impressao { display: block; }
+  .verso-perguntas { grid-template-columns: 1fr 1fr; }
+  .verso-perguntas li { padding-bottom: 1.45cm; }
+  .verso h2 { margin-top: 0; }
+  .s-serie figcaption { display: none; }
+  .s-lei .convencoes-lei, .s-lei > p:last-child { display: none; }
+  .lei li { padding: 0.15rem 0; break-inside: avoid; }
+  .lei .norma { display: inline; margin-left: 0.4em; }
+  .lei .norma::before { content: "("; } .lei .norma::after { content: ")"; }
+  .s-fonte { margin-top: 0.4rem; padding-top: 0.3rem; font-size: 0.8rem; }
 }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

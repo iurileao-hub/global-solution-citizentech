@@ -12,7 +12,7 @@
  */
 
 import "./estilo.css";
-import { versao } from "./dados";
+import { ErroDados, versao } from "./dados";
 import { h, trocar } from "./dom";
 import { novaGeracao, vivo } from "./estado";
 import { telaAssunto, telaInicio, telaPergunta } from "./telas/inicio";
@@ -73,8 +73,9 @@ async function rota(): Promise<void> {
   } catch (e) {
     if (!vivo(g)) return;
     console.error(e);
+    const semSinal = e instanceof ErroDados && e.status === 0;
     trocar(main, h("div", { class: "erro", role: "alert" },
-      h("p", null, h("strong", null, "Algo deu errado ao montar esta página. ")),
+      h("h1", { style: "font-size:var(--t2);margin-top:1rem" }, semSinal ? "Sem sinal para abrir esta página" : "Algo deu errado ao montar esta página"),
       h("p", null, e instanceof Error ? e.message : String(e)),
       h("p", null, h("a", { href: location.hash || "#/" }, "Tentar de novo"), " ou ", h("a", { href: "#/" }, "voltar ao início"), ".")));
   }
@@ -102,7 +103,7 @@ versao().then((v) => {
 }).catch(() => undefined);
 
 // funciona sem sinal depois da primeira visita (sw.js guarda a página e o que já foi aberto)
-if ("serviceWorker" in navigator && location.protocol === "https:") {
+if ("serviceWorker" in navigator && window.isSecureContext) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js").catch(() => undefined);
   });
