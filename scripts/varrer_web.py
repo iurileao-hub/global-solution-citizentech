@@ -105,7 +105,8 @@ def amostra_escolas() -> dict[int, str]:
     pega("receptora no mesmo lugar", lambda e: any(r["km"] < 1 for r in rs(e)), 3)
     pega("sem município", lambda e: not e["m"] or not e["uf"], 2)
     pega("sem coordenada", lambda e: not e["geo"], 2)
-    pega("nome mais longo", lambda e: len(e["n"]) == max(len(x["n"]) for x in es))
+    maior_nome = max(len(x["n"]) for x in es)  # calculado uma vez: dentro do filtro seria 53 mil x 53 mil
+    pega("nome mais longo", lambda e: len(e["n"]) == maior_nome)
     pega("matrícula zero", lambda e: not e["t"], 2)
     return escolha
 
@@ -124,7 +125,7 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--url", default="http://127.0.0.1:8765/")
     p.add_argument("--larguras", default="320,390,768,1280")
-    p.add_argument("--impressas", type=int, default=12, help="quantas fichas conferir na impressão")
+    p.add_argument("--impressas", type=int, default=100, help="quantas fichas conferir na impressão")
     a = p.parse_args()
     base = json.loads((RAIZ / "data" / "base_orientacoes.json").read_text(encoding="utf-8"))
     lista = telas(base)

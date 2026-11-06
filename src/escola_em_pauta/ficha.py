@@ -40,10 +40,10 @@ ORDEM_ETAPAS = list(ETAPA_ROTULO)
 ANOS_DA_ETAPA = {"anos_iniciais": range(1, 6), "anos_finais": range(6, 10)}
 
 # Referência externa em Muniz Freire (validacao.py, 04/11/2026): para a receptora indicada pela
-# prefeitura, a área técnica do TCE-ES estimou ATÉ 52 km/dia; de escola a escola, nossa rota dá 25 km.
+# prefeitura, a área técnica do TCE-ES estimou ATÉ 52 km/dia; de escola a escola, nossa rota dá 24,9 km.
 MARGEM_TEXTO = ("por enquanto há uma única referência externa (Muniz Freire, ES). Para a escola receptora "
                 "indicada pela prefeitura, a área técnica do Tribunal de Contas estimou até 52 km por dia, "
-                "pensando em quem mora mais longe; o cálculo de escola a escola dá 25 km. O caminho real de "
+                "pensando em quem mora mais longe; o cálculo de escola a escola dá 24,9 km. O caminho real de "
                 "parte das crianças pode passar do dobro do piso.")
 
 SIGLAS = {"EMEF", "EEEFM", "CEEFMTI", "CEI", "EPM", "EEEM", "EMEI", "EMEIEF", "CMEI", "CEF", "CED", "EC",

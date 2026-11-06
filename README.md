@@ -18,7 +18,7 @@ Global Solution 2026, 2º semestre. Desafio CitizenTech, case Citizen Assist AI.
 > - **O problema.** Antes de fechar uma escola do campo, a LDB exige um diagnóstico do impacto e a manifestação da comunidade. A comunidade chega à reunião sem saber os direitos e sem os números. De 2019 a 2025, 19.159 escolas públicas rurais foram extintas.
 > - **A solução.** Um assistente que responde em linguagem simples com 27 orientações conferidas no texto oficial, sempre com fonte e data, e que diz "não sei" quando a base não cobre a pergunta. Junto, a ficha de cada uma das **53.759 escolas do campo**: alunos por etapa, transporte, série da matrícula e quanta estrada separa a escola das que receberiam os alunos.
 > - **Como funciona.** Regras explícitas e índice invertido, sem modelo de linguagem gerando resposta. Rotas pela malha do OpenStreetMap, com Dijkstra e velocidade de ônibus escolar, pré-calculadas para 36.112 escolas. O terminal usa só a biblioteca padrão do Python; a versão web é o mesmo núcleo em TypeScript, preso ao terminal por um contrato de 130 perguntas.
-> - **O que os números mostram.** Se a escola fechar, a mediana é de pelo menos 12,7 km por dia até a escola mais próxima que recebe todas as etapas. No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais. 930 escolas (114 mil alunos) passariam a 2 horas ou mais de ônibus por dia. Na EMEF Durval Máximo (ES), o cálculo dá 25 km por dia, coerente como piso com os "até 52 km" estimados pelo Tribunal de Contas.
+> - **O que os números mostram.** Se a escola fechar, a mediana é de pelo menos 12,7 km por dia até a escola mais próxima que recebe todas as etapas. No Centro-Oeste, 1 em cada 3 escolas fica a 50 km ou mais. 930 escolas (114 mil alunos) passariam a 2 horas ou mais de ônibus por dia. Na EMEF Durval Máximo (ES), o cálculo dá 24,9 km por dia até a escola indicada pela prefeitura, coerente como piso com os "até 52 km" estimados pelo Tribunal de Contas.
 > - **A medida honesta.** Em 50 perguntas escritas às cegas, antes de qualquer ajuste, o assistente acertou 68%. Numa rodada nova, com 60 perguntas, 52%, e o erro foi quase todo "não sei" (20 casos contra 3 respostas erradas sem aviso). Os usuários dos testes foram simulados, e isso está declarado.
 > - **Para usar.** `python src/sistema.py` (Python 3.10 ou mais recente, sem instalar nada, sem internet) ou a **[versão web](https://iurileao-hub.github.io/global-solution-citizentech/)** no celular, que funciona sem sinal depois da primeira visita.
 
@@ -56,9 +56,9 @@ Só a biblioteca padrão do Python (3.10 ou mais recente). Funciona sem internet
 
 <p align="center"><img src="docs/img/01-abertura.png" alt="Abertura do assistente com o aviso de não oficial e o menu" width="70%"></p>
 
-A **[versão web](https://iurileao-hub.github.io/global-solution-citizentech/)** é o mesmo assistente no celular, com a ficha de cada escola e o mapa das estradas até as escolas que receberiam os alunos. Abaixo, da esquerda para a direita: uma pergunta respondida com a fonte, a ficha da EMEF Durval Máximo (Muniz Freire, ES) e a prancha do mapa, onde a estrada de chão aparece tracejada.
+A **[versão web](https://iurileao-hub.github.io/global-solution-citizentech/)** é o mesmo assistente no celular, com a ficha de cada escola e o mapa das estradas até as escolas que receberiam os alunos. Abaixo, da esquerda para a direita: uma pergunta respondida com a fonte, a ficha da EMEF Durval Máximo (Muniz Freire, ES) e o mapa da escola, onde a estrada de chão aparece tracejada.
 
-<p align="center"><img src="docs/img/07-web-celular.png" alt="Versão web no celular: pergunta respondida, ficha da EMEF Durval Máximo e prancha do mapa com as rotas" width="100%"></p>
+<p align="center"><img src="docs/img/07-web-celular.png" alt="Versão web no celular: pergunta respondida, ficha da EMEF Durval Máximo e mapa da escola com as rotas" width="100%"></p>
 
 ### 1. O problema, quem ele atinge e os temas abordados
 
@@ -114,7 +114,7 @@ O problema foi escolhido por um processo explícito, antes de qualquer decisão 
 
 ### 3. Regras de resposta, modelos de instrução e tratamento das limitações
 
-As respostas nunca saem da base: o texto da orientação é o do registro, palavra por palavra. A ordem das regras, em `src/assistente/nucleo.py`, é: entrada vazia → código digitado (D1, C5, ou falado: "ce um") → número solto, que não é código de escola → nome de escola → números de fechamento, quando a pergunta pede contagem ou cita um lugar ("quantas escolas fecharam no Piauí?") → busca nas orientações → "sem base suficiente". A primeira regra que se aplica decide.
+As respostas nunca saem da base: o texto da orientação é o do registro, palavra por palavra. A ordem das regras, em `src/assistente/nucleo.py`, é: entrada vazia → código digitado (D1, C5, ou falado: "ce um") → número solto, que não é código de escola → nome de escola → pergunta pelo número de alunos sem dizer a escola ("quantos alunos tem?"), em que o assistente pede o nome dela → números de fechamento, quando a pergunta pede contagem ou cita um lugar ("quantas escolas fecharam no Piauí?") → busca nas orientações → "sem base suficiente". A primeira regra que se aplica decide.
 
 **Dois modelos de instrução de resposta**, escritos como especificação (papel, formato, regras) em `src/assistente/respostas.py` e cumpridos por código:
 
@@ -229,7 +229,17 @@ As seis personas concluíram as seis tarefas, incluindo a nova, que pede o núme
 
 Notas médias: facilidade 3,2; entendimento 3,8; confiança 3,5.
 
-**Varredura de tela da versão web.** Os testes conferem o texto das respostas, e a tela pode errar com o texto certo. `scripts/varrer_web.py` abre 126 telas (início, retrato, o retrato de cinco UFs, as 27 orientações, perguntas de exemplo e uma amostra de escolas escolhida pelos casos difíceis: cada UF com e sem rota, indígena, quilombola, escola sem município, nome mais longo) em 4 larguras, de 320 a 1.280 px. Ela procura rolagem lateral, texto quebrado letra a letra, conteúdo cortado, "null" ou "0,0 km" na tela e erro no console, e confere se a ficha impressa cabe em 2 páginas. Rodada contra o site publicado antes da correção, ela acusou a tabela do retrato espremida no celular, o defeito que motivou a ferramenta; depois das correções, não achou nenhum.
+**Varredura de tela da versão web.** Os testes conferem o texto das respostas, e a tela pode errar com o texto certo. `scripts/varrer_web.py` abre 126 telas (início, retrato, o retrato de cinco UFs, as 27 orientações, perguntas de exemplo e uma amostra de escolas escolhida pelos casos difíceis: cada UF com e sem rota, indígena, quilombola, escola sem município, nome mais longo) em 4 larguras, de 320 a 1.280 px. Ela procura rolagem lateral, texto quebrado letra a letra, conteúdo cortado, "null" ou "0,0 km" na tela e erro no console, e imprime cada uma das 78 fichas da amostra para conferir que cabe em 2 páginas. Rodada contra o site publicado antes da correção, ela acusou a tabela do retrato espremida no celular, o defeito que motivou a ferramenta; depois das correções, não achou nenhum.
+
+**Teste do site por agentes com papéis.** Depois da varredura, três agentes de IA testaram o site publicado, cada um com uma missão: uma agricultora de pouca escolaridade no celular, que escreve sem acento e com erros; uma conselheira municipal que imprime as fichas para a reunião; e um auditor que comparou a tela, o terminal, o cartão do WhatsApp e os arquivos de dados. O auditor conferiu 64 escolas campo a campo e não achou nenhum número errado. Os três acharam 18 defeitos de redação e de critério, todos corrigidos. Os principais:
+- a nota sobre Muniz Freire saía em todas as fichas e parecia o número da escola aberta;
+- o checklist da lei dava como pronto o diagnóstico do impacto, que é da Secretaria, e afirmava que "nenhuma escola próxima é rural" em escola sem rota;
+- 784 escolas com alunos só fora das etapas regulares apareciam como "sem matrícula";
+- o terminal escrevia "0 km e 1 min" para escolas no mesmo endereço;
+- o "pelo menos" era arredondado para cima (24,9 km virava "pelo menos 25"), e passou a ser arredondado para baixo;
+- a pergunta "o que eu faço agora" recebia "não sei" e passou a mostrar as três ações que a base cobre (pedir os números, participar, recorrer).
+
+Esta última entrou como palavra-chave nova, então as perguntas da persona agora são conjunto de ajuste, não de medida. O contrato com o terminal foi regerado, e nenhuma das 130 perguntas rotuladas mudou de resposta.
 
 **Próximo passo: validação com usuários reais** (famílias, professores, conselheiros, lideranças e quem atua nesses conflitos), pelo canal que essas pessoas usam, com as perguntas delas ampliando a base.
 
@@ -272,7 +282,7 @@ A versão web está publicada no link da seção Links. Para rodá-la localmente
 - **Privacidade.** O assistente não pede nome, endereço nem documento, e não grava o que é digitado. Os números das escolas são públicos e contam escolas, nunca identificam crianças. Por isso a distância é sempre de escola a escola: calcular a partir da casa de cada criança exigiria um dado pessoal que o problema não justifica.
 - **Clareza.** Orientações em frases curtas (15 palavras por frase, em média, no modelo B), com o termo técnico explicado quando aparece ("nucleação", "órgão normativo"). O assistente mostra o assunto que entendeu, para a pessoa conferir.
 - **Acessibilidade.** A interface do terminal é só texto, o que funciona com leitores de tela e em computadores modestos, sem internet. As entradas aceitam erros de acento e maiúsculas, a grafia do reconhecimento de voz ("fexar") e siglas ditas letra a letra ("elê dê bê").
-- **Versão web.** Fonte Atkinson Hyperlegible, desenhada para leitores com baixa visão; contraste conferido; alvos de toque grandes; link para pular ao conteúdo. A primeira tela pesa 38 KB comprimidos, para abrir em conexão fraca, e depois da primeira visita o site funciona sem sinal. A ficha impressa sai em 2 páginas A4, com o verso livre para a comunidade escrever na assembleia.
+- **Versão web.** Fonte Atkinson Hyperlegible, desenhada para leitores com baixa visão; contraste conferido; alvos de toque grandes; link para pular ao conteúdo; um glossário das palavras da ficha (LDB, PL, INEP, piso, escola receptora), em "Como funciona"; e, no mapa do Brasil, uma lista de estados para quem não acerta as UFs pequenas com o dedo. A primeira tela pesa 38 KB comprimidos, para abrir em conexão fraca, e depois da primeira visita o site funciona sem sinal. A ficha impressa sai em 2 páginas A4, com o verso livre para a comunidade escrever na assembleia.
 
 ### 8. De onde vêm os números das escolas
 
@@ -305,9 +315,9 @@ Na versão web, o retrato vira um mapa por UF, em degraus de cor. Tocar numa UF 
 
 A conta procura a receptora entre as 10 escolas mais próximas com rota. A ficha lista as 4 mais próximas e, quando nenhuma delas recebe todas as etapas, acrescenta em 5º lugar a mais próxima que recebe (3.417 escolas). Em 7% das escolas com rota (2.482), nenhuma das 10 recebe todas as etapas, e a família pode precisar de mais de uma escola. A primeira versão do cálculo olhava só as 4 mais próximas: quando nenhuma recebia todas as etapas, a conta caía numa escola que recebe só parte dos alunos, mais perto, e a mediana nacional saía 11,6 km em vez de 12,7.
 
-As escolas sem rota são de cinco tipos: 12.601 sem coordenada na base do Ipea; 4.092 longe demais da estrada mapeada, quase todas no Amazonas e no Pará, onde o transporte pode ser fluvial; 501 sem ligação na malha; 420 sem matrícula em 2025; 33 sem receptora a até 60 km. A cobertura é menor justamente nas escolas indígenas: só 1.142 das 3.664 têm rota.
+As escolas sem rota são de cinco tipos: 12.601 sem coordenada na base do Ipea; 4.092 longe demais da estrada mapeada, quase todas no Amazonas e no Pará, onde o transporte pode ser fluvial; 501 sem ligação na malha; 420 sem alunos nas etapas da creche ao ensino médio regular (401 delas só têm turmas de outras modalidades, como EJA ou educação profissional); 33 sem receptora a até 60 km. A cobertura é menor justamente nas escolas indígenas: só 1.142 das 3.664 têm rota.
 
-**Validação.** Em Muniz Freire (ES), na EMEF Durval Máximo, a área técnica do Tribunal de Contas estimou que os alunos "percorreriam até 52 km por dia" até a receptora indicada (Decisão 02423/2025-2). O nosso cálculo, de escola a escola, dá 25 km por dia, cerca da metade, porque não conhece a casa de cada criança. O resultado confirma o número como piso. Com uma única referência externa, ele vale como ordem de grandeza.
+**Validação.** Em Muniz Freire (ES), na EMEF Durval Máximo, a área técnica do Tribunal de Contas estimou que os alunos "percorreriam até 52 km por dia" até a receptora indicada (Decisão 02423/2025-2). O nosso cálculo, de escola a escola, dá 24,9 km por dia, cerca da metade, porque não conhece a casa de cada criança. A ficha mostra "pelo menos 24 km": todo número de piso é arredondado para baixo, para o "pelo menos" nunca passar do valor calculado. O resultado confirma o número como piso. Com uma única referência externa, ele vale como ordem de grandeza.
 
 <p align="center"><img src="docs/img/09-web-impressao.png" alt="Ficha da EMEF Durval Máximo impressa em duas páginas A4" width="90%"></p>
 
@@ -364,7 +374,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 >
 > **Versão web sem servidor, presa ao terminal por um contrato.** A busca foi reescrita em TypeScript (`web/`) para rodar no celular sem baixar 6 MB de Python. O arquivo `data/regressao_web.json` guarda o que o núcleo Python responde às 130 perguntas rotuladas e às buscas de escola, e o teste da web (`web/test/contrato.test.ts`, rodado no GitHub Actions) exige a mesma resposta, palavra por palavra.
 >
-> **Distância como piso.** Sem o endereço das crianças (dado pessoal), o cálculo de escola a escola só pode garantir o mínimo, e a resposta diz isso.
+> **Distância como piso.** Sem o endereço das crianças (dado pessoal), o cálculo de escola a escola só pode garantir o mínimo, e a resposta diz isso. Pela mesma razão, todo número de piso é arredondado para baixo: 24,9 km aparece como "pelo menos 24 km", nunca 25.
 
 ### 📢 Observações Gerais
 

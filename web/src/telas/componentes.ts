@@ -100,8 +100,8 @@ export function botaoCompartilhar(titulo: string, url: string): HTMLButtonElemen
       }
     }
     const ok = await copiarTexto(url);
-    b.textContent = ok ? "Link copiado" : "Não foi possível copiar";
-    setTimeout(() => (b.textContent = rotulo), 2500);
+    b.textContent = ok ? "Link copiado: cole no WhatsApp" : "Não foi possível copiar";
+    setTimeout(() => (b.textContent = rotulo), 4000);
   });
   return b;
 }

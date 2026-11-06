@@ -76,6 +76,17 @@ const INDICADORES: Indicador[] = [
     valor: (r) => (r.com_rota ? r.receptora_urbana / r.com_rota : null), texto: pct, limites: [0.15, 0.25, 0.35, 0.5] },
 ];
 
+/** A lista de estados ao lado do mapa: DF, Sergipe e Alagoas têm poucos milímetros no celular, e a lista também serve
+ * a quem não usa o mapa. */
+function escolhaUf(aoEscolher: (uf: string) => void, atual: () => string | null): HTMLElement {
+  const sel = h("select", { class: "escolha-uf", id: `uf-${Math.random().toString(36).slice(2, 7)}` },
+    h("option", { value: "" }, "Escolha o estado"),
+    Object.entries(UF_NOME).sort((a, b) => a[1].localeCompare(b[1], "pt-BR")).map(([uf, nome]) => h("option", { value: uf }, nome)));
+  sel.value = atual() ?? "";
+  sel.addEventListener("change", () => { if (sel.value) aoEscolher(sel.value); });
+  return h("p", { class: "escolha-uf-linha" }, h("label", { for: sel.id }, "Ou escolha na lista: "), sel);
+}
+
 /** Rolagem suave, menos para quem pediu menos movimento ao sistema. */
 const suave = (): ScrollBehavior => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
 
@@ -149,6 +160,7 @@ export async function pranchaBrasil(alvo: HTMLElement, texto: HTMLElement): Prom
       h("div", { class: "prancha-titulo" }, h("h2", null, "O Brasil, por UF"), h("span", null, "escolas a 50 km ou mais por dia")),
       h("div", { class: "prancha-moldura" }, desenharMapa(mapa, dados, ind, abrir, null, false)),
       legenda(ind),
+      escolhaUf(abrir, () => null),
       h("figcaption", null, "Toque numa UF para abrir o retrato dela.")));
   trocar(texto, h("section", { class: "coluna" },
     h("h2", null, "O retrato do país"),
@@ -160,13 +172,23 @@ export async function pranchaBrasil(alvo: HTMLElement, texto: HTMLElement): Prom
     h("p", null, h("a", { class: "botao secundario", href: "#/retrato" }, "Ver o retrato completo"))));
 }
 
+const MOTIVO_SEM_ROTA: Record<string, string> = {
+  sem_coordenada: "sem localização pública", origem_longe: "longe da estrada mapeada",
+  sem_rota: "sem ligação na malha viária", sem_matricula: "sem alunos nas etapas regulares",
+  sem_candidata: "sem escola receptora a até 60 km",
+};
+
+const km1 = (v: number | null) => (v === null ? "" : `${v.toFixed(1).replace(".", ",")} km`);
+/** Menos da metade das escolas com rota: a mediana vale para as que têm, e a tabela marca. */
+const poucaCobertura = (r: Recorte) => r.escolas > 0 && r.com_rota / r.escolas < 0.5;
+
 function linhaTabela(nome: string, r: Recorte, tipo: "regiao" | "uf" | "brasil", uf?: string): HTMLElement {
   const fluvial = r.aviso_fluvial;
   return h("tr", { class: tipo === "uf" ? null : "regiao", "data-uf": uf ?? null },
     h("th", { scope: "row", class: tipo === "uf" ? "sub" : null }, nome, fluvial ? h("span", { title: "transporte em parte por rio" }, " (rio)") : null),
-    h("td", { class: "num" }, `${mil(r.com_rota)} de ${mil(r.escolas)}`),
-    h("td", { class: "num" }, r.km_ida_volta.mediana === null ? "" : `${String(r.km_ida_volta.mediana).replace(".", ",")} km`),
-    h("td", { class: "num" }, r.km_ida_volta.p90 === null ? "" : `${String(r.km_ida_volta.p90).replace(".", ",")} km`),
+    h("td", { class: "num" }, `${mil(r.com_rota)} de ${mil(r.escolas)}`, h("small", { class: "cobertura" }, ` (${pct(r.escolas ? r.com_rota / r.escolas : 0)})`)),
+    h("td", { class: "num" }, km1(r.km_ida_volta.mediana), poucaCobertura(r) && r.km_ida_volta.mediana !== null ? " †" : ""),
+    h("td", { class: "num" }, km1(r.km_ida_volta.p90)),
     h("td", { class: "num" }, longe(r) === null ? "" : pct(longe(r)!)),
     h("td", { class: "num" }, mil(r.faixas_min?.["120_ou_mais"]?.escolas ?? 0)),
     h("td", { class: "num" }, r.com_rota ? pct(r.receptora_urbana / r.com_rota) : ""));
@@ -190,7 +212,14 @@ function detalheNumeros(uf: string, r: Recorte | undefined): (string | HTMLEleme
       `uma em cada dez passa de ${String(r.km_ida_volta.p90).replace(".", ",")} km. `);
   }
   if (r.aviso_fluvial) partes.push(h("b", null, "Parte do transporte escolar é por rio: "), "a rota por estrada pode não ser o caminho das crianças. ");
-  if (r.sem_rota["sem_coordenada"]) partes.push(`${mil(r.sem_rota["sem_coordenada"])} escolas sem localização pública.`);
+  if (poucaCobertura(r)) {
+    partes.push(h("b", null, `Só ${pct(r.com_rota / r.escolas)} das escolas têm rota: `), "a mediana vale para elas, não para o estado todo. ");
+  }
+  const motivos = Object.entries(r.sem_rota).filter(([, q]) => q > 0).sort((a, b) => b[1] - a[1]);
+  if (motivos.length) {
+    partes.push(`Sem rota (${mil(r.escolas - r.com_rota)}): ` +
+      motivos.map(([k, q]) => `${mil(q)} ${MOTIVO_SEM_ROTA[k] ?? k}`).join(", ") + ".");
+  }
   return partes;
 }
 
@@ -216,6 +245,10 @@ export async function telaRetrato(main: HTMLElement, g: number, ufPedida: string
     linha.classList.add("destaque");
     linha.scrollIntoView({ block: "center", behavior: suave() });
   };
+  const marcarLinha = (uf: string) => {
+    corpoTabela.querySelectorAll("tr.destaque").forEach((tr) => tr.classList.remove("destaque"));
+    corpoTabela.querySelector(`tr[data-uf="${uf}"]`)?.classList.add("destaque");
+  };
   const mostrar = (uf: string) => trocar(detalhe, detalheUf(uf, dados.uf[uf], () => verNaTabela(uf)));
   const escolher = (uf: string) => {
     escolhida = uf;
@@ -227,6 +260,9 @@ export async function telaRetrato(main: HTMLElement, g: number, ufPedida: string
       if (sim) p.parentNode!.insertBefore(p, p.parentNode!.querySelector("text"));
     }
     mostrar(uf);
+    marcarLinha(uf);
+    const sel = lugarMapa.parentElement?.querySelector<HTMLSelectElement>("select.escolha-uf");
+    if (sel) sel.value = uf;
     // o endereço passa a ter a UF (dá para compartilhar), sem redesenhar a tela
     history.replaceState(null, "", `#/retrato/${uf}`);
     const r = detalhe.getBoundingClientRect();
@@ -248,18 +284,20 @@ export async function telaRetrato(main: HTMLElement, g: number, ufPedida: string
   trocar(main,
     h("section", { class: "abertura", style: "padding-bottom:0" },
       h("h1", null, "Se as escolas do campo fechassem, quanto as crianças passariam a viajar?"),
-      h("p", { class: "sub" }, "A conta foi feita para cada escola do campo do país: a estrada até a escola mais próxima que " +
-        "recebe todas as etapas dela, de escola a escola, ida e volta. É um piso: o caminho real das crianças é maior.")),
+      h("p", { class: "sub" }, `A conta foi feita para as ${mil(b.com_rota)} escolas do campo com rota calculada ` +
+        `(${pct(b.com_rota / b.escolas)} das ${mil(b.escolas)}): a estrada até a escola mais próxima que recebe todas as etapas ` +
+        "dela, de escola a escola, ida e volta. É um piso: o caminho real das crianças é maior.")),
     h("ul", { class: "brasil-numeros" },
       h("li", null, h("b", null, `${String(b.km_ida_volta.mediana).replace(".", ",")} km`), "por dia é a distância mediana, pelo menos"),
       h("li", null, h("b", null, mil(duas?.escolas ?? 0)), `escolas, com ${mil(duas?.alunos ?? 0)} alunos, passariam a ter duas horas ou mais de ônibus por dia`),
       h("li", null, h("b", null, mil(b.receptora_urbana)), `escolas mandariam os alunos para uma escola urbana (${mil(b.alunos_receptora_urbana ?? 0)} alunos)`),
-      h("li", null, h("b", null, mil(sc)), "escolas não têm localização pública no INEP: para elas, o assistente não estima")),
+      h("li", null, h("b", null, mil(sc)), `escolas não têm localização pública no INEP, e outras ${mil(b.escolas - b.com_rota - sc)} ` +
+        "ficaram sem rota por outros motivos (a maioria longe da estrada mapeada, no Norte). Para elas, o assistente não estima")),
     h("div", { class: "duas" },
       h("figure", { class: "prancha", style: "margin:1rem 0" },
-        h("div", { class: "prancha-titulo" }, h("h2", null, "Prancha do Brasil"), tituloMapa),
+        h("div", { class: "prancha-titulo" }, h("h2", null, "Mapa do Brasil"), tituloMapa),
         h("div", { class: "indicadores", role: "group", "aria-label": "O que o mapa mostra" }, botoes),
-        lugarMapa, detalhe, lugarLegenda,
+        lugarMapa, escolhaUf(escolher, () => escolhida), detalhe, lugarLegenda,
         h("figcaption", null, "Cores em degraus. A conta usa a escola mais próxima que recebe todas as etapas; quando nenhuma das " +
           `${dados.receptoras_por_escola ?? 4} mais próximas recebe, usa a mais próxima (${mil(b.nenhuma_recebe_todas)} escolas). ` +
           `Malha de UFs: ${mapa.fonte}.`)),
@@ -282,10 +320,14 @@ export async function telaRetrato(main: HTMLElement, g: number, ufPedida: string
             .map(([uf, u]) => linhaTabela(UF_NOME[uf], u, "uf", uf)),
         ])))),
     h("p", { class: "legenda" }, "Km e minutos por dia, ida e volta, de escola a escola, sempre como piso. \"Com rota\": escolas com " +
-      "rota calculada, do total de escolas do campo. \"1 em 10 passa de\": o percentil 90. \"(rio)\": parte do transporte é " +
+      "rota calculada, do total de escolas do campo. \"1 em 10 passa de\": o percentil 90. \"†\": menos da metade das escolas tem rota, e a mediana vale só para " +
+      "as que têm. \"(rio)\": parte do transporte é " +
       `fluvial. Fonte: ${dados.fonte}; estradas do OpenStreetMap de ${dados.data_osm.map((d) => d.split("-").reverse().join("/")).join(", ")}.`));
   desenhar();
   if (!escolhida) return;
   mostrar(escolhida);
+  marcarLinha(escolhida);
+  const sel = lugarMapa.parentElement?.querySelector<HTMLSelectElement>("select.escolha-uf");
+  if (sel) sel.value = escolhida;
   return lugarMapa.closest("figure") as HTMLElement;
 }

@@ -81,7 +81,33 @@ export function tempo(minutos: number): string {
   const total = redondo(minutos);
   const h = Math.floor(total / 60);
   const m = total % 60;
-  return h ? `${h} h ${String(m).padStart(2, "0")} min` : `${m} min`;
+  return !h ? `${m} min` : !m ? `${h} h` : `${h} h ${String(m).padStart(2, "0")} min`;
+}
+
+/** Abaixo disso, ida e volta, é a mesma coordenada pública (escolas que dividem prédio ou endereço). */
+export const MESMO_LUGAR_KM = 1;
+
+/**
+ * Distância para dizer "pelo menos": arredonda PARA BAIXO, senão o piso passaria do valor calculado (24,9 km viraria
+ * "pelo menos 25"). Inteiro a partir de 10 km; uma casa decimal abaixo disso. Igual a respostas.km_piso do Python.
+ */
+export function kmPiso(x: number): string {
+  if (x >= 10) return String(Math.floor(x + 1e-9));
+  return (Math.floor(x * 10 + 1e-9) / 10).toFixed(1).replace(".", ",");
+}
+
+export function lugarEscola(e: { m: string | null; uf: string | null }): string {
+  return e.m && e.uf ? `${e.m}/${e.uf}` : "município não informado no Censo";
+}
+
+/** O aviso do pré-cálculo, corrigido onde dizia "sem matrícula" de escola que tem alunos, mas só fora das etapas
+ * que a busca de receptoras usa (EJA ou educação profissional, por exemplo). */
+export function avisoRota(rota: Rota, e: Escola): string {
+  if (rota.motivo === "sem_matricula" && e.t) {
+    return "A escola não tem alunos nas etapas da creche ao ensino médio regular, que a busca de escolas " +
+      "receptoras usa: não há receptoras a calcular.";
+  }
+  return rota.aviso || "";
 }
 
 export function fonte(r: Registro): string {
@@ -98,9 +124,9 @@ function item(base: Base, rid: string): string {
 }
 
 export function avisoParcial(fora: string[]): string {
-  return "Atenção: esta é a orientação mais próxima que encontrei, mas ela não trata de " +
-    fora.map((p) => `"${p}"`).join(", ") + ". Se isso é o centro da sua dúvida, a base não tem " +
-    "essa resposta; confirme com o órgão responsável.";
+  return "Atenção: respondi com a orientação mais próxima, mas ela não fala de " +
+    fora.map((p) => `"${p}"`).join(", ") + ". Se a sua dúvida é sobre isso, esta base não tem a " +
+    "resposta: confirme com o órgão responsável.";
 }
 
 export function sugestoes(base: Base, ids: string[]): string {
@@ -143,10 +169,16 @@ export function semResposta(base: Base): string {
 export function receptora(r: Receptora, origem: Escola): string {
   const onde = [r.rural ? "rural" : "urbana"];
   if (r.m || r.uf) onde.push(`${r.m || origem.m}/${r.uf || origem.uf}`);
-  const partes = [`${redondo(r.km)} km`];
-  if (r.min !== undefined && r.min !== null) partes.push(tempo(r.min));
-  let texto = `${r.n} (${onde.join(", ")}): ${partes.join(" e ")}`;
-  if ((r.chao ?? 0) >= 0.5) texto += `, dos quais ${redondo(r.chao!)} km de estrada de chão`;
+  let texto: string;
+  if (r.km < MESMO_LUGAR_KM) {
+    // "0 km e 1 min" seria precisão falsa: é a mesma coordenada pública
+    texto = `${r.n} (${onde.join(", ")}): no mesmo lugar ou quase (mesma localização pública)`;
+  } else {
+    const partes = [`${kmPiso(r.km)} km`];
+    if (r.min !== undefined && r.min !== null) partes.push(tempo(r.min));
+    texto = `${r.n} (${onde.join(", ")}): ${partes.join(" e ")}`;
+    if ((r.chao ?? 0) >= 0.5) texto += `, dos quais ${kmPiso(Math.min(r.chao!, r.km))} km de estrada de chão`;
+  }
   if (r.etapas && r.etapas.length) {
     texto += recebeTodas(r, origem)
       ? "; recebe todas as etapas desta escola"
@@ -163,10 +195,12 @@ export function recebeTodas(r: Receptora, origem: Escola): boolean {
 export function textoEscola(base: Base, e: Escola, fonteDados: string, dataVerif: string, extras: string[] = []):
   string {
   const local = e.z === "rural" ? "rural" : "urbana, mas a maioria dos alunos mora na zona rural";
-  const etapas = Object.entries(e.e).map(([k, v]) => `${ETAPA[k]}: ${v}`).join("; ") || "sem matrícula informada";
+  const etapas = Object.entries(e.e).map(([k, v]) => `${ETAPA[k]}: ${v}`).join("; ") || (e.t
+    ? "nenhum da creche ao ensino médio regular; podem ser de EJA ou de educação profissional"
+    : "sem matrícula informada");
   const anos = Object.keys(e.s).sort();
   const linhas = [
-    `${e.n}, ${e.m}/${e.uf} (código INEP ${e.c})`,
+    `${e.n}, ${lugarEscola(e)} (código INEP ${e.c})`,
     `Escola ${e.r || "pública"} ${local}` + (e.d ? `, ${ONDE[e.d] ?? e.d}` : "") + ".",
     `Alunos em ${anos.length ? anos[anos.length - 1] : "último ano"}: ${e.t} (${etapas}).`,
   ];
@@ -178,7 +212,7 @@ export function textoEscola(base: Base, e: Escola, fonteDados: string, dataVerif
   if (rota && rota.receptoras && rota.receptoras.length) {
     linhas.push("Escolas que poderiam receber os alunos (estrada por dia, ida e volta, PELO MENOS):");
     for (const r of rota.receptoras) linhas.push("  - " + receptora(r, e));
-    if (rota.aviso) linhas.push(rota.aviso);
+    if (avisoRota(rota, e)) linhas.push(avisoRota(rota, e));
     if (rota.sem_rota) {
       linhas.push(`Outras ${rota.sem_rota} escola(s) próxima(s) ficaram sem rota na malha viária ` +
         "e não entram na lista.");
@@ -187,7 +221,7 @@ export function textoEscola(base: Base, e: Escola, fonteDados: string, dataVerif
     linhas.push(`Conta feita de escola a escola pela malha do OpenStreetMap${quando}. A casa de cada ` +
       "criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior.");
   } else if (rota) {
-    linhas.push((rota.aviso || "Nenhuma rota por estrada foi calculada para esta escola.") +
+    linhas.push((avisoRota(rota, e) || "Nenhuma rota por estrada foi calculada para esta escola.") +
       " Não vou estimar um número sem base.");
   } else if (!e.geo) {
     linhas.push(SEM_COORDENADA);
@@ -208,18 +242,26 @@ export const SEM_COORDENADA = "A localização desta escola não é pública: o 
 export const NAO_CALCULADA = "A distância até as escolas que poderiam receber os alunos ainda não foi calculada para " +
   "esta escola. Não vou estimar um número sem base.";
 
+/** Todas as escolas da lista no mesmo município (conhecido): a busca já filtrou pelo lugar. */
+export function mesmoMunicipio(es: { m: string | null; uf: string | null }[]): boolean {
+  return es.length > 1 && Boolean(es[0].m && es[0].uf) && es.every((e) => e.m === es[0].m && e.uf === es[0].uf);
+}
+
 export function textoListaEscolas<E extends EscolaNome>(resp: Extract<Resposta<E>, { tipo: "escola_ambigua" }>):
   string {
   const { achado, jaFiltrado, mostra } = resp;
   const es = achado.escolas;
-  const pedido = jaFiltrado ? "" : ". Para escolher, informe o município e a UF";
+  // todas no mesmo município: pedir o município de novo não ajuda (a pessoa já disse); só a ficha distingue
+  const mesmo = mesmoMunicipio(es);
+  const pedido = mesmo ? `, todas em ${es[0].m}/${es[0].uf}. Para saber qual é a sua, abra a ficha de cada uma`
+    : jaFiltrado ? "" : ". Para escolher, informe o município e a UF";
   const nUfs = new Set(es.map((e) => e.uf)).size;
   const onde = nUfs > 1 && es.length > 8 ? `, em ${nUfs} UFs` : "";
   const cauda = es.length > mostra.length ? `. Algumas delas (${mostra.length} de ${achado.total}):` : ":";
   return [
     `Encontrei ${achado.total} escolas com essas palavras no nome${onde}${pedido}${cauda}`,
-    ...mostra.map((e) => `  ${e.c}  ${e.n}, ${e.m}/${e.uf}`),
-    "Ou digite o código INEP (o número da esquerda).",
+    ...mostra.map((e) => `  ${e.c}  ${e.n}, ${lugarEscola(e)}`),
+    mesmo ? "Digite o código INEP (o número da esquerda) para abrir a ficha." : "Ou digite o código INEP (o número da esquerda).",
   ].join("\n");
 }
 

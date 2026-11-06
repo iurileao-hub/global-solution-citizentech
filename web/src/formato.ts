@@ -1,5 +1,5 @@
 /** Formatação de texto da ficha (como em src/escola_em_pauta/ficha.py, o protótipo impresso). */
-import { redondo } from "./nucleo/respostas";
+import { kmPiso, redondo } from "./nucleo/respostas";
 
 export const UF_NOME: Readonly<Record<string, string>> = {
   AC: "Acre", AL: "Alagoas", AP: "Amapá", AM: "Amazonas", BA: "Bahia", CE: "Ceará", DF: "Distrito Federal",
@@ -38,9 +38,10 @@ export function nomeLegivel(nome: string): string {
   }).join(" ");
 }
 
-/** "25" a partir de 10 km; "4,5" abaixo (uma casa decimal ajuda quando a distância é curta). */
+/** Distância de piso ("pelo menos"): arredonda para baixo, como o terminal (kmPiso). "24" a partir de 10 km;
+ * "4,5" abaixo (uma casa decimal ajuda quando a distância é curta). */
 export function km(x: number): string {
-  return x >= 10 ? String(redondo(x)) : (Math.round(x * 10) / 10).toFixed(1).replace(".", ",");
+  return kmPiso(x);
 }
 
 export function mil(n: number): string {

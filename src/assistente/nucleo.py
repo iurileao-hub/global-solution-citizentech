@@ -17,6 +17,7 @@ Ordem das regras (condicionais em sequência; a primeira que se aplica decide):
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 from . import fechamentos as fech_mod
@@ -92,6 +93,19 @@ def _numeros(ctx: Contexto, rid: str, texto: str) -> str:
     return ""
 
 
+_CONTA_ALUNOS = re.compile(r"\bquant[oa]s (alunos|alunas|criancas|estudantes|matriculas|matriculados)\b")
+MENSAGEM_ALUNOS = ("Para saber quantos alunos uma escola tem, escreva o nome dela ou o código INEP. Por exemplo: "
+                   "Durval Máximo, ou 32049501.")
+
+
+def _pede_alunos(texto: str, lugar: frozenset) -> bool:
+    """"quantos alunos tem?" sem dizer a escola: a resposta é a ficha da escola, e falta saber qual. Sem esta
+    regra, a pergunta casava com a orientação sobre PREVER a matrícula. Pergunta de fechamento ou com lugar
+    ("quantos alunos no Piauí") segue o caminho normal."""
+    # a contagem tem de vir colada ("quantas crianças"): "quanto tempo as crianças ficam no ônibus" é outra pergunta
+    return bool(_CONTA_ALUNOS.search(normalizar(texto))) and "fecha" not in termos(texto) and not lugar
+
+
 def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
     base = ctx.base
     bruto = normalizar(texto)
@@ -123,6 +137,8 @@ def responder(ctx: Contexto, texto: str, modelo: str = "B") -> Resposta:
             return lista_escolas(achado)
         resp = escola(ctx, achado["escolas"][0], modelo, extras)
         return resp
+    if _pede_alunos(texto, lugar):
+        return Resposta("vazia", respostas._par(MENSAGEM_ALUNOS))
     r = _pede_fechamentos(ctx, _lugar_desempata(ctx, r, texto), texto, lugar)
     if r.tipo == "vazia":
         return Resposta("vazia", respostas._par("Não entendi a pergunta: ela só tem palavras muito comuns. Tente com "
@@ -164,13 +180,18 @@ def _amostra(es: list[dict], n: int) -> list[dict]:
 
 def lista_escolas(achado: dict, ja_filtrado: bool = False) -> Resposta:
     es = achado["escolas"]
-    pedido = "" if ja_filtrado else ". Para escolher, informe o município e a UF"
+    lugares = {(e["m"], e["uf"]) for e in es}
+    # todas no mesmo município: pedir o município de novo não ajuda (a pessoa já disse); só a ficha distingue
+    mesmo = len(es) > 1 and len(lugares) == 1 and all(next(iter(lugares)))
+    pedido = (f", todas em {es[0]['m']}/{es[0]['uf']}. Para saber qual é a sua, abra a ficha de cada uma" if mesmo
+              else "" if ja_filtrado else ". Para escolher, informe o município e a UF")
     mostra = _amostra(es, MAX_ESCOLAS_LISTA) if len(es) > MAX_ESCOLAS_LISTA else es
     n_ufs = len({e["uf"] for e in es})
     onde = f", em {n_ufs} UFs" if n_ufs > 1 and len(es) > MAX_ESCOLAS_LISTA else ""
     linhas = [respostas._par(f"Encontrei {achado['total']} escolas com essas palavras no nome{onde}{pedido}"
                              + (f". Algumas delas ({len(mostra)} de {achado['total']}):" if len(es) > len(mostra)
                                 else ":"))]
-    linhas += [f"  {e['c']}  {e['n']}, {e['m']}/{e['uf']}" for e in mostra]
-    linhas.append("Ou digite o código INEP (o número da esquerda).")
+    linhas += [f"  {e['c']}  {e['n']}, {respostas.lugar_escola(e)}" for e in mostra]
+    linhas.append("Digite o código INEP (o número da esquerda) para abrir a ficha." if mesmo
+                  else "Ou digite o código INEP (o número da esquerda).")
     return Resposta("escola_ambigua", "\n".join(linhas), escolas=[e["c"] for e in es])

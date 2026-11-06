@@ -10,6 +10,7 @@
  *   #/retrato                  o retrato nacional
  *   #/retrato/<UF>             o retrato com uma UF escolhida (o mapa da página inicial leva para cá)
  *   #/sobre                    como funciona, limites, privacidade e fontes
+ *   #/sobre/palavras           o glossário (LDB, INEP, PL, piso...), aberto direto nele
  */
 
 import "./estilo.css";
@@ -82,7 +83,7 @@ async function rota(): Promise<void> {
       }
       case "sobre": {
         const { telaSobre } = await import("./telas/sobre");
-        await telaSobre(main, g);
+        abrirEm = await telaSobre(main, g, partes[1] ?? null);
         break;
       }
       default:
@@ -95,7 +96,9 @@ async function rota(): Promise<void> {
     const semSinal = e instanceof ErroDados && e.status === 0;
     trocar(main, h("div", { class: "erro", role: "alert" },
       h("h1", { style: "font-size:var(--t2);margin-top:1rem" }, semSinal ? "Sem sinal para abrir esta página" : "Algo deu errado ao montar esta página"),
-      h("p", null, e instanceof Error ? e.message : String(e)),
+      // sem sinal, o nome do arquivo que faltou ("escolas/095.json") não ajuda ninguém: diz o que fazer
+      h("p", null, semSinal ? "Sem internet, só abrem as fichas e páginas que você já abriu antes neste aparelho. Quando " +
+        "tiver sinal, abra as fichas que vai precisar: elas ficam guardadas para depois." : e instanceof Error ? e.message : String(e)),
       h("p", null, h("a", { href: location.hash || "#/" }, "Tentar de novo"), " ou ", h("a", { href: "#/" }, "voltar ao início"), ".")));
   }
   if (!vivo(g)) return;

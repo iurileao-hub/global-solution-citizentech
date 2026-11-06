@@ -27,6 +27,8 @@ export const MAX_ESCOLAS_LISTA = 8;
 export const MENSAGEM = {
   vazia: "Você não digitou nada. Escreva uma pergunta, um código como D1, ou o nome da escola.",
   soComuns: "Não entendi a pergunta: ela só tem palavras muito comuns. Tente com outras palavras.",
+  alunos: "Para saber quantos alunos uma escola tem, escreva o nome dela ou o código INEP. Por exemplo: " +
+    "Durval Máximo, ou 32049501.",
   numero: (n: string) => `Não reconheci o número ${n}. Digite um código como D1, o código INEP de uma escola, ` +
     "ou escreva sua pergunta. (No menu, as opções vão de 0 a 4.)",
 } as const;
@@ -107,6 +109,15 @@ function numeros(ctx: Contexto, rid: string, texto: string): BlocoFechamentos | 
 
 const VAZIO: Set<string> = new Set();
 
+/** "quantos alunos tem?" sem dizer a escola: falta saber qual. Sem esta regra, casava com a orientação sobre PREVER
+ * a matrícula. Pergunta de fechamento ou com lugar ("quantos alunos no Piauí") segue o caminho normal. */
+const CONTA_ALUNOS = /\bquant[oa]s (alunos|alunas|criancas|estudantes|matriculas|matriculados)\b/;
+
+function pedeAlunos(texto: string, lugar: Set<string>): boolean {
+  // a contagem tem de vir colada ("quantas crianças"): "quanto tempo as crianças ficam no ônibus" é outra pergunta
+  return CONTA_ALUNOS.test(normalizar(texto)) && !termos(texto).includes("fecha") && lugar.size === 0;
+}
+
 export function responder<E extends EscolaNome>(ctx: Contexto<E>, texto: string): Resposta<E> {
   const base = ctx.base;
   const bruto = normalizar(texto);
@@ -132,6 +143,7 @@ export function responder<E extends EscolaNome>(ctx: Contexto<E>, texto: string)
     if (achado.tipo === "ambigua") return listaEscolas(achado);
     return escola(ctx, achado.escolas[0], r.tipo === "unica" ? r.ids : []);
   }
+  if (pedeAlunos(texto, lugar)) return { ...nada, tipo: "vazia", mensagem: MENSAGEM.alunos };
   r = pedeFechamentos(ctx, lugarDesempata(ctx, r, texto), texto, lugar);
   if (r.tipo === "vazia") return { ...nada, tipo: "vazia", mensagem: MENSAGEM.soComuns };
   if (r.tipo === "unica") {

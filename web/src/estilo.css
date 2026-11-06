@@ -427,6 +427,17 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
   background: var(--papel); color: var(--tinta); border: 1px solid var(--tinta-2);
 }
 .indicadores button[aria-pressed="true"] { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.escolha-uf-linha { margin: 0.6rem 0 0; font-size: 0.92rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.escolha-uf { font: inherit; padding: 0.45rem 0.6rem; min-height: 2.75rem; border: 1px solid var(--tinta-2); border-radius: 2px;
+  background: var(--papel); color: var(--tinta); max-width: 100%; }
+.escolas-lista .e-info { display: block; font-size: 0.88rem; color: var(--tinta-2); grid-column: 1 / -1; }
+.glossario dl { display: grid; gap: 0.2rem 1rem; margin: 0.6rem 0 1rem; }
+@media (min-width: 40rem) { .glossario dl { grid-template-columns: 12rem minmax(0, 1fr); } }
+.glossario dt { font-weight: 700; padding-top: 0.5rem; }
+.glossario dd { margin: 0; padding: 0.5rem 0; border-bottom: 1px solid var(--fio); }
+@media (min-width: 40rem) { .glossario dt { border-bottom: 1px solid var(--fio); } }
+.glossario { scroll-margin-top: 1rem; }
+.quadro .cobertura { color: var(--tinta-2); font-size: 0.82em; }
 .uf-detalhe { min-height: 3.2rem; font-size: 0.95rem; border-left: 4px solid var(--mata); background: var(--papel-2);
   padding: 0.6rem 0.85rem; margin: 0.7rem 0 0.4rem; scroll-margin: 1rem; }
 .uf-detalhe p { margin: 0; }
@@ -456,7 +467,13 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
 }
 
 /* ---------- impressão: a ficha vira a folha de duas páginas para a assembleia ---------- */
-.so-impressao { display: none; }
+.so-impressao, .so-impressao-bloco { display: none; }
+/* o verso na tela: recolhido, porque a ficha já é longa no celular */
+.verso-tela { border-top: 1px solid var(--fio); margin-top: 1.6rem; padding-top: 0.6rem; }
+.verso-tela > summary { cursor: pointer; padding: 0.3rem 0; min-height: 2.75rem; }
+.verso-tela > summary h2 { display: inline; margin: 0; }
+.verso-tela > summary .legenda { display: block; margin-top: 0.2rem; }
+.verso-lista li { margin: 0.35rem 0; font-weight: 700; }
 @media print {
   :root { --papel: #fff; --papel-2: #fff; --tinta: #000; --tinta-2: #333; --fio: #999; --varzea: #eaf0e1; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -486,7 +503,13 @@ main { display: block; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter
   .s-receptoras .legenda { font-size: 0.8rem; }
   .so-impressao { display: block; }
   .verso-perguntas { grid-template-columns: 1fr 1fr; }
-  .verso-perguntas li { padding-bottom: 1.45cm; }
+  .so-impressao-bloco { display: grid; }
+  /* linhas para escrever à mão, como num caderno */
+  .verso-perguntas li { padding-bottom: 0; border-bottom: 0; }
+  .verso-perguntas li::after { content: ""; display: block; height: 1.95cm;
+    background: repeating-linear-gradient(to bottom, transparent 0 0.45cm, #999 0.45cm 0.48cm); }
+  /* no papel, link para fora do site mostra o endereço */
+  .ficha a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; overflow-wrap: anywhere; }
   .verso h2 { margin-top: 0; }
   .s-serie figcaption { display: none; }
   .s-lei .convencoes-lei, .s-lei > p:last-child { display: none; }

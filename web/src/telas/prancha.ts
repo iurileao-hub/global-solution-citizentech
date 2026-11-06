@@ -175,10 +175,10 @@ export function prancha(e: Escola, receptoras: Receptora[], tracados: Tracado[] 
 
   const temChao = rotas.some((r) => r.chao.length);
   const fig = h("figure", { class: "prancha", style: "margin:0" },
-    h("div", { class: "prancha-titulo" }, h("h2", null, "Prancha da escola"), h("span", null, `${e.m}, ${e.uf}`)),
+    h("div", { class: "prancha-titulo" }, h("h2", null, "Mapa da escola"), h("span", null, `${e.m}, ${e.uf}`)),
     h("div", { class: "prancha-moldura" }, svg),
     h("div", { class: "convencoes" },
-      h("h3", null, "Convenções"),
+      h("h3", null, "Legenda"),
       amostra("origem"), h("span", null, "esta escola"),
       amostra("receptora"), h("span", null, "escola que poderia receber os alunos (a letra é a da lista)"),
       amostra("pav"), h("span", null, "estrada pavimentada"),

@@ -67,11 +67,13 @@ const legivel = (nome) => nome.split(/\s+/).filter(Boolean).map((p, i) => {
 }).join(" ");
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const mil = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-const km = (x) => (x >= 10 ? String(Math.round(x)) : x.toFixed(1).replace(".", ","));
+// piso ("pelo menos"): para BAIXO, como a ficha e o terminal (kmPiso em web/src/nucleo/respostas.ts)
+const km = (x) => (x >= 10 ? String(Math.floor(x + 1e-9)) : (Math.floor(x * 10 + 1e-9) / 10).toFixed(1).replace(".", ","));
 
 function resumo(e) {
   const partes = [];
   if (e.t) partes.push(`${mil(e.t)} ${e.t === 1 ? "aluno" : "alunos"}${e.tp ? `, ${mil(e.tp)} de transporte escolar` : ""}.`);
+  if (e.t && !Object.keys(e.e).length) partes.push("Os alunos estão fora das etapas da creche ao ensino médio regular (EJA ou educação profissional, por exemplo).");
   const rs = e.rota?.receptoras ?? [];
   const etapas = Object.keys(e.e);
   const todas = rs.filter((r) => etapas.every((x) => (r.etapas ?? []).includes(x)));
@@ -81,10 +83,14 @@ function resumo(e) {
     const qual = todas.length ? "as mesmas etapas" : "parte das etapas";
     partes.push(p.km < 1
       ? `Se fechar: a escola mais perto que oferece ${qual} fica no mesmo lugar ou quase (mesma coordenada pública).`
-      : `Se fechar: pelo menos ${km(p.km)} km por dia de estrada até a escola mais perto que oferece ${qual}.`);
+      : `Se fechar: pelo menos ${km(p.km)} km por dia de estrada, ida e volta, até a escola mais perto que oferece ${qual}.`);
     if (e.rota.aviso) partes.push("Atenção: na região, parte do transporte escolar é por rio.");
   } else if (!e.geo) {
-    partes.push("A localização desta escola não é pública no INEP.");
+    partes.push("A localização desta escola não é pública no INEP: a ficha não estima distância.");
+  } else if (e.rota?.motivo === "origem_longe") {
+    partes.push("A escola fica longe da estrada mapeada (na região, parte do transporte pode ser por rio): a ficha não estima distância.");
+  } else if (e.rota) {
+    partes.push("A distância por estrada não foi calculada para esta escola: a ficha explica por quê.");
   }
   partes.push("Ficha com dados públicos para a reunião sobre o fechamento.");
   return partes.join(" ");

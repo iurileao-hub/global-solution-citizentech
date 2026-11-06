@@ -10,7 +10,7 @@ Saída: km e minutos de ida e volta, como PISO. Se não houver caminho no grafo,
 devolvemos None e o aviso "rota não encontrada", nunca uma estimativa inventada.
 
 Validação (docs/pesquisa/tce-es-durval-maximo.md): em Muniz Freire o TCE-ES
-estimou até 52 km/dia; de escola a escola, 25 km para a receptora indicada. Ver validacao.py.
+estimou até 52 km/dia; de escola a escola, 24,9 km para a receptora indicada. Ver validacao.py.
 """
 
 from __future__ import annotations

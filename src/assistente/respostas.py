@@ -10,6 +10,7 @@ As respostas nunca saem da base: o texto da orientação é o do registro, palav
 
 from __future__ import annotations
 
+import math
 import textwrap
 
 from .base import Base
@@ -72,9 +73,9 @@ def _data(iso: str) -> str:
 
 
 def aviso_parcial(fora: list[str]) -> str:
-    return _par("Atenção: esta é a orientação mais próxima que encontrei, mas ela não trata de "
-                + ", ".join(f'"{p}"' for p in fora) + ". Se isso é o centro da sua dúvida, a base não tem "
-                "essa resposta; confirme com o órgão responsável.")
+    return _par("Atenção: respondi com a orientação mais próxima, mas ela não fala de "
+                + ", ".join(f'"{p}"' for p in fora) + ". Se a sua dúvida é sobre isso, esta base não tem a "
+                "resposta: confirme com o órgão responsável.")
 
 
 def orientacao(base: Base, rid: str, modelo: str = "B", extras: list[str] | None = None,
@@ -124,7 +125,31 @@ def sugestoes(base: Base, ids: list[str]) -> str:
 
 def _tempo(minutos: float) -> str:
     h, m = divmod(round(minutos), 60)
-    return f"{m} min" if not h else f"{h} h {m:02d} min"
+    return f"{m} min" if not h else f"{h} h" if not m else f"{h} h {m:02d} min"
+
+
+MESMO_LUGAR_KM = 1.0  # abaixo disso, ida e volta, é a mesma coordenada pública (prédio ou endereço dividido)
+
+
+def km_piso(x: float) -> str:
+    """Distância para dizer "pelo menos": arredonda PARA BAIXO, senão o piso passaria do valor calculado
+    (24,9 km viraria "pelo menos 25"). Inteiro a partir de 10 km; uma casa decimal abaixo disso."""
+    if x >= 10:
+        return f"{math.floor(x + 1e-9)}"
+    return f"{math.floor(x * 10 + 1e-9) / 10:.1f}".replace(".", ",")
+
+
+def lugar_escola(e: dict) -> str:
+    return f"{e['m']}/{e['uf']}" if e.get("m") and e.get("uf") else "município não informado no Censo"
+
+
+def aviso_rota(rota: dict, e: dict) -> str:
+    """O aviso gravado no pré-cálculo, corrigido onde ele dizia "sem matrícula" de escola que tem alunos, mas só
+    fora das etapas que a busca de receptoras usa (EJA ou educação profissional, por exemplo)."""
+    if rota.get("motivo") == "sem_matricula" and e.get("t"):
+        return ("A escola não tem alunos nas etapas da creche ao ensino médio regular, que a busca de escolas "
+                "receptoras usa: não há receptoras a calcular.")
+    return rota.get("aviso") or ""
 
 
 def _receptora(r: dict, origem: dict) -> str:
@@ -135,12 +160,15 @@ def _receptora(r: dict, origem: dict) -> str:
     onde = ["rural" if r["rural"] else "urbana"]
     if r.get("m") or r.get("uf"):
         onde.append(f"{r.get('m') or origem['m']}/{r.get('uf') or origem['uf']}")
-    partes = [f"{r['km']:.0f} km"]
-    if r.get("min") is not None:
-        partes.append(_tempo(r["min"]))
-    texto = f"{r['n']} ({', '.join(onde)}): {' e '.join(partes)}"
-    if (r.get("chao") or 0) >= 0.5:  # abaixo disso o arredondamento diria "0 km"
-        texto += f", dos quais {r['chao']:.0f} km de estrada de chão"
+    if r["km"] < MESMO_LUGAR_KM:  # "0 km e 1 min" seria precisão falsa: é a mesma coordenada pública
+        texto = f"{r['n']} ({', '.join(onde)}): no mesmo lugar ou quase (mesma localização pública)"
+    else:
+        partes = [f"{km_piso(r['km'])} km"]
+        if r.get("min") is not None:
+            partes.append(_tempo(r["min"]))
+        texto = f"{r['n']} ({', '.join(onde)}): {' e '.join(partes)}"
+        if (r.get("chao") or 0) >= 0.5:
+            texto += f", dos quais {km_piso(min(r['chao'], r['km']))} km de estrada de chão"
     etapas = r.get("etapas")
     if etapas:
         if set(etapas) >= set(origem["e"]):
@@ -153,10 +181,12 @@ def _receptora(r: dict, origem: dict) -> str:
 def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B",
            extras: list[str] | None = None) -> str:
     local = "rural" if e["z"] == "rural" else "urbana, mas a maioria dos alunos mora na zona rural"
-    etapas = "; ".join(f"{ETAPA[k]}: {v}" for k, v in e["e"].items()) or "sem matrícula informada"
+    etapas = "; ".join(f"{ETAPA[k]}: {v}" for k, v in e["e"].items()) or (
+        "nenhum da creche ao ensino médio regular; podem ser de EJA ou de educação profissional" if e["t"]
+        else "sem matrícula informada")
     serie = e["s"]
     anos = sorted(serie)
-    linhas = [f"{e['n']}, {e['m']}/{e['uf']} (código INEP {e['c']})",
+    linhas = [f"{e['n']}, {lugar_escola(e)} (código INEP {e['c']})",
               _par(f"Escola {e['r'] or 'pública'} {local}" + (f", {ONDE.get(e['d'], e['d'])}" if e["d"] else "") + ".")]
     linhas.append(_par(f"Alunos em {anos[-1] if anos else 'último ano'}: {e['t']} ({etapas})."))
     if e.get("tp") is not None:
@@ -168,8 +198,8 @@ def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B",
         linhas.append("Escolas que poderiam receber os alunos (estrada por dia, ida e volta, PELO MENOS):")
         for r in rota["receptoras"]:
             linhas.append(textwrap.fill(_receptora(r, e), LARGURA, initial_indent="  - ", subsequent_indent="    "))
-        if rota.get("aviso"):
-            linhas.append(_par(rota["aviso"]))
+        if aviso_rota(rota, e):
+            linhas.append(_par(aviso_rota(rota, e)))
         if rota.get("sem_rota"):
             linhas.append(_par(f"Outras {rota['sem_rota']} escola(s) próxima(s) ficaram sem rota na malha viária "
                                "e não entram na lista."))
@@ -177,7 +207,7 @@ def escola(base: Base, e: dict, fonte: str, data_verif: str, modelo: str = "B",
         linhas.append(_par(f"Conta feita de escola a escola pela malha do OpenStreetMap{quando}. A casa de cada "
                            "criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior."))
     elif rota:  # calculada, mas nenhuma receptora tem rota: o aviso diz por quê, e nenhum número aparece
-        linhas.append(_par((rota.get("aviso") or "Nenhuma rota por estrada foi calculada para esta escola.")
+        linhas.append(_par((aviso_rota(rota, e) or "Nenhuma rota por estrada foi calculada para esta escola.")
                            + " Não vou estimar um número sem base."))
     elif not e["geo"]:
         linhas.append(_par("A localização desta escola não é pública: o Catálogo de Escolas do INEP não traz a "

@@ -8,6 +8,8 @@
 export interface Referencia {
   titulo: string;
   url: string;
+  /** outras fontes oficiais conferidas para a mesma orientação */
+  outras?: string[];
 }
 
 export interface Registro {

@@ -7,9 +7,10 @@ import { h } from "../dom";
 import type { Base } from "../nucleo/base";
 import { filtrar, type EscolaNome } from "../nucleo/escolas";
 import { type BlocoFechamentos, mil, NOME_POVO, nomeLugar } from "../nucleo/fechamentos";
-import { amostra, type Contexto, MAX_ESCOLAS_LISTA, type Resposta } from "../nucleo/nucleo";
-import { avisoParcial, data, RODAPE, textoResposta } from "../nucleo/respostas";
-import { nomeLegivel } from "../formato";
+import { amostra, type Contexto, MAX_ESCOLAS_LISTA, MENSAGEM, type Resposta } from "../nucleo/nucleo";
+import { avisoParcial, data, mesmoMunicipio, RODAPE, textoResposta } from "../nucleo/respostas";
+import { escola as baixarEscola } from "../dados";
+import { faixaEtapas, nomeLegivel, ordenarEtapas } from "../formato";
 import { botaoCompartilhar, botaoCopiar, comCodigos } from "./componentes";
 
 type Ctx = Contexto<EscolaNome>;
@@ -100,7 +101,9 @@ function verbeteOrientacao(ctx: Ctx, r: Extract<Resposta, { tipo: "unica" | "cod
       reg.dados
         ? ["Fonte: ", h("a", { href: ref.url, rel: "noopener" }, ref.titulo), ". Os totais foram contados pelo projeto; o texto ",
           `desta orientação foi conferido em ${data(reg.data_verificacao)}.`]
-        : ["Fonte: ", h("a", { href: ref.url, rel: "noopener" }, ref.titulo), `. Conferida em ${data(reg.data_verificacao)}.`]),
+        : ["Fonte: ", h("a", { href: ref.url, rel: "noopener" }, ref.titulo), `. Conferida em ${data(reg.data_verificacao)}.`],
+      ref.outras && ref.outras.length ? [" Outras fontes conferidas: ", ref.outras.map((u, i) =>
+        [i ? ", " : "", h("a", { href: u, rel: "noopener" }, dominio(u))]), "."] : null),
     caminhos(base, "Para continuar", rel),
     caminhos(base, "Talvez também interesse", extras),
     h("div", { class: "acoes" },
@@ -129,11 +132,30 @@ function verbeteNenhuma(ctx: Ctx): HTMLElement {
     h("p", { class: "legenda" }, RODAPE));
 }
 
-function itemEscola(e: EscolaNome): HTMLElement {
+/** "www.planalto.gov.br" a partir do endereço: curto, e diz de onde a fonte vem. */
+function dominio(u: string): string {
+  try {
+    return new URL(u).hostname.replace(/^www\./, "");
+  } catch {
+    return u;
+  }
+}
+
+/** Uma escola da lista de nomes repetidos. Com poucas na tela, cada uma ganha alunos e etapas (baixados do pedaço
+ * dela): sem isso, três "Escola São José" no mesmo município só se distinguem abrindo uma por uma. */
+function itemEscola(e: EscolaNome, detalhar: boolean): HTMLElement {
+  const info = h("span", { class: "e-info" });
+  if (detalhar) {
+    void baixarEscola(e.c).then((x) => {
+      if (!x) return;
+      const et = ordenarEtapas(Object.keys(x.e));
+      info.textContent = `${mil(x.t)} ${x.t === 1 ? "aluno" : "alunos"}${et.length ? `, ${faixaEtapas(et)}` : ""}`;
+    }).catch(() => undefined);
+  }
   return h("li", null, h("a", { href: `#/escola/${e.c}` },
     h("span", { class: "e-nome" }, nomeLegivel(e.n ?? "")),
-    h("span", { class: "e-lugar" }, `${e.m ?? ""}${e.uf ? "/" + e.uf : ""}`),
-    h("span", { class: "e-cod" }, e.c)));
+    h("span", { class: "e-lugar" }, e.m && e.uf ? `${e.m}/${e.uf}` : "município não informado"),
+    h("span", { class: "e-cod" }, e.c), info));
 }
 
 const MOSTRA_FILTRADA = 60;
@@ -146,7 +168,7 @@ function verbeteEscolas(r: Extract<Resposta, { tipo: "escola_ambigua" }>, todas:
   const resumo = h("p", { "aria-live": "polite" });
   const mostrar = (es: EscolaNome[], filtrada: boolean) => {
     const parte = filtrada ? es.slice(0, MOSTRA_FILTRADA) : es.length > MAX_ESCOLAS_LISTA ? amostra(es, MAX_ESCOLAS_LISTA) : es;
-    lista.replaceChildren(...parte.map(itemEscola));
+    lista.replaceChildren(...parte.map((e) => itemEscola(e, parte.length <= 12)));
     resumo.textContent = !es.length
       ? "Nenhuma dessas escolas fica nesse município ou UF. Confira o nome do município, ou digite o código INEP da escola."
       : es.length > parte.length
@@ -174,14 +196,18 @@ function verbeteEscolas(r: Extract<Resposta, { tipo: "escola_ambigua" }>, todas:
   void r;
   return h("article", { class: "verbete" },
     h("h1", null, `${mil(total)} escolas do campo têm essas palavras no nome`),
-    h("p", null, nUfs > 1 ? `Elas ficam em ${nUfs} UFs. ` : "", "Para achar a sua, informe o município e a UF, ou escolha na lista."),
+    h("p", null, mesmoMunicipio(todas)
+      ? `Todas ficam em ${todas[0].m}/${todas[0].uf}. Para saber qual é a sua, compare os alunos e as etapas, ou abra cada ficha.`
+      : [nUfs > 1 ? `Elas ficam em ${nUfs} UFs. ` : "", "Para achar a sua, informe o município e a UF, ou escolha na lista."]),
     form, resumo, lista);
 }
 
 export function desenharResposta(ctx: Ctx, r: Resposta): HTMLElement {
   switch (r.tipo) {
     case "vazia":
-      return h("article", { class: "verbete" }, h("h1", null, "Faltou a pergunta"), h("p", null, r.mensagem));
+      // "quantos alunos tem?" sem a escola: o que falta é o nome dela, não a pergunta
+      return h("article", { class: "verbete" }, h("h1", null, r.mensagem === MENSAGEM.alunos ? "Qual escola?" : "Faltou a pergunta"),
+        h("p", null, r.mensagem));
     case "codigo":
     case "unica":
       return verbeteOrientacao(ctx, r);

@@ -31,7 +31,7 @@ export async function telaInicio(main: HTMLElement, g: number): Promise<void> {
         h("h2", null, "Antes da reunião sobre o fechamento"),
         h("ol", { class: "passos" },
           h("li", null, h("div", null, h("strong", null, "Ache a escola."),
-            "Pelo nome ou pelo código INEP. A ficha mostra os alunos, as escolas que poderiam recebê-los e a estrada até lá.")),
+            "Pelo nome ou pelo código INEP (o número da escola no Censo Escolar). A ficha mostra os alunos, as escolas que poderiam recebê-los e a estrada até lá.")),
           h("li", null, h("div", null, h("strong", null, "Leve a ficha impressa."),
             "A frente traz os números; o verso fica em branco para a comunidade escrever o que nenhum dado mede.")),
           h("li", null, h("div", null, h("strong", null, "Peça o diagnóstico."),

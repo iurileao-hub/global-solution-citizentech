@@ -16,15 +16,34 @@ import {
 } from "../formato";
 import { ligacoesDaEscola } from "../nucleo/nucleo";
 import {
-  data, type Escola, NAO_CALCULADA, ONDE, type Receptora, recebeTodas, RODAPE, SEM_COORDENADA, textoEscola,
+  avisoRota, data, type Escola, NAO_CALCULADA, ONDE, type Receptora, recebeTodas, RODAPE, SEM_COORDENADA, textoEscola,
 } from "../nucleo/respostas";
 import { botaoCompartilhar, botaoCopiar, caixaBusca, carregando } from "./componentes";
 import { caminhos } from "./resposta";
 import { LETRAS, prancha } from "./prancha";
 
-const MARGEM_TEXTO = "Por enquanto há uma única referência externa (Muniz Freire, ES). Para a escola receptora indicada " +
-  "pela prefeitura, a área técnica do Tribunal de Contas estimou até 52 km por dia, pensando em quem mora mais longe; " +
-  "o cálculo de escola a escola dá 25 km. O caminho real de parte das crianças pode passar do dobro do piso.";
+const DURVAL = 32049501;
+
+/** A única referência externa até agora é de OUTRA escola (a Durval Máximo): fora da ficha dela, o texto diz isso,
+ * senão o "24 km" pareceria o número da escola aberta. */
+function margem(e: Escola): string {
+  return e.c === DURVAL
+    ? "Nesta escola há uma referência externa: para a escola indicada pela prefeitura (EEEFM Arquimimo Mattos), a área " +
+      "técnica do Tribunal de Contas do ES estimou até 52 km por dia, pensando em quem mora mais longe; o cálculo de escola " +
+      "a escola dá pelo menos 24 km. O caminho real de parte das crianças pode passar do dobro do piso."
+    : "Para dar a medida do piso: na única escola com estimativa oficial até agora, a EMEF Durval Máximo (Muniz Freire, " +
+      "ES), a área técnica do Tribunal de Contas estimou até 52 km por dia até a escola indicada pela prefeitura, e o " +
+      "cálculo de escola a escola deu pelo menos 24 km. O caminho real de parte das crianças pode passar do dobro do piso.";
+}
+
+/** "1 criança", "2 crianças": o número decide o plural. */
+const n = (q: number, um: string, varios: string) => `${mil(q)} ${q === 1 ? um : varios}`;
+
+/** Metade da distância por dia mostrada, para a ida: 29 km por dia dá 14,5 km na ida (e não 15, que somaria 30). */
+function ida(xDia: number): string {
+  const dia = xDia >= 10 ? Math.floor(xDia + 1e-9) : Math.floor(xDia * 10 + 1e-9) / 10;
+  return (dia / 2).toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+}
 
 /** A receptora da frase de abertura: a mais próxima que recebe TODAS as etapas; senão, a mais próxima. */
 export function principal(e: Escola): Receptora | null {
@@ -49,15 +68,20 @@ export function lugarDe(e: Escola): string {
 
 function quem(e: Escola): string {
   const etapas = Object.keys(e.e);
-  return etapas.some((x) => x === "anos_finais" || x === "medio") ? "crianças e adolescentes" : "crianças";
+  const adol = etapas.some((x) => x === "anos_finais" || x === "medio");
+  if (e.t === 1) return adol ? "estudante" : "criança";
+  return adol ? "crianças e adolescentes" : "crianças";
 }
 
 function manchete(e: Escola): HTMLElement {
   const etapas = ordenarEtapas(Object.keys(e.e));
   const p = principal(e);
   const partes: (string | HTMLElement)[] = [];
-  if (etapas.length) partes.push("Aqui estudam ", h("b", null, `${mil(e.t)} ${quem(e)}`), `, ${faixaEtapas(etapas)}. `);
-  else partes.push("No Censo mais recente, esta escola não tinha matrícula. ");
+  if (etapas.length) partes.push(e.t === 1 ? "Aqui estuda " : "Aqui estudam ", h("b", null, `${mil(e.t)} ${quem(e)}`), `, ${faixaEtapas(etapas)}. `);
+  else if (e.t) {
+    partes.push(e.t === 1 ? "Aqui estuda " : "Aqui estudam ", h("b", null, n(e.t, "aluno", "alunos")),
+      ", fora das etapas da creche ao ensino médio regular (podem ser de EJA ou de educação profissional). ");
+  } else partes.push("No Censo mais recente, esta escola não tinha matrícula. ");
   if (e.tp) partes.push(h("b", null, `${mil(e.tp)} ${e.tp === 1 ? "chega" : "chegam"} de transporte escolar público.`), " ");
   if (p && p.km < MESMO_LUGAR_KM) {
     const todas = recebeTodas(p, e);
@@ -66,10 +90,9 @@ function manchete(e: Escola): HTMLElement {
       "Confira se é o mesmo prédio: escolas que dividem o endereço aparecem com a mesma coordenada.");
   } else if (p) {
     const todas = recebeTodas(p, e);
-    partes.push(`Se a escola fechar, a mais perto que oferece ${todas ? "as mesmas etapas" : "parte das etapas"} fica a ` +
-      `pelo menos ${km(p.km / 2)} km por estrada: `,
-    h("b", { class: "piso" }, `pelo menos ${km(p.km)} km por dia`), ", ida e volta",
-    p.min ? `, cerca de ${horas(p.min)} de ônibus` : "", ".");
+    partes.push(`Se a escola fechar, a mais perto que oferece ${todas ? "as mesmas etapas" : "parte das etapas"} fica a `,
+      h("b", { class: "piso" }, `pelo menos ${km(p.km)} km por dia`), ` de estrada, ida e volta (${ida(p.km)} km na ida)`,
+      p.min ? `: cerca de ${horas(p.min)} de ônibus por dia` : "", ".");
   }
   return h("p", { class: "manchete" }, partes);
 }
@@ -78,11 +101,13 @@ function semNumero(e: Escola): HTMLElement | null {
   const rota = e.rota;
   if (rota && rota.receptoras && rota.receptoras.length) return null;
   const texto = rota
-    ? (rota.aviso || "Nenhuma rota por estrada foi calculada para esta escola.") + " Não vou estimar um número sem base."
+    ? (avisoRota(rota, e) || "Nenhuma rota por estrada foi calculada para esta escola.") + " Não vou estimar um número sem base."
     : !e.geo ? SEM_COORDENADA : NAO_CALCULADA;
   return h("div", { class: "sem-numero", role: "note" }, h("p", { style: "margin:0" }, texto),
     !rota && !e.geo ? h("p", { style: "margin:.6rem 0 0" }, h("a", { href: "#/orientacao/C1" },
-      "Como pedir informação pela Lei de Acesso à Informação")) : null);
+      "Como pedir informação pela Lei de Acesso à Informação"),
+    // no papel o link não leva a lugar nenhum: a ficha impressa diz onde achar
+    h("span", { class: "so-impressao" }, " (no site do Escola em Pauta, pergunte \"como pedir os números à prefeitura\")")) : null);
 }
 
 function selos(e: Escola): HTMLElement {
@@ -90,7 +115,7 @@ function selos(e: Escola): HTMLElement {
     h("li", null, `Rede ${e.r ?? "pública"}`),
     h("li", null, e.z === "rural" ? "Zona rural" : "Zona urbana, alunos do campo"),
     e.d ? h("li", null, (ONDE[e.d] ?? e.d).replace(/^em /, "Em ")) : null,
-    h("li", null, `Código INEP ${e.c}`));
+    h("li", { title: "O número da escola no Censo Escolar do INEP, o instituto do MEC que faz o Censo" }, `Código INEP ${e.c}`));
 }
 
 function receptoraItem(r: Receptora, e: Escola, i: number, p: Receptora | null, maior: number): HTMLElement {
@@ -115,25 +140,36 @@ function receptoraItem(r: Receptora, e: Escola, i: number, p: Receptora | null, 
       h("span", { class: "chao", style: `width:${(100 * chao) / Math.max(maior, MESMO_LUGAR_KM)}%` })));
 }
 
+/** Quantas das escolas listadas são rurais. A 5ª da lista, quando existe, não é a 5ª mais próxima: é a mais próxima
+ * que recebe todas as etapas, acrescentada porque nenhuma das 4 recebe. */
+function ruraisTexto(rs: Receptora[]): string {
+  const quinta = rs.length > 4 ? rs[4] : null;
+  const perto = quinta ? rs.slice(0, 4) : rs;
+  const rurais = perto.filter((r) => r.rural).length;
+  const conta = perto.length === 1
+    ? `A escola mais próxima que oferece alguma das mesmas etapas é ${perto[0].rural ? "rural" : "urbana"}.`
+    : `Das ${perto.length} escolas mais próximas que oferecem alguma das mesmas etapas, ` +
+      (rurais === 0 ? "nenhuma é rural." : rurais === perto.length ? "todas são rurais." : `${rurais} ${rurais === 1 ? "é rural" : "são rurais"}.`);
+  return quinta ? conta + ` Nenhuma delas recebe todas as etapas desta escola; a 5ª da lista, ${quinta.rural ? "rural" : "urbana"}, é ` +
+    "a mais próxima que recebe." : conta;
+}
+
 function receptoras(e: Escola, p: Receptora | null): HTMLElement | null {
   const rota = e.rota;
   if (!rota || !rota.receptoras || !rota.receptoras.length) return null;
   const rs = rota.receptoras;
-  const rurais = rs.filter((r) => r.rural).length;
   const quando = rota.osm ? `, dados de ${data(rota.osm)}` : "";
   return h("section", { class: "s-receptoras" },
     h("h2", null, "Para onde as crianças iriam, e quanta estrada a mais"),
     h("p", null, "Medimos a estrada de escola a escola, ida e volta, por dia. ", h("b", null, "É o mínimo."),
-      " O ônibus real passa de casa em casa, por isso o caminho de verdade é maior. ",
-      `Das ${rs.length} escolas mais próximas que oferecem alguma das mesmas etapas, `,
-      rurais === 0 ? "nenhuma é rural." : `${rurais} ${rurais === 1 ? "é rural" : "são rurais"}.`),
+      " O ônibus real passa de casa em casa, por isso o caminho de verdade é maior. ", ruraisTexto(rs)),
     h("ol", { class: "receptoras", "aria-label": "Escolas que poderiam receber os alunos, da mais perto à mais longe" },
       rs.map((r, i) => receptoraItem(r, e, i, p, Math.max(...rs.map((x) => x.km))))),
     p ? h("p", { class: "legenda nao-imprime" }, `A faixa amarela marca a escola da frase de abertura: a mais perto que ` +
       `${recebeTodas(p, e) ? "recebe todas as etapas desta escola" : "recebe parte das etapas (nenhuma das listadas recebe todas)"}.`) : null,
     rota.sem_rota ? h("p", null, `Outras ${rota.sem_rota} escola(s) próxima(s) ficaram sem rota na malha viária e não entram na lista.`) : null,
     h("p", { class: "legenda" }, `Conta feita pela malha do OpenStreetMap${quando}, com velocidade de ônibus escolar. ` +
-      "A casa de cada criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior. " + MARGEM_TEXTO),
+      "A casa de cada criança, as paradas do ônibus e a estrada na chuva deixam o trajeto real maior. " + margem(e)),
     h("p", { class: "legenda" }, "Vagas em cada escola: a calcular (o número de vagas não é publicado)."));
 }
 
@@ -147,9 +183,31 @@ function quemEstuda(e: Escola): HTMLElement {
       h("span", { role: "listitem" }, ETAPA_ROTULO[x].charAt(0).toUpperCase() + ETAPA_ROTULO[x].slice(1),
         ETAPA_ANOS[x] ? h("span", { class: "legenda", style: "font-size:.85rem" }, ` (${ETAPA_ANOS[x]})`) : null),
       h("span", { class: "barra", style: `width:${(100 * e.e[x]) / maior}%`, "aria-hidden": "true" }),
-      h("span", { class: "v" }, mil(e.e[x]))])) : h("p", null, "Sem matrícula informada no Censo."),
-    zr !== null && e.t ? h("p", null, zr === e.t ? h("b", null, `Todas as ${mil(e.t)}`) : h("b", null, `${mil(zr)} de ${mil(e.t)}`),
-      " moram na zona rural.", e.tp ? [" ", h("b", null, mil(e.tp)), " usam transporte escolar público."] : null) : null);
+      h("span", { class: "v" }, mil(e.e[x]))]))
+      : h("p", null, e.t ? `${e.t === 1 ? "O aluno está" : `Os ${mil(e.t)} alunos estão`} fora das etapas da creche ao ensino ` +
+        "médio regular (podem ser de EJA ou de educação profissional)." : "Sem matrícula informada no Censo."),
+    zr !== null && e.t ? h("p", null,
+      e.t === 1 ? (zr ? h("b", null, "O único aluno mora") : h("b", null, "O único aluno não mora")) : zr === e.t
+        ? h("b", null, `Todos os ${mil(e.t)}`) : h("b", null, `${mil(zr)} de ${mil(e.t)}`),
+      e.t === 1 ? " na zona rural." : zr === 1 && zr !== e.t ? " mora na zona rural." : " moram na zona rural.",
+      e.tp ? [" ", h("b", null, mil(e.tp)), e.tp === 1 ? " usa transporte escolar público." : " usam transporte escolar público."] : null) : null);
+}
+
+/** A maior variação de um ano para o seguinte, quando passa da metade: pode ser mudança real (turmas transferidas)
+ * ou correção de registro, e quem lê na reunião precisa saber que vale perguntar. */
+function saltoTexto(e: Escola, anos: string[]): HTMLElement | null {
+  let maior: [string, string, number] | null = null;
+  for (let i = 1; i < anos.length; i++) {
+    const [a, b] = [e.s[anos[i - 1]], e.s[anos[i]]];
+    if (Math.max(a, b) < 10) continue;
+    const v = Math.abs(b - a) / Math.max(a, 1);
+    if (v > 0.5 && (!maior || v > maior[2])) maior = [anos[i - 1], anos[i], v];
+  }
+  if (!maior) return null;
+  const [a, b] = [e.s[maior[0]], e.s[maior[1]]];
+  return h("p", { class: "aviso" }, `Entre ${maior[0]} e ${maior[1]} a matrícula ${b < a ? "caiu" : "subiu"} de ${mil(a)} para ` +
+    `${mil(b)}. Uma mudança grande assim pode ser real (turmas transferidas, por exemplo) ou correção do registro no Censo: ` +
+    "a Secretaria de Educação sabe dizer.");
 }
 
 function serie(e: Escola): HTMLElement | null {
@@ -159,12 +217,13 @@ function serie(e: Escola): HTMLElement | null {
   const [a0, a1] = [anos[0], anos[anos.length - 1]];
   return h("section", { class: "s-serie" },
     h("h2", null, "A matrícula ao longo dos anos"),
-    h("p", null, `De ${a0} a ${a1}, a matrícula foi de ${mil(e.s[a0])} para ${mil(e.s[a1])} alunos.`),
+    h("p", null, `De ${a0} a ${a1}, a matrícula foi de ${mil(e.s[a0])} para ${n(e.s[a1], "aluno", "alunos")}.`),
+    saltoTexto(e, anos),
     h("figure", { style: "margin:0" },
       h("div", { class: "serie", role: "img", "aria-label": anos.map((a) => `${a}: ${e.s[a]}`).join("; ") },
         anos.map((a) => h("div", { class: "barra", style: `height:${(100 * e.s[a]) / maior}%;background:var(--mata)`, title: `${a}: ${e.s[a]}` }))),
       h("div", { class: "serie-anos", "aria-hidden": "true" }, anos.map((a) => h("span", null, `${a.slice(2)}`))),
-      h("div", { class: "serie-anos", "aria-hidden": "true" }, anos.map((a) => h("span", null, `${e.s[a]}`))),
+      h("div", { class: "serie-anos", "aria-hidden": "true" }, anos.map((a) => h("span", null, mil(e.s[a])))),
       h("figcaption", null, "Alunos matriculados por ano, Censo Escolar. Não projetamos o futuro: num teste com quase 2 mil " +
         "escolas rurais, projetar pela tendência errou mais do que supor que a matrícula se repete.")));
 }
@@ -194,7 +253,7 @@ function lei(e: Escola): HTMLElement {
     ["A lei de fechamento se aplica a esta escola", "Decreto 7.352/2010, art. 1º", "pronto",
       (campo ? "Sim: " : "Não pelos dados do Censo: ") + (campo ? motivo : "escola urbana com maioria de alunos da zona urbana")],
     ["Justificativa da Secretaria de Educação", LDB, "preencher", "pela Secretaria"],
-    ["Diagnóstico do impacto", LDB, "pronto", "esta ficha é um começo: os números com base pública"],
+    ["Diagnóstico do impacto", LDB, "preencher", "pela Secretaria; esta ficha reúne os números públicos que ele pode usar"],
     ["Manifestação da comunidade escolar", LDB, "preencher", "na assembleia (verso da ficha impressa)"],
     ["Manifestação do Conselho de Educação", LDB, "preencher", "pelo Conselho"],
     ["Distância a ser percorrida pelos alunos realocados", PL, comRota ? "pronto" : "calcular",
@@ -205,13 +264,18 @@ function lei(e: Escola): HTMLElement {
     ["Matrícula dos últimos cinco anos", CME, anos.length >= 5 ? "pronto" : "calcular",
       anos.length ? `de ${anos[0]} a ${anos[anos.length - 1]}, nesta ficha` : "sem série no Censo"],
     ["Mapa de distâncias até as escolas receptoras", CME, comRota ? "pronto" : "calcular",
-      comRota ? "a prancha desta ficha" : "sem rota calculada"],
+      comRota ? "o mapa desta ficha" : "sem rota calculada"],
     ["Ata da assembleia por segmento", CME, "preencher", "anexar à ficha"],
-    ["Pré-escola e anos iniciais na própria comunidade", "Res. CNE/CEB 2/2008, art. 3º", "pronto",
+    ["Pré-escola e anos iniciais na própria comunidade", "Res. CNE/CEB 2/2008, art. 3º", !criancas || comRota ? "pronto" : "calcular",
       !criancas ? "a escola não tem essas etapas"
-        : `${mil(criancas)} das ${mil(e.t)} crianças estão nessas etapas; ` + (maisPerto
-          ? `a escola rural mais próxima com essas etapas é ${nomeLegivel(maisPerto.n)} (${km(maisPerto.km / 2)} km por estrada)`
-          : "nenhuma das escolas próximas com essas etapas é rural")],
+        : `${n(criancas, "aluno está", "alunos estão")} nessas etapas; ` + (!comRota
+          ? "sem rota calculada, não dá para dizer onde fica a escola rural mais próxima com essas etapas"
+          : maisPerto
+            ? `a escola rural mais próxima com essas etapas é ${nomeLegivel(maisPerto.n)} (pelo menos ${km(maisPerto.km)} km por dia, ida e volta)`
+            : "nenhuma das escolas próximas com rota que têm essas etapas é rural")],
+    ...(dif ? [["Consulta prévia, livre e informada à comunidade", "Convenção 169 da OIT, art. 6º (Decreto 10.088/2019)",
+      "preencher", `a escola fica ${ONDE[e.d!]}: o governo deve consultar a comunidade, pelas instituições dela, antes de ` +
+      "decidir"] as [string, string, Situacao, string]] : []),
   ];
   return h("section", { class: "s-lei" },
     h("h2", null, "O que a lei pede e o que já está pronto"),
@@ -220,7 +284,10 @@ function lei(e: Escola): HTMLElement {
     h("ul", { class: "lei" }, itens.map(([item, norma, sit, detalhe]) => h("li", null,
       h("span", { class: `marca-lei ${sit}`, "aria-label": NOME_SITUACAO[sit] }, SIMBOLO[sit]),
       h("span", null, h("b", null, item), `: ${detalhe}.`, h("span", { class: "norma" }, norma))))),
-    h("p", null, h("a", { href: "#/orientacao/D1" }, "O que a lei exige antes de fechar uma escola do campo"), "."));
+    h("p", null, h("a", { href: "#/orientacao/D1" }, "O que a lei exige antes de fechar uma escola do campo"),
+      dif ? [" · ", h("a", { href: `#/orientacao/${e.d === "indígena" ? "D8" : "D5"}` },
+        `As regras próprias das escolas ${e.d === "indígena" ? "indígenas" : "quilombolas"}`)] : null,
+      " · ", h("a", { href: "#/sobre/palavras" }, "O que querem dizer LDB, PL, INEP e as outras siglas"), "."));
 }
 
 const PERGUNTAS_VERSO = [
@@ -234,13 +301,19 @@ const PERGUNTAS_VERSO = [
 ];
 
 function verso(e: Escola): HTMLElement {
+  const intro = h("p", null, "Os números não dizem o que esta escola é para a comunidade. A lei pede a manifestação da comunidade, e ",
+    h("b", null, "esta parte vale tanto quanto os números"), ". Na ficha impressa, estas perguntas ficam com espaço para " +
+    "escrever na assembleia; a folha vai ao Conselho com a ata.");
   return h("section", { class: "verso" },
     h("p", { class: "so-impressao" }, h("b", null, nomeLegivel(e.n)), `, ${lugarDe(e)}. Verso da ficha: a parte que a comunidade escreve.`),
-    h("h2", null, "O que esta ficha não mede"),
-    h("p", null, "Os números não dizem o que esta escola é para a comunidade. A lei pede a manifestação da comunidade, e ",
-      h("b", null, "esta parte vale tanto quanto os números"), ". Na ficha impressa, estas perguntas ficam com espaço para " +
-      "escrever na assembleia; a folha vai ao Conselho com a ata."),
-    h("ul", { class: "verso-perguntas" }, PERGUNTAS_VERSO.map((p) => h("li", null, p))),
+    // na tela, recolhido (a ficha já é longa no celular); no papel, aberto e com linhas para escrever
+    h("details", { class: "nao-imprime verso-tela" },
+      h("summary", null, h("h2", null, "O que esta ficha não mede"), h("span", { class: "legenda" }, "Perguntas para a assembleia: saem no verso da ficha impressa")),
+      intro.cloneNode(true) as HTMLElement,
+      h("ul", { class: "verso-lista" }, PERGUNTAS_VERSO.map((p) => h("li", null, p)))),
+    h("h2", { class: "so-impressao" }, "O que esta ficha não mede"),
+    h("div", { class: "so-impressao" }, intro),
+    h("ul", { class: "verso-perguntas so-impressao-bloco" }, PERGUNTAS_VERSO.map((p) => h("li", null, p))),
     h("p", { class: "so-impressao" }, "Assembleia realizada em ____/____/________. Quem escreveu: ______________________. " +
       "Pessoas presentes, por grupo (pais, professores, alunos, funcionários): ______________________________."));
 }
@@ -276,9 +349,10 @@ export async function telaFicha(main: HTMLElement, g: number, codigo: number, ma
       h("h1", null, nome),
       h("p", { class: "ficha-onde" }, lugar),
       selos(e),
+      // o aviso (transporte por rio, por exemplo) vem ANTES do número que ele qualifica
+      rs.length && e.rota?.aviso ? h("p", { class: "aviso", role: "note" }, h("strong", null, "Atenção: "), e.rota.aviso) : null,
       manchete(e),
       // o aviso (transporte por rio, por exemplo) fica colado no número que ele qualifica
-      rs.length && e.rota?.aviso ? h("p", { class: "aviso", role: "note" }, h("strong", null, "Atenção: "), e.rota.aviso) : null,
       semNumero(e)),
     rs.length ? lado : null,
     receptoras(e, p),
@@ -294,7 +368,8 @@ export async function telaFicha(main: HTMLElement, g: number, codigo: number, ma
         botaoCopiar("Copiar o texto da ficha", () => textoEscola(b, e, v.fonte, v.data_verificacao, extras)),
         botaoCompartilhar(`${nome}, ${lugar}`, urlPrevia))),
     h("p", { class: "fonte s-fonte" }, `Fonte: ${v.fonte} (dados baixados em ${data(v.data_verificacao)}). Estradas: © colaboradores ` +
-      "do OpenStreetMap (ODbL). ", RODAPE)));
+      "do OpenStreetMap (ODbL). ", RODAPE,
+      h("span", { class: "so-impressao" }, ` Esta ficha no site: ${urlPrevia.replace(/^https?:\/\//, "")}`))));
   // o traçado chega depois, sem segurar a tela: a página já pode rolar e receber o foco
   if (rs.length) {
     void tracados(codigo).then((t) => {

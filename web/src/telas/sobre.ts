@@ -6,12 +6,40 @@ import { vivo } from "../estado";
 import { mil } from "../formato";
 import { data, NAO_OFICIAL } from "../nucleo/respostas";
 
-export async function telaSobre(main: HTMLElement, g: number): Promise<void> {
+/** As palavras que a ficha e as orientações usam, em linguagem de todo dia (pedido do teste com a persona de uma
+ * agricultora: "PL", "INEP", "piso" e "receptora" apareciam sem explicação). */
+const PALAVRAS: [string, string][] = [
+  ["Ação civil pública", "Processo na Justiça para defender um direito de muita gente ao mesmo tempo. Podem entrar com ela o Ministério Público, a Defensoria Pública e associações, como a de pais."],
+  ["Censo Escolar", "Levantamento feito todo ano, em que cada escola do país informa seus alunos, turmas, transporte e prédio. É a fonte dos números das fichas."],
+  ["Código INEP", "O número de cada escola no Censo Escolar. Serve para achar a escola sem confusão de nomes parecidos."],
+  ["Conselho de Educação", "O órgão que faz as regras do ensino e precisa se manifestar antes do fechamento. É o Conselho Municipal, se o município tem sistema próprio de ensino; senão, o Conselho Estadual."],
+  ["Convenção 169 da OIT", "Tratado internacional assinado pelo Brasil. Garante a povos indígenas e comunidades quilombolas o direito de serem consultados antes de decisões que os afetam."],
+  ["Defensoria Pública", "Órgão público que dá orientação e defesa na Justiça, de graça, a quem não pode pagar advogado."],
+  ["Diagnóstico do impacto", "O estudo que a LDB exige antes de fechar uma escola do campo: o que muda para os alunos e para a comunidade. A lei não diz como ele deve ser feito."],
+  ["EJA", "Educação de Jovens e Adultos: turmas para quem não estudou na idade certa. As fichas não usam essas turmas para achar as escolas que receberiam os alunos."],
+  ["Escola do campo", "A escola em área rural, ou a escola da cidade que atende principalmente gente do campo (Decreto 7.352/2010). É a ela que a regra do fechamento se aplica."],
+  ["Escola receptora", "A escola que receberia os alunos se a escola deles fechasse."],
+  ["Etapa", "Cada fase do estudo: creche, pré-escola, anos iniciais (1º ao 5º ano), anos finais (6º ao 9º ano) e ensino médio."],
+  ["Extinta, paralisada", "No Censo, escola extinta é a que foi encerrada de vez. Paralisada é a que está sem aulas, mas ainda não foi encerrada oficialmente."],
+  ["INEP", "Instituto do Ministério da Educação que faz o Censo Escolar."],
+  ["LAI e SIC", "LAI é a Lei de Acesso à Informação (Lei 12.527/2011), que garante a qualquer pessoa o direito de pedir documentos ao governo. O SIC é o balcão, na internet ou presencial, onde se faz o pedido."],
+  ["LDB", "Lei de Diretrizes e Bases da Educação (Lei 9.394/1996), a lei que organiza a educação no país. O art. 28 trata das escolas do campo e do fechamento."],
+  ["Ministério Público", "Órgão que defende os direitos da sociedade, inclusive o direito à educação. Recebe denúncias e pode levar o caso à Justiça."],
+  ["Nucleação", "Juntar os alunos de várias escolas pequenas numa escola maior, o \"núcleo\". É o nome técnico mais comum do fechamento."],
+  ["Piso, \"pelo menos\"", "O menor valor possível. A distância da ficha vai de escola a escola; o caminho real das crianças começa em casa e é maior."],
+  ["PL", "Projeto de lei: uma proposta que ainda está sendo discutida no Congresso. Só vale como lei depois de aprovada e sancionada."],
+  ["Resolução CNE/CEB", "Regra nacional do Conselho Nacional de Educação, na parte da educação básica."],
+];
+
+export async function telaSobre(main: HTMLElement, g: number, secao: string | null = null): Promise<HTMLElement | void> {
   document.title = "Como funciona: Escola em Pauta";
   const [b, v] = await Promise.all([base(), versao()]);
   if (!vivo(g)) return;
   const n = b.registros.size;
   const temas = Object.values(b.temas).map((t) => t.nome);
+  const palavras = h("section", { class: "glossario", id: "palavras" },
+    h("h2", null, "O que querem dizer as palavras da ficha"),
+    h("dl", null, PALAVRAS.map(([t, d]) => [h("dt", null, t), h("dd", null, d)])));
   trocar(main, h("article", { class: "coluna", style: "padding-top:1.5rem" },
     h("h1", null, "Como funciona"),
     h("p", { class: "sub" }, "A LDB, no art. 28, exige um diagnóstico do impacto e a manifestação da comunidade escolar antes do " +
@@ -43,7 +71,7 @@ export async function telaSobre(main: HTMLElement, g: number): Promise<void> {
     h("h2", null, "Quanto o cálculo fica abaixo do real"),
     h("p", null, "Em 2025, a prefeitura de Muniz Freire (ES) anunciou o fim do ensino fundamental na EMEF Durval Máximo. A área " +
       "técnica do Tribunal de Contas estimou que os alunos percorreriam até 52 km por dia até a escola indicada para " +
-      "recebê-los. De escola a escola, o nosso cálculo dá 25 km: cerca da metade, porque o Tribunal pensa em quem mora mais " +
+      "recebê-los. De escola a escola, o nosso cálculo dá 24,9 km (a ficha diz \"pelo menos 24 km\"): cerca da metade, porque o Tribunal pensa em quem mora mais " +
       "longe. Por isso a ficha fala sempre em \"pelo menos\". É uma referência só: mostra a ordem de grandeza, sem autorizar " +
       "um fator de correção. ", h("a", { href: "#/escola/32049501" }, "Ver a ficha da Durval Máximo"), "."),
 
@@ -55,6 +83,8 @@ export async function telaSobre(main: HTMLElement, g: number): Promise<void> {
         "a ficha avisa."),
       h("li", null, "As vagas de cada escola receptora não são publicadas."),
       h("li", null, `A base tem ${n} orientações. Fora delas, o assistente não responde.`)),
+
+    palavras,
 
     h("h2", null, "Privacidade"),
     h("p", null, "Esta página não pede, não guarda e não envia nenhum dado pessoal. Não há cadastro, cookie de rastreamento ou " +
@@ -68,4 +98,5 @@ export async function telaSobre(main: HTMLElement, g: number): Promise<void> {
     h("a", { href: "https://github.com/iurileao-hub/global-solution-citizentech" }, "repositório do projeto"), "."),
     h("p", { class: "legenda" }, `Dados: ${v.fonte}, baixados em ${data(v.data_verificacao)}. Versão dos dados ${v.versao}. ` +
       "Estradas © colaboradores do OpenStreetMap (ODbL). Malha de UFs: IBGE.")));
+  if (secao === "palavras") return palavras;
 }

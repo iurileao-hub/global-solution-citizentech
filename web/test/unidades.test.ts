@@ -20,7 +20,10 @@ describe("arredondamento igual ao do Python", () => {
 });
 
 describe("formatação", () => {
-  it("km com uma casa abaixo de 10", () => expect([km(4.24), km(9.96), km(25.4)]).toEqual(["4,2", "10,0", "25"]));
+  it("km com uma casa abaixo de 10", () => expect([km(4.24), km(25.4)]).toEqual(["4,2", "25"]));
+  // piso ("pelo menos") arredonda para BAIXO: 24,9 km não pode virar "pelo menos 25"
+  it("km de piso nunca passa do valor calculado", () =>
+    expect([km(24.9), km(9.96), km(10), km(2.65), km(0.99)]).toEqual(["24", "9,9", "10", "2,6", "0,9"]));
   it("percentual sem ',0' sobrando", () => expect([pct(0.02), pct(0.045), pct(0.35)]).toEqual(["2%", "4,5%", "35%"]));
   it("nome do Censo legível", () => expect(nomeLegivel("EMEF DURVAL MAXIMO DE SOUZA")).toBe("EMEF Durval Maximo de Souza"));
 });

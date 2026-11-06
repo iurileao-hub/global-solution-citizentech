@@ -122,6 +122,15 @@ Uma falha do próprio teste também entrou no registro: os agentes rodavam ao me
 - **Revisão adversarial antes de publicar.** Um segundo modelo recebeu o site com a missão de quebrá-lo e achou cinco problemas que bloqueavam a publicação, todos corrigidos. O mais instrutivo: 171 fichas diziam "0,0 km, 1 min de ônibus" para escolas no mesmo endereço. Era um número tecnicamente certo e enganoso para quem lê, e virou "no mesmo lugar ou quase". A revisão também tentou, sem conseguir, injetar código pela busca e pelo endereço e misturar versões de dados guardadas no celular.
 - **Captura de tela de cada mudança visível.** Os testes conferem o texto da resposta, e a tela pode errar mesmo com o texto certo. Duas falhas só apareceram na captura: um mapa sem estrada, porque o leitor seguia um formato provisório dos traçados, e um parágrafo que sumia depois de uma citação. A segunda ganhou um teste automático; a leitura dos traçados ainda é conferida só na tela.
 
+**7. Teste do site por agentes com papéis.** Três agentes de IA receberam o site publicado e uma missão cada, com a instrução de atacar justamente o que a equipe considerava sólido:
+- uma agricultora assentada de pouca escolaridade, no celular, escrevendo sem acento;
+- uma conselheira municipal que imprime as fichas para a reunião;
+- um auditor que compara a tela com os dados e com o terminal.
+
+O auditor conferiu 64 escolas em cerca de 550 comparações e não achou número errado, mas achou o cartão do WhatsApp arredondando diferente da ficha. A conselheira imprimiu 13 fichas e achou afirmações que diziam mais do que os dados sustentam: o checklist marcava o diagnóstico do impacto como pronto, e uma nota sobre outra escola parecia ser da escola impressa. A agricultora achou a busca repetindo o pedido do município que ela já tinha dado, e palavras sem explicação (PL, INEP, piso, receptora), que viraram um glossário. Cada achado foi reproduzido antes de ser aceito.
+
+A lição desta etapa: o "pelo menos" estava sendo arredondado para cima, e um piso arredondado para cima deixa de ser piso. Ninguém tinha notado em quatro rodadas de teste, porque cada número, sozinho, parecia certo.
+
 **Próximo passo: validação com usuários reais.** O teste simulado acha defeitos grosseiros, mas não substitui pessoas. Um agente lê a tela inteira, não cansa, sabe usar terminal e escreve melhor que muita gente; o tempo que ele leva numa tarefa não diz nada sobre o tempo de uma pessoa. A validação seguinte deveria:
 - ouvir quem vive o problema: famílias e professores de escolas do campo, conselheiros municipais, lideranças quilombolas e indígenas, e quem já atua nesses conflitos (Defensoria, Ministério Público, fóruns de educação do campo);
 - usar o canal que essas pessoas usam, provavelmente o celular, e não o terminal;
