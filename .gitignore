@@ -24,3 +24,6 @@ docs/*
 dados/brutos/
 dados/processados/
 site/
+
+# Lock do uv (o projeto não tem dependência externa)
+uv.lock

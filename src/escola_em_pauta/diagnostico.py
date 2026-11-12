@@ -9,7 +9,7 @@ reescrita.
 Unidade de saída: a CRIANÇA (quantas são afetadas, quantos km e minutos a
 mais), nunca o custo por aluno. Distâncias são PISO ("pelo menos"), porque o
 cálculo vai de escola a escola e não conhece a casa de cada criança nem a
-estrada na chuva (ver docs/discussao/2026-11-04-passos-5-6.md).
+estrada na chuva (README, seção 8).
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ __all__ = ["Diagnostico", "Escola", "Receptora", "diagnosticar"]
 # Conferido no texto da decisão em 04/11/2026: "apontou-se que os alunos percorreriam ATÉ 52 km
 # por dia em estradas precárias" (estimativa de máximo da área técnica, não medição), com a
 # EEEFM Arquimimo Mattos como receptora indicada. A cautelar foi DEFERIDA (o fundamental não foi
-# suprimido; a escola seguiu aberta por liminar). Ver docs/pesquisa/tce-es-durval-maximo.md.
+# suprimido; a escola seguiu aberta por liminar).
 REFERENCIAS_EXTERNAS = {
     32049501: {"km_dia": 52.0, "quem": "Tribunal de Contas do ES", "fonte": "Decisão 02423/2025-2",
                "tipo": "estimativa de máximo", "receptora": 32050364,

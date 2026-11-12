@@ -17,7 +17,7 @@ const SITE = join(WEB, "..", "site");
 const DADOS = join(SITE, "dados");
 // o robô que monta o cartão do link (WhatsApp, Facebook) nem sempre resolve endereço relativo na og:image
 const URL_SITE = process.env.URL_SITE ?? "https://iurileao-hub.github.io/global-solution-citizentech/";
-const ORCAMENTO_PRIMEIRA_TELA = 100_000; // bytes comprimidos, sem as fontes (docs/orcamento_web.md)
+const ORCAMENTO_PRIMEIRA_TELA = 100_000; // bytes comprimidos, sem as fontes: teto de peso da primeira tela
 
 if (!existsSync(join(DIST, "index.html"))) throw new Error("web/dist vazio: rode `npm run build` antes");
 if (!existsSync(join(DADOS, "versao.json"))) throw new Error("site/dados sem versao.json: rode scripts/dividir_para_web.py");

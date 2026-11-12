@@ -2,8 +2,8 @@
 
 Separação de responsabilidades: `contexto()` decide TODO o texto (plurais,
 porcentagens, qual receptora vai para a manchete) em Python, onde dá para
-testar; o template Jinja2 (templates/ficha.html.j2) só posiciona. O CSS é o
-do mockup aprovado (docs/design/ficha-mockup.html), sem mudança de design.
+testar; o template Jinja2 (templates/ficha.html.j2) só posiciona, e o CSS
+(templates/ficha.css) só dá a forma.
 
 Regras de texto: o número é sempre PISO ("pelo menos"); nada de "deve" ou
 "não deve" fechar; a frente informa e o verso é da comunidade.
