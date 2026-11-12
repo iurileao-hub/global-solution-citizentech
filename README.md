@@ -372,7 +372,7 @@ Módulos em `src/escola_em_pauta/`: `censo.py`, `geo.py`, `grafo.py`, `osm_local
 
 ### 🔗 Links do Projeto
 
-* **Vídeo de apresentação (YouTube, não listado):** *a publicar*
+* **[Vídeo de apresentação](https://youtu.be/szWZfz1qFq0)** (YouTube, não listado, 4 minutos): o problema, o assistente, a ficha da escola, o simulador e o terminal, com os testes e os limites.
 * **[Versão web](https://iurileao-hub.github.io/global-solution-citizentech/)**: o mesmo assistente no navegador do celular, com a ficha de cada uma das 53.759 escolas do campo, o mapa das estradas até as escolas receptoras e o retrato por UF. Funciona sem servidor e, depois da primeira visita, sem sinal.
 
 ### 🧠 Decisões Técnicas
